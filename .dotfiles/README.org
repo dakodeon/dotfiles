@@ -1,0 +1,21 @@
+* MY DOTFILES (PERSONAL CONFIGURATION)
+
+A repository that will gradually contain all of my basic config files.
+
+I followed this guide: https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
+
+The repository is stored in a directory named =.dotfiles= in my home folder.
+
+** TREE
+
+A rough representation of the file structure:
+
+- .dotfiles
+  - README.org
+- .config
+  - darktable
+  - ranger
+- .i3
+  - i3blocks
+- .Xresources
+- .zshrc
