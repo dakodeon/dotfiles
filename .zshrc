@@ -59,6 +59,9 @@ alias getpid='ps h -o pid -C'
 #alias to manage dotfiles repository
 alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zob203'
 
+# add autocompletion to the new alias
+# complete -o bashdefault -o default -o nospace -F __git_wrap__git_main config
+
 export EDITOR="emacs"
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
