@@ -56,8 +56,10 @@ fi
 #alias for getting pid of running app (use: getpid <appname>)
 alias getpid='ps h -o pid -C'
 
+#alias to manage dotfiles repository
+alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zob203'
+
 export EDITOR="emacs"
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
 export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zob203'
