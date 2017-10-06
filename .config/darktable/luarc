@@ -1,0 +1,32 @@
+darktable = require "darktable"
+
+for _,v in ipairs(darktable.database) do
+    print(tostring(v.rating))
+end
+
+for i,s in ipairs(darktable.tags) do
+    print(i, s)
+end
+
+print("Active collection")
+for i,v in ipairs(darktable.collection) do
+    print(tostring(v))
+end
+
+print("Films:")
+for i,v in ipairs(darktable.films) do
+    print(tostring(v))
+end
+
+print("Images in Film:")
+for i,v in ipairs(darktable.database) do
+    if v.film.path == "/home/zob203/win703/Pictures/februcorfu" then
+        print(tostring(v))
+    end
+end
+
+local function hello_shortcut(event, shortcut)
+darktable.print("Hello, I just received '"..event.."' with parameter '"..shortcut.."'")
+end
+
+darktable.register_event("shortcut",hello_shortcut,"A shortcut that prints its parameters")
