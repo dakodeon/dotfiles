@@ -59,6 +59,9 @@ alias getpid='ps h -o pid -C'
 #alias to manage dotfiles repository
 alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zob203'
 
+# alias for contacts
+alias contacts='wine .wine/drive_c/Program\ Files\ \(x86\)/Echo\ Images/Contact\ Sheets\ 1.7.0.1/Contacts.exe'
+
 # add autocompletion to the new alias
 # complete -o bashdefault -o default -o nospace -F __git_wrap__git_main config
 
