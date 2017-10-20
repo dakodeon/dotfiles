@@ -37,13 +37,17 @@ bindsym $mod+apostrophe exec darktable
 bindsym $mod+comma exec firefox
 bindsym $mod+backslash exec libreoffice --writer
 bindsym $mod+period exec urxvt -e ranger
+bindsym $mod+equal exec thunderbird
+bindsym $mod+minus exec deadbeef
 
 # shortcuts to jump around commonly used applications
-bindsym $mod+Control+t [class="URxvt"] focus
+bindsym $mod+Control+x [class="URxvt"] focus
 bindsym $mod+Control+e [class="Emacs"] focus
 bindsym $mod+Control+d [class="Darktable"] focus
-bindsym $mod+Control+f [class="Firefox"] focus
+bindsym $mod+Control+b [class="Firefox"] focus
 bindsym $mod+Control+i [class="Image Lounge"] focus
+bindsym $mod+Control+h [class="Thunderbird"] focus
+bindsym $mod+Control+m [class="Deadbeef"] focus
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -53,11 +57,11 @@ bindsym $mod+q kill
 bindsym $mod+Shift+Delete exec python ~/bin/i3-exit.py
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec dmenu_run -fn "Jura-10"
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --dmenu="dmenu -fn 'Jura Light-10'"
 
 # change focus
 bindsym $mod+j focus left
