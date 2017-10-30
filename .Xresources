@@ -16,7 +16,7 @@ URxvt.color8: #555753
 URxvt.color1: #CC0000
 URxvt.color9: #EF2929
 ! green
-URxvt.color2: black
+URxvt.color2: #CDCD60
 URxvt.color10: #8AE234
 ! yellow
 URxvt.color3: #C4A000
