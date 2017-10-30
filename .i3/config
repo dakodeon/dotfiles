@@ -187,13 +187,15 @@ bindsym Control+XF86AudioRaiseVolume exec --no-startup-id amixer set 'Master' 5%
 bindsym Control+XF86AudioLowerVolume exec --no-startup-id amixer set 'Master' 5%-
 bindsym Control+XF86AudioMute exec --no-startup-id amixer set 'Speaker' toggle
 
-bindsym $mod+grave exec sudo mount -a
+# mount - unmount
+exec_always sudo /home/zob203/bin/mnt.sh -a
+bindsym $mod+grave exec sudo /home/zob203/bin/mnt.sh -a
+bindsym $mod+Shift+grave exec sudo /home/zob203/bin/umnt.sh -a
 
 ## STARTUP PROGRAMS
 exec nm-applet
 exec thunderbird
 # exec tixati
-exec_always sudo mount -a
 
 ## STARTUP SETTINGS
 # wallpaper

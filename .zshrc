@@ -49,9 +49,12 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
+
+# clear alias
+alias clr='clear'
 
 #alias for getting pid of running app (use: getpid <appname>)
 alias getpid='ps h -o pid -C'

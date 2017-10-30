@@ -1,3 +1,5 @@
+! Note: execute xrdb ~/.Xresources after editing the file
+
 URxvt.scrollBar: false
 URxvt.font: xft:monospace:size=8.5
 
@@ -14,7 +16,7 @@ URxvt.color8: #555753
 URxvt.color1: #CC0000
 URxvt.color9: #EF2929
 ! green
-URxvt.color2: yellow
+URxvt.color2: black
 URxvt.color10: #8AE234
 ! yellow
 URxvt.color3: #C4A000
