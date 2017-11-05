@@ -82,6 +82,10 @@ handle_extension() {
             lynx -dump -- "${FILE_PATH}" && exit 5
             elinks -dump "${FILE_PATH}" && exit 5
             ;; # Continue with next handler on failure
+        ## mp3
+        mp3)
+            # Show tags
+            eyeD3 "${FILE_PATH}" && exit 5
     esac
 }
 
