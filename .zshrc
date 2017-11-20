@@ -53,8 +53,8 @@ alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -CF'
 
-# clear alias
-alias clr='clear'
+# alias emacs -nw
+alias emnw='emacs -nw '
 
 #alias for getting pid of running app (use: getpid <appname>)
 alias getpid='ps h -o pid -C'
@@ -72,3 +72,4 @@ export EDITOR="emacs"
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
 export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+

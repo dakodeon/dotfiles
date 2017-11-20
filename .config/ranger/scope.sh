@@ -85,7 +85,8 @@ handle_extension() {
         ## mp3
         mp3)
             # Show tags
-            eyeD3 "${FILE_PATH}" && exit 5
+            ffprobe -loglevel error -show_entries format_tags=title,artist,composer,album,date,track "${FILE_PATH}" | cut -s -d':' -f2 && exit 5
+            # eyeD3 "${FILE_PATH}" && exit 5
     esac
 }
 

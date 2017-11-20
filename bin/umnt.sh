@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Unmount drives and clean up
 
 if [ $1 = -h ] || [ $1 = --help ]; then
