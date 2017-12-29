@@ -33,3 +33,8 @@ URxvt.color14: #34E2E2
 ! white
 URxvt.color7: #D3D7CF
 URxvt.color15: #EEEEEC
+
+! Resize font
+URxvt.perl-ext-common: resize-font
+URxvt.resize-font.smaller: C-j
+URxvt.resize-font.bigger: C-k

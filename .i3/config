@@ -33,21 +33,28 @@ for_window [class="^.*"] border pixel 5
 ##### STARTUP
 
 # wallpaper
-exec_always feh --bg-scale /home/zob203/.config/.wallpaper.jpg
+exec_always --no-startup-id feh --bg-scale /home/zob203/.config/.wallpaper.jpg
 
 # keyboard layout -- now using /etc/X11/xorg.conf instead of running the command
 # exec_always         setxkbmap -layout us,gr -option 'grp:alt_shift_toggle'
 bindsym Shift+Alt_L exec pkill -RTMIN+2 i3blocks
 
 # clipboard -- not shure if this works
-exec_always  autocutsel
+exec_always  --no-startup-id autocutsel
+
+# hide mouse pointer when idle
+exec_always  --no-startup-id unclutter -idle 1
 
 # some startup programs
-exec   nm-applet
-exec   thunderbird
+exec --no-startup-id nm-applet
+exec --no-startup-id thunderbird
+exec --no-startup-id emacs --daemon
 
 # start i3blocks
 bar {
+        output          LVDS1
+        output          VGA1
+
         font            pango: FontAwesome 8, IcoMoon 8, Abel 9
         status_command  i3blocks -c ~/.i3/i3blocks.conf
 }
@@ -103,14 +110,18 @@ bindsym $mod+Control+Pause       exec --no-startup-id xrandr --output VGA1 --off
 exec pkill -RTMIN+10 i3blocks
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume     exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks    # increase sound volume
-bindsym XF86AudioLowerVolume     exec --no-startup-id pactl set-sink-volume 0 -- -5% && pkill -RTMIN+10 i3blocks # decrease sound volume
-bindsym XF86AudioMute            exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks   # mute sound
+bindsym XF86AudioRaiseVolume          exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume          exec --no-startup-id pactl set-sink-volume 0 -- -5% && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioMute                 exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
+bindsym Shift+XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
+bindsym Shift+XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
 
 # ALSA mixer controls
-bindsym Control+XF86AudioRaiseVolume    exec --no-startup-id amixer set 'Master' 5%+
-bindsym Control+XF86AudioLowerVolume    exec --no-startup-id amixer set 'Master' 5%-
-bindsym Control+XF86AudioMute           exec --no-startup-id amixer set 'Speaker' toggle
+bindsym Control+XF86AudioRaiseVolume         exec --no-startup-id amixer set 'Master' 5%+
+bindsym Control+XF86AudioLowerVolume         exec --no-startup-id amixer set 'Master' 5%-
+bindsym Control+XF86AudioMute                exec --no-startup-id amixer set 'Speaker' toggle
+bindsym Control+Shift+XF86AudioRaiseVolume   exec --no-startup-id amixer set 'Master' 100%
+bindsym Control+Shift+XF86AudioLowerVolume   exec --no-startup-id amixer set 'Master' 100%
 
 ##### WINDOWS
 
@@ -167,15 +178,15 @@ bindsym $mod+Shift+d  focus child
 ##### WORKSPACES
 
 # funny names for workspaces
-set $ws1   1 
-set $ws2   2 
-set $ws3   3 
-set $ws4   4 
-set $ws5   5 
-set $ws6   6 
-set $ws7   7 
-set $ws8   8 
-set $ws9   9 
+set $ws1    1 
+set $ws2    2 
+set $ws3    3 
+set $ws4    4 
+set $ws5    5 
+set $ws6    6 
+set $ws7    7 
+set $ws8    8 
+set $ws9    9 
 set $ws0   10 
 
 # switch to workspace
@@ -219,28 +230,55 @@ bindsym $mod+Control+Right  move workspace to output right
 
 ##### PROGRAMS
 
-# programs shortcuts
-bindsym $mod+Return     exec urxvt
-bindsym $mod+slash      exec emacs
-bindsym $mod+apostrophe exec darktable
-bindsym $mod+comma      exec firefox
-bindsym $mod+backslash  exec libreoffice --writer
-bindsym $mod+period     exec urxvt -e ranger
-bindsym $mod+equal      exec thunderbird
-bindsym $mod+minus      exec smplayer
+# program variables
+set $term       urxvt
+set $fileman    urxvt -e ranger
+set $editor     emacsclient -c
+set $mail       thunderbird
+set $browser    waterfox
+set $torrent    tixati
+set $writer     libreoffice --writer
+set $player     smplayer
+set $imgview    nomacs
+set $photo      darktable
+set $calc       urxvt -e qalc
 
-# # focus programs
-# bindsym $mod+Control+x [class="URxvt"] focus
-# bindsym $mod+Control+e [class="Emacs"] focus
-# bindsym $mod+Control+d [class="Darktable"] focus
-# bindsym $mod+Control+b [class="Firefox"] focus
-# bindsym $mod+Control+i [class="Image Lounge"] focus
-# bindsym $mod+Control+h [class="Thunderbird"] focus
-# bindsym $mod+Control+m [class="SMPlayer"] focus
+# programs shortcuts
+bindsym $mod+Return       exec $term
+bindsym $mod+slash        exec $editor
+bindsym $mod+apostrophe   exec $photo
+bindsym $mod+comma        exec $browser
+bindsym $mod+backslash    exec $writer
+bindsym $mod+period       exec $fileman
+bindsym $mod+equal        exec $mail
+bindsym $mod+minus        exec $player
+bindsym $mod+bracketright exec $calc
+
+# launcher mode (emacs-like shortcuts)
+bindsym $mod+x mode "launcher"
+
+mode "launcher" {
+     bindsym x exec $term;        mode "default"
+     bindsym r exec $fileman;     mode "default"
+     bindsym e exec $editor;      mode "default"
+     bindsym m exec $mail;        mode "default"
+     bindsym b exec $browser;     mode "default"
+     bindsym t exec $torrent;     mode "default"
+     bindsym w exec $writer;      mode "default"
+     bindsym p exec $player;      mode "default"
+     bindsym i exec $imgview;     mode "default"
+     bindsym d exec $photo;       mode "default"
+     bindsym q exec $calc;        mode "default"
+
+     bindsym Escape mode "default"
+}
+
+##### PROGRAM OPTIONS
 
 # always floating
 for_window [class="I3-exit.py" instance="i3-exit.py"] floating enable
 for_window [class="SuperCollider"]                    floating enable
+for_window [title="qalc"]                             floating enable; move absolute position 900 px 10 px; resize shrink width 200 px
 
 # focused on startup
 for_window [class="Darktable"]    focus
@@ -250,3 +288,9 @@ for_window [class="Image Lounge"] focus
 assign [class="Image Lounge"] $ws6
 assign [class="Tixati"]       $ws9
 assign [class="Darktable"]    $ws0
+
+##### MISC FUNCTIONS
+
+# youtube downloads (video URL must be on the clipboard)
+bindsym $mod+Shift+comma   exec urxvt -e youtube-dl -i -c -o "~/Downloads/youtubeDownload/video/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
+bindsym $mod+Shift+period  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "~/Downloads/youtubeDownload/audio/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"

@@ -65,11 +65,15 @@ alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zo
 # alias for contacts
 alias contacts='wine .wine/drive_c/Program\ Files\ \(x86\)/Echo\ Images/Contact\ Sheets\ 1.7.0.1/Contacts.exe'
 
+# youtube download (URL must be in clipboard)
+alias Ydv='youtube-dl -i -c -o "/home/zob203/Downloads/youtubeDownload/video/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
+alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "/home/zob203/Downloads/youtubeDownload/audio/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
+
 # add autocompletion to the new alias
 # complete -o bashdefault -o default -o nospace -F __git_wrap__git_main config
 
+export TERM=xterm-256color
 export EDITOR="emacs"
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
 export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-
