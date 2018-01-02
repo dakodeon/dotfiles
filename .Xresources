@@ -4,10 +4,12 @@ URxvt.scrollBar: false
 URxvt.font: xft:monospace:size=8.5
 
 ! style
-URxvt.transparent: true
-URxvt.shading: 30
+!URxvt.transparent: true
+!URxvt.shading: 30
+*fading: 30
+*fadeColor: black
 ! colors (Tango theme)
-URxvt.background: black
+URxvt.background: [80]#000000
 URxvt.foreground: gray
 ! black
 URxvt.color0: #2E3436
