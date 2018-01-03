@@ -57,8 +57,8 @@ alias l='ls -CF'
 alias emnw='emacs -nw '
 
 # youtube download (URL must be in clipboard)
-alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtubeDownload/video/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
-alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtubeDownload/audio/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
+alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
+alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 
 export TERM=rxvt-unicode-256color
 export EDITOR=emacs
