@@ -1,0 +1,8 @@
+* My config files
+
+This repository contains configuration files for some programs that I frequently use. There are also some scripts that make my life somewhat easier...
+The approach that I decided to take is to place all these files together and then link them to the correct path.
+This is currently under construction, for now I am just experimenting with this idea. I also want to write a script that will link the files to the correct path automatically.
+
+Configured programs: i3, ranger, zsh, urxvt (with Xresources)
+Scripts: mount/unmount management, bulk MP3 renaming according to ID3 tags, python script to shutdown i3 (unused)
