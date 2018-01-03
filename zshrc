@@ -56,15 +56,6 @@ alias l='ls -CF'
 # alias emacs -nw
 alias emnw='emacs -nw '
 
-#alias for getting pid of running app (use: getpid <appname>)
-alias getpid='ps h -o pid -C'
-
-#alias to manage dotfiles repository
-alias config='/usr/bin/git --git-dir=/home/zob203/.dotfiles --work-tree=/home/zob203'
-
-# alias for contacts
-alias contacts='wine .wine/drive_c/Program\ Files\ \(x86\)/Echo\ Images/Contact\ Sheets\ 1.7.0.1/Contacts.exe'
-
 # youtube download (URL must be in clipboard)
 alias Ydv='youtube-dl -i -c -o "/home/zob203/Downloads/youtubeDownload/video/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "/home/zob203/Downloads/youtubeDownload/audio/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
