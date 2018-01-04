@@ -15,6 +15,33 @@ client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-co
 client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color $inactive-bg-color
 client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $inactive-bg-color
 
+# default font for windows
+font pango:Jura Light 10
+
+# deafult border size for windows
+for_window [class="^.*"] border pixel 1
+
+##### GAPS
+
+# set gaps
+gaps inner 10
+gaps outer -4
+
+smart_gaps    on
+smart_borders on
+
+# change current gaps size
+bindsym $mod+Shift+i gaps outer current minus 5
+bindsym $mod+Shift+o gaps outer current plus 5
+bindsym $mod+Shift+u gaps inner current minus 5
+bindsym $mod+Shift+p gaps inner current plus 5
+
+# change all gaps size
+bindsym $mod+Control+i gaps outer all minus 5
+bindsym $mod+Control+o gaps outer all plus 5
+bindsym $mod+Control+u gaps inner all minus 5
+bindsym $mod+Control+p gaps inner all plus 5
+
 ##### BASIC SETUP
 
 # basic mod key (win key)
@@ -24,33 +51,29 @@ set $mod Mod4
 floating_modifier   $mod
 focus_follows_mouse no
 
-# default font for windows
-font pango:Jura Light 10
-
-# deafult border size for windows
-for_window [class="^.*"] border pixel 5
-
 ##### STARTUP
 
 # wallpaper
-exec_always --no-startup-id feh --bg-scale /home/zob203/.config/.wallpaper.jpg
+exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
 
-# keyboard layout -- now using /etc/X11/xorg.conf instead of running the command
-# exec_always         setxkbmap -layout us,gr -option 'grp:alt_shift_toggle'
+# keyboard layout -- using /etc/X11/xorg.conf
 bindsym Shift+Alt_L exec pkill -RTMIN+2 i3blocks
 
 # clipboard -- not shure if this works
 exec_always  --no-startup-id autocutsel
 
 # hide mouse pointer when idle
-exec_always  --no-startup-id unclutter -idle 1
+exec_always  --no-startup-id unclutter -idle 3
 
 # some startup programs
+exec --no-startup-id volumeicon
 exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
+exec --no-startup-id compton -b
+exec --no-startup-id start_conky_maia
 
-# start i3blocks
+# status bar
 bar {
         output          LVDS1
         output          VGA1
@@ -58,6 +81,9 @@ bar {
         font            pango: FontAwesome 8, IcoMoon 8, Abel 9
         status_command  i3blocks -c ~/.i3/i3blocks.conf
 }
+
+# show/hide bar
+bindsym $mod+b bar mode toggle
 
 ##### BASIC FUNCTIONALITY
 
@@ -67,23 +93,37 @@ bindsym $mod+Shift+c  reload
 # restart i3 inplace
 bindsym $mod+Shift+r  restart
 
-# log out (use python script instead)
-#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
-
-# shutdown script
-bindsym $mod+Shift+Delete  exec python ~/bin/i3-exit.py
+# Lock screen
+bindsym $mod+Pause exec --no-startup-id blurlock
 
 # kill focused window
 bindsym $mod+Shift+q  kill
 bindsym $mod+q        kill
 
 # start dmenu (program launcher)
-bindsym $mod+d  exec dmenu_run -fn "Jura-10"
+bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 
 # mount - unmount
 exec                      sudo /home/zob203/bin/mnt.sh -a
 bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
 bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
+
+# system mode (shutdown, restart, logout)
+bindsym $mod+Delete mode "$mode_system"
+set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (s)hutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym s exec --no-startup-id i3exit suspend, mode "default"
+    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym e exec --no-startup-id i3exit logout, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym s exec --no-startup-id i3exit shutdown, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 ##### DISPLAYS
 
@@ -154,8 +194,7 @@ bindsym $mod+o  resize shrink height 5 px or 5 ppt
 bindsym $mod+p  resize grow width 5 px or 5 ppt
 
 # split in horizontal / vertical orientation
-bindsym $mod+h  split h
-bindsym $mod+v  split v
+bindsym $mod+v  split toggle
 
 # enter fullscreen mode for the focused container
 bindsym $mod+Shift+f  fullscreen
@@ -163,13 +202,17 @@ bindsym $mod+Shift+f  fullscreen
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s   layout stacking
 bindsym $mod+w   layout tabbed
-bindsym $mod+e   layout toggle split
+# bindsym $mod+e   layout toggle split
+bindsym $mod+e   layout toggle splitv splith tabbed
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space    focus mode_toggle
+
+# toggle sticky
+bindsym $mod+Shift+s  sticky toggle
 
 # focus the parent / child container
 bindsym $mod+Shift+a  focus parent
@@ -228,6 +271,10 @@ bindsym $mod+Control+Down   move workspace to output down
 bindsym $mod+Control+Up     move workspace to output up
 bindsym $mod+Control+Right  move workspace to output right
 
+# scratchpad
+bindsym $mod+Shift+minus    move scratchpad
+bindsym $mod+minus          scratchpad show
+
 ##### PROGRAMS
 
 # program variables
@@ -239,9 +286,9 @@ set $browser    waterfox
 set $torrent    tixati
 set $writer     libreoffice --writer
 set $player     smplayer
-set $imgview    nomacs
+set $imgview    viewnior
 set $photo      darktable
-set $calc       urxvt -e qalc
+set $calc       urxvt -e calc
 
 # programs shortcuts
 bindsym $mod+Return       exec $term
@@ -251,7 +298,7 @@ bindsym $mod+comma        exec $browser
 bindsym $mod+backslash    exec $writer
 bindsym $mod+period       exec $fileman
 bindsym $mod+equal        exec $mail
-bindsym $mod+minus        exec $player
+# bindsym $mod+minus        exec $player
 bindsym $mod+bracketright exec $calc
 
 # launcher mode (emacs-like shortcuts)
@@ -278,7 +325,7 @@ mode "launcher" {
 # always floating
 for_window [class="I3-exit.py" instance="i3-exit.py"] floating enable
 for_window [class="SuperCollider"]                    floating enable
-for_window [title="qalc"]                             floating enable; move absolute position 900 px 10 px; resize shrink width 200 px
+for_window [title="calc"]                             floating enable
 
 # focused on startup
 for_window [class="Darktable"]    focus
@@ -287,10 +334,11 @@ for_window [class="Image Lounge"] focus
 # attach programs on workspaces
 assign [class="Image Lounge"] $ws6
 assign [class="Tixati"]       $ws9
+assign [class="Thunderbird"]   $ws9
 assign [class="Darktable"]    $ws0
 
 ##### MISC FUNCTIONS
 
 # youtube downloads (video URL must be on the clipboard)
-bindsym $mod+Shift+comma   exec urxvt -e youtube-dl -i -c -o "~/Downloads/youtubeDownload/video/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
-bindsym $mod+Shift+period  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "~/Downloads/youtubeDownload/audio/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
+bindsym $mod+Shift+comma   exec urxvt -e youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
+bindsym $mod+Shift+period  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
