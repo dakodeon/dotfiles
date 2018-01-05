@@ -8,18 +8,19 @@ set $inactive-bg-color   #000000
 set $text-color          #f3f4f5
 set $inactive-text-color #676E7D
 set $urgent-bg-color     #E53935
+set $indicator-color     #336699
 
 #                       border              background         text                 indicator
-client.focused          $bg-color           $bg-color          $text-color          $inactive-bg-color
-client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color $inactive-bg-color
-client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color $inactive-bg-color
-client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $inactive-bg-color
+client.focused          $bg-color           $bg-color          $text-color          $indicator-color
+client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color $indicator-color
+client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color $indicator-color
+client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $indicator-color
 
 # default font for windows
 font pango:Jura Light 10
 
 # deafult border size for windows
-for_window [class="^.*"] border pixel 1
+for_window [class="^.*"] border pixel 2
 
 ##### GAPS
 
@@ -51,40 +52,6 @@ set $mod Mod4
 floating_modifier   $mod
 focus_follows_mouse no
 
-##### STARTUP
-
-# wallpaper
-exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
-
-# keyboard layout -- using /etc/X11/xorg.conf
-bindsym Shift+Alt_L exec pkill -RTMIN+2 i3blocks
-
-# clipboard -- not shure if this works
-exec_always  --no-startup-id autocutsel
-
-# hide mouse pointer when idle
-exec_always  --no-startup-id unclutter -idle 3
-
-# some startup programs
-exec --no-startup-id volumeicon
-exec --no-startup-id nm-applet
-exec --no-startup-id thunderbird
-exec --no-startup-id emacs --daemon
-exec --no-startup-id compton -b
-exec --no-startup-id start_conky_maia
-
-# status bar
-bar {
-        output          LVDS1
-        output          VGA1
-
-        font            pango: FontAwesome 8, IcoMoon 8, Abel 9
-        status_command  i3blocks -c ~/.i3/i3blocks.conf
-}
-
-# show/hide bar
-bindsym $mod+b bar mode toggle
-
 ##### BASIC FUNCTIONALITY
 
 # reload configuration file
@@ -104,21 +71,21 @@ bindsym $mod+q        kill
 bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 
 # mount - unmount
-exec                      sudo /home/zob203/bin/mnt.sh -a
-bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
-bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
+# exec                      sudo /home/zob203/bin/mnt.sh -a
+# bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
+# bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
 
 # system mode (shutdown, restart, logout)
 bindsym $mod+Delete mode "$mode_system"
-set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (s)hutdown
+set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
-    bindsym l exec --no-startup-id i3exit lock, mode "default"
-    bindsym s exec --no-startup-id i3exit suspend, mode "default"
-    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
-    bindsym e exec --no-startup-id i3exit logout, mode "default"
-    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
-    bindsym r exec --no-startup-id i3exit reboot, mode "default"
-    bindsym s exec --no-startup-id i3exit shutdown, mode "default"
+    bindsym l         exec --no-startup-id i3exit lock, mode "default"
+    bindsym s         exec --no-startup-id i3exit suspend, mode "default"
+    bindsym u         exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym e         exec --no-startup-id i3exit logout, mode "default"
+    bindsym h         exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r         exec --no-startup-id i3exit reboot, mode "default"
+    bindsym Shift+s   exec --no-startup-id i3exit shutdown, mode "default"
 
     # exit system mode: "Enter" or "Escape"
     bindsym Return mode "default"
@@ -144,6 +111,13 @@ bindsym $mod+Control+Shift+Right exec --no-startup-id xrandr --output VGA1 --aut
 # turn off secondary monitor
 bindsym $mod+Control+Pause       exec --no-startup-id xrandr --output VGA1 --off
 
+##### BRIGHTNESS CONTROLS
+exec_always              xbacklight set 100
+bindsym Control+F7       "exec xbacklight -inc 10; exec notify-send -t 1 brightness up"
+bindsym Control+F6       "exec xbacklight -dec 10; exec notify-send -t 1 brightness down"
+bindsym Shift+Control+F7 "exec xbacklight -set 100; exec notify-send -t 1 brightness max"
+bindsym Shift+Control+F6 "exec xbacklight -set 50; exec notify-send -t 1 brightness low"
+
 ##### AUDIO
 
 # send a signal to init volume indicator
@@ -151,17 +125,17 @@ exec pkill -RTMIN+10 i3blocks
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume          exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume          exec --no-startup-id pactl set-sink-volume 0 -- -5% && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioMute                 exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume          exec --no-startup-id pactl set-sink-volume 0 -5% && pkill -RTMIN+10 i3blocks
 bindsym Shift+XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
-bindsym Shift+XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
+bindsym Shift+XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 50% && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioMute                 exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
 
 # ALSA mixer controls
 bindsym Control+XF86AudioRaiseVolume         exec --no-startup-id amixer set 'Master' 5%+
 bindsym Control+XF86AudioLowerVolume         exec --no-startup-id amixer set 'Master' 5%-
-bindsym Control+XF86AudioMute                exec --no-startup-id amixer set 'Speaker' toggle
 bindsym Control+Shift+XF86AudioRaiseVolume   exec --no-startup-id amixer set 'Master' 100%
-bindsym Control+Shift+XF86AudioLowerVolume   exec --no-startup-id amixer set 'Master' 100%
+bindsym Control+Shift+XF86AudioLowerVolume   exec --no-startup-id amixer set 'Master' 50%
+bindsym Control+XF86AudioMute                exec --no-startup-id amixer set 'Speaker' toggle
 
 ##### WINDOWS
 
@@ -275,6 +249,40 @@ bindsym $mod+Control+Right  move workspace to output right
 bindsym $mod+Shift+minus    move scratchpad
 bindsym $mod+minus          scratchpad show
 
+##### STARTUP
+
+# wallpaper
+exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
+
+# keyboard layout -- using /etc/X11/xorg.conf
+# bindsym Alt_L+Caps_Lock exec pkill -RTMIN+2 i3blocks
+
+# clipboard -- not shure if this works
+exec_always  --no-startup-id autocutsel
+
+# hide mouse pointer when idle
+exec_always  --no-startup-id unclutter -idle 3
+
+# some startup programs
+exec --no-startup-id volumeicon
+exec --no-startup-id nm-applet
+exec --no-startup-id thunderbird
+exec --no-startup-id emacs --daemon
+exec --no-startup-id compton -b
+exec --no-startup-id start_conky_maia
+
+# status bar
+bar {
+        output          LVDS1
+        output          VGA1
+
+        font            pango: FontAwesome 8, IcoMoon 8, Abel 9
+        status_command  i3blocks -c ~/.i3/i3blocks.conf
+}
+
+# show/hide bar
+bindsym $mod+b bar mode toggle
+
 ##### PROGRAMS
 
 # program variables
@@ -283,7 +291,7 @@ set $fileman    urxvt -e ranger
 set $editor     emacsclient -c
 set $mail       thunderbird
 set $browser    waterfox
-set $torrent    tixati
+set $torrent    transmission-gtk
 set $writer     libreoffice --writer
 set $player     smplayer
 set $imgview    viewnior
@@ -323,19 +331,20 @@ mode "launcher" {
 ##### PROGRAM OPTIONS
 
 # always floating
-for_window [class="I3-exit.py" instance="i3-exit.py"] floating enable
-for_window [class="SuperCollider"]                    floating enable
-for_window [title="calc"]                             floating enable
+for_window [class="SuperCollider"]    floating enable
+for_window [title="calc"]             floating enable
+for_window [title="youtube-dl"]       floating enable
+for_window [class="Transmission-gtk"] floating enable
 
 # focused on startup
-for_window [class="Darktable"]    focus
-for_window [class="Image Lounge"] focus
+for_window [class="Darktable"] focus
+for_window [class="Viewnior"]  focus
 
 # attach programs on workspaces
-assign [class="Image Lounge"] $ws6
-assign [class="Tixati"]       $ws9
-assign [class="Thunderbird"]   $ws9
-assign [class="Darktable"]    $ws0
+assign [class="Viewnior"]         $ws6
+assign [class="Transmission-gtk"] $ws9
+assign [class="Thunderbird"]      $ws9
+assign [class="Darktable"]        $ws0
 
 ##### MISC FUNCTIONS
 
