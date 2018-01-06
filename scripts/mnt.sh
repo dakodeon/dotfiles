@@ -12,7 +12,7 @@
 declare -A mlist
 
 # Mount directory
-m_dir="/media/zob203"
+m_dir="/mnt/louk"
 
 case $1 in
     "-h"|"--help"|"")
@@ -36,7 +36,7 @@ By dakodeon, 2017'
     exit 0
         ;;
     "-a"|"--all")
-        for uuid in $(blkid -sUUID | grep -v sda | cut -d'"' -f2); do
+        for uuid in $(blkid -sUUID | grep sd | grep -v sda | cut -d'"' -f2); do
             path=$(cat /etc/fstab | grep $uuid | cut -d' ' -f2)
             if [[ ! $(mount | grep -q $uuid)  ||  ! $(mount | grep -q $path) ]] ; then
                 if cat /etc/fstab | grep -q $uuid; then
@@ -49,7 +49,7 @@ By dakodeon, 2017'
         done
         ;;
     "-u"|"--unknown")
-        for uuid in $(blkid -sUUID | grep -v sda | cut -d'"' -f2); do
+        for uuid in $(blkid -sUUID | grep sd | grep -v sda | cut -d'"' -f2); do
             if ! cat /etc/fstab | grep -q $uuid; then
                 point="$m_dir/$(blkid | grep $uuid | cut -d' ' -f2 | cut -d'"' -f2)"
                 mlist["$uuid"]=$point
