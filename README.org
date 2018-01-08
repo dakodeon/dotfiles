@@ -2,19 +2,43 @@
 
 ** OVERVIEW
 This repository contains configuration files for some programs that I frequently use. There are also some scripts that make my life somewhat easier...
+
 The approach that I decided to take is to place all these files together and then link them to the correct path.
-This is currently under construction, for now I am just experimenting with this idea. I also want to write a script that will link the files to the correct path automatically.
+
+This is under (constant) construction. In the final version, there will be a script that automates adding config files to the repository (by auto-moving files and creating hardlinks).
 
 Configured programs: i3, ranger, zsh, urxvt (with Xresources)
-Scripts: mount/unmount management, bulk MP3 renaming according to ID3 tags, python script to shutdown i3 (unused)
+
+Scripts: mount/unmount management, bulk MP3 renaming according to ID3 tags, python script to shutdown i3 (not used anymore)
 
 ** FILES AND LOCATIONS
-"i3/config" "$HOME/.i3/config"
-"i3/i3blocks.conf" "$HOME/.i3/i3blocks.conf"
-"i3/i3blocks_scripts/*" "$HOME/.i3/i3blocks_scripts/*"
-"ranger/*" "$HOME/.config/ranger/*"
-"scripts/*" "$HOME/.config/scripts"
-"zshrc" "$HOME/.zshrc"
-"Xresources" "$HOME/.Xresources"
+- "i3/config" "$HOME/.i3/config"
+- "i3/i3blocks.conf" "$HOME/.i3/i3blocks.conf"
+- "i3/i3blocks/*" "$HOME/.i3/i3blocks/*"
+- "ranger/*" "$HOME/.config/ranger/*"
+- "scripts/*" "$HOME/.config/scripts"
+- "zshrc" "$HOME/.zshrc"
+- "Xresources" "$HOME/.Xresources"
 
 Note that the scripts directory must be added to your path
+
+** SYSTEM, PROGRAMS, DEPENDENCIES
+- System: Manjaro Linux with the i3 window manager (some scripts and stuff used are part of the installation and thus not yet included here, for example the shutdown scripts).
+- Window manager: i3 (i3-gaps)
+- Terminal emulator: urxvt (rxvt-unicode)
+- Editor: Emacs (run as daemon, using clients)
+- File manager: Ranger
+- Display settings: xrandr, xbacklight, compton, feh, w3m
+- Audio management: pulseaudio, pactl
+- Notifications: dunst, conky (with default scripts from Manjaro)
+- Status bar: i3blocks
+- Misc: youtube-dl, xkb-switch
+- System fonts: Jura, Abel, FontAwesome, IcoMoon
+
+** TODO-list
+
+*** TODO
+Write sync script to add and manage config files
+
+*** TODO
+Add all used configurations and useful entries from the original i3 config file

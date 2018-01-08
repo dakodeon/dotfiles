@@ -71,9 +71,9 @@ bindsym $mod+q        kill
 bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 
 # mount - unmount
-exec                      sudo /home/zob203/bin/mnt.sh -a
-bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
-bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
+# exec                      sudo /home/zob203/bin/mnt.sh -a
+# bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
+# bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
 
 # system mode (shutdown, restart, logout)
 bindsym $mod+Escape mode "$mode_system"
