@@ -22,6 +22,15 @@ font pango:Jura Light 10
 # deafult border size for windows
 for_window [class="^.*"] border pixel 2
 
+##### BASIC SETUP
+
+# basic mod key (win key)
+set $mod Mod4
+
+# use mod and mouse to drag floating window
+floating_modifier   $mod
+focus_follows_mouse no
+
 ##### GAPS
 
 # set gaps
@@ -42,15 +51,6 @@ bindsym $mod+Control+i gaps outer all minus 5
 bindsym $mod+Control+o gaps outer all plus 5
 bindsym $mod+Control+u gaps inner all minus 5
 bindsym $mod+Control+p gaps inner all plus 5
-
-##### BASIC SETUP
-
-# basic mod key (win key)
-set $mod Mod4
-
-# use mod and mouse to drag floating window
-floating_modifier   $mod
-focus_follows_mouse no
 
 ##### BASIC FUNCTIONALITY
 
@@ -76,7 +76,7 @@ bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 # bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
 
 # system mode (shutdown, restart, logout)
-bindsym $mod+Delete mode "$mode_system"
+bindsym $mod+Escape mode "$mode_system"
 set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
 mode "$mode_system" {
     bindsym l         exec --no-startup-id i3exit lock, mode "default"
@@ -176,8 +176,7 @@ bindsym $mod+Shift+f  fullscreen
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s   layout stacking
 bindsym $mod+w   layout tabbed
-# bindsym $mod+e   layout toggle split
-bindsym $mod+e   layout toggle splitv splith tabbed
+bindsym $mod+e   layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -255,7 +254,7 @@ bindsym $mod+minus          scratchpad show
 exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
 
 # keyboard layout -- using /etc/X11/xorg.conf
-# bindsym Alt_L+Caps_Lock exec pkill -RTMIN+2 i3blocks
+# bindsym Mod1+Space exec pkill -RTMIN+2 i3blocks
 
 # clipboard -- not shure if this works
 exec_always  --no-startup-id autocutsel
@@ -264,7 +263,7 @@ exec_always  --no-startup-id autocutsel
 exec_always  --no-startup-id unclutter -idle 3
 
 # some startup programs
-exec --no-startup-id volumeicon
+# exec --no-startup-id volumeicon
 exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
@@ -278,11 +277,11 @@ bar {
 
         font            pango: FontAwesome 8, IcoMoon 8, Abel 9
         status_command  i3blocks -c ~/.i3/i3blocks.conf
+        # status_command ~/.source/bumblebee-status/bumblebee-status -t gruvbox -m title nic weather cpu memory layout datetime battery -p memory.format="{percent:05.02f}%"
 }
 
 # show/hide bar
 bindsym $mod+b bar mode toggle
-
 ##### PROGRAMS
 
 # program variables
