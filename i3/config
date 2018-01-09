@@ -174,8 +174,7 @@ bindsym $mod+v  split toggle
 bindsym $mod+Shift+f  fullscreen
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s   layout stacking
-bindsym $mod+w   layout tabbed
+bindsym $mod+w   layout toggle tabbed stacking
 bindsym $mod+e   layout toggle split
 
 # toggle tiling / floating
@@ -193,7 +192,7 @@ bindsym $mod+Shift+d  focus child
 
 ##### WORKSPACES
 
-# funny names for workspaces
+# funny names for workspaces (with FontAwesome and IcoMoon)
 set $ws1    1 
 set $ws2    2 
 set $ws3    3 
@@ -254,12 +253,11 @@ bindsym $mod+minus          scratchpad show
 exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
 # exec_always --no-startup-id wal -R
 
-# keyboard layout -- using /etc/X11/xorg.conf
-# bindsym Mod1+Space exec pkill -RTMIN+2 i3blocks
-# there is a bug (?) in i3status, using xkb-switch. On startup there is no display of the keyboard layout, until it is changed for the first time. The code below is used to monitor the layout on startup
+# keyboard layout -- settings in /etc/X11/xorg.conf
+# there is a bug (?) in i3status, using xkb-switch. On startup there is no display of the keyboard layout, until it is changed for the first time. This is used to monitor the layout on startup
 exec_always --no-startup-id notify-send layout: $(xkb-switch)
 
-# clipboard -- not shure if this works
+# clipboard -- not sure if this works
 exec_always  --no-startup-id autocutsel
 
 # hide mouse pointer when idle
