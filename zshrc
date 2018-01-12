@@ -48,6 +48,18 @@ alias df='df -h'                                                # Human-readable
 alias free='free -m'                                            # Show sizes in MB
 alias gitu='git add . && git commit && git push'
 
+## Plugins section: Enable fish style features
+# Use syntax highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Use history substring search
+source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+# bind UP and DOWN arrow keys to history substring search
+zmodload zsh/terminfo
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+bindkey '^[[A' history-substring-search-up			
+bindkey '^[[B' history-substring-search-down
+
 # Theming section  
 autoload -U compinit colors zcalc
 compinit -d
@@ -62,10 +74,8 @@ setopt prompt_subst
 PROMPT="%B%{$fg[cyan]%}%(4~|%-1~/.../%2~|%~)%u%b >%{$fg[cyan]%}>%B%(?.%{$fg[cyan]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
 # Print a greeting message when shell is started
 echo $USER@$HOST  $(uname -srm) $(lsb_release -rcs)
-## Prompt on right side:
-#  - shows status of git when in git repository (code adapted from https://techanic.net/2012/12/30/my_git_prompt_for_zsh.html)
-#  - shows exit status of previous command (if previous command finished with an error)
-#  - is invisible, if neither is the case
+
+### Git prompt functions
 
 # Modify the colors and symbols in these variables as desired.
 GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"                              # plus/minus     - clean repo
@@ -123,11 +133,18 @@ git_prompt_string() {
   [ ! -n "$git_where" ] && echo "%{$fg[red]%} %(?..[%?])"
 }
 
-# Right prompt with exit status of previous command if not successful
- #RPROMPT="%{$fg[red]%} %(?..[%?])" 
-# Right prompt with exit status of previous command marked with ✓ or ✗
- #RPROMPT="%(?.%{$fg[green]%}✓ %{$reset_color%}.%{$fg[red]%}✗ %{$reset_color%})"
+## Prompt on right side:
+#  - shows status of git when in git repository (code adapted from https://techanic.net/2012/12/30/my_git_prompt_for_zsh.html)
+#  - shows exit status of previous command (if previous command finished with an error)
+#  - is invisible, if neither is the case
 
+# Right prompt with exit status of previous command if not successful
+#RPROMPT="%{$fg[red]%} %(?..[%?])" 
+# Right prompt with exit status of previous command marked with ✓ or ✗
+# RPROMPT="%(?.%{$fg[green]%}✓ %{$reset_color%}.%{$fg[red]%}✗ %{$reset_color%})"
+
+RPROMPT="%{$fg[red]%} %(?..[%?])"
+RPROMPT='$(git_prompt_string)'
 
 # Color man pages
 export LESS_TERMCAP_mb=$'\E[01;32m'
@@ -138,69 +155,6 @@ export LESS_TERMCAP_so=$'\E[01;47;34m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;36m'
 export LESS=-r
-
-
-## Plugins section: Enable fish style features
-# Use syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Use history substring search
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-# bind UP and DOWN arrow keys to history substring search
-zmodload zsh/terminfo
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-bindkey '^[[A' history-substring-search-up			
-bindkey '^[[B' history-substring-search-down
-
-case $(basename "$(cat "/proc/$PPID/comm")") in
-  login)
-    	RPROMPT="%{$fg[red]%} %(?..[%?])" 
-    	alias x='startx ~/.xinitrc'      # Type name of desired desktop after x, xinitrc is configured for it
-    ;;
-  urxvt)
-    	RPROMPT='$(git_prompt_string)'
-    	# Use autosuggestion
-    	source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-    	ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-    	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-    ;;
-  konsole|qterminal)
-    	RPROMPT='$(git_prompt_string)'
-    ;;   
-  'tmux: server')
-  	if $(ps -p$PPID| grep -q -e konsole -e qterminal); then
-    	RPROMPT='$(git_prompt_string)'
-    else
-        RPROMPT='$(git_prompt_string)'
-		## Base16 Shell color themes.
-		#possible themes: 3024, apathy, ashes, atelierdune, atelierforest, atelierhearth,
-		#atelierseaside, bespin, brewer, chalk, codeschool, colors, default, eighties, 
-		#embers, flat, google, grayscale, greenscreen, harmonic16, isotope, londontube,
-		#marrakesh, mocha, monokai, ocean, paraiso, pop (dark only), railscasts, shapesifter,
-		#solarized, summerfruit, tomorrow, twilight
-		#theme="eighties"
-		#Possible variants: dark and light
-		#shade="dark"
-		#BASE16_SHELL="/usr/share/zsh/scripts/base16-shell/base16-$theme.$shade.sh"
-		#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-		# Use autosuggestion
-		source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-		ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-  		ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-  	fi
-    ;;
-  *)
-  	if $(ps -p$PPID| grep -q -e konsole -e qterminal); then
-    	RPROMPT='$(git_prompt_string)'
-    else
-        RPROMPT='$(git_prompt_string)'
-		# Use autosuggestion
-		source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-		ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-  		ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-  	fi
-    ;;
-esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
