@@ -42,3 +42,6 @@ Write sync script to add and manage config files
 
 *** TODO
 Add all used configurations and useful entries from the original i3 config file
+
+*** TODO
+Include a folder with system configs only for reference (eg sudoers, fstab etc)
