@@ -1,10 +1,32 @@
-# Set up the prompt
+setopt correct
+setopt extendedglob
+setopt nocaseglob
+setopt rcexpandparam
+# setopt nocheckjobs
+setopt numericglobsort
+setopt nobeep
+setopt appendhistory
+# setopt sharehistory
+setopt histignorealldups
+setopt autocd
+set prompt_subst
 
-autoload -Uz promptinit
-promptinit
-prompt adam1
+# Theming  
+autoload -U compinit colors zcalc
+compinit -d
+colors
 
-setopt histignorealldups sharehistory
+PROMPT="%B%{$fg[cyan]%}%(4~|%-1~/.../%2~|%~)%u%b >%{$fg[cyan]%}>%B%(?.%{$fg[cyan]%}.%{$fg[red]%})>%{$reset_color%}%b "
+
+GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"                              # plus/minus     - clean repo
+# GIT_PROMPT_PREFIX="%{$fg[green]%}[%{$reset_color%}"
+# GIT_PROMPT_SUFFIX="%{$fg[green]%}]%{$reset_color%}"
+# GIT_PROMPT_AHEAD="%{$fg[red]%}ANUM%{$reset_color%}"             # A"NUM"         - ahead by "NUM" commits
+# GIT_PROMPT_BEHIND="%{$fg[cyan]%}BNUM%{$reset_color%}"           # B"NUM"         - behind by "NUM" commits
+# GIT_PROMPT_MERGING="%{$fg_bold[magenta]%}⚡︎%{$reset_color%}"     # lightning bolt - merge conflict
+# GIT_PROMPT_UNTRACKED="%{$fg_bold[red]%}●%{$reset_color%}"       # red circle     - untracked files
+# GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}●%{$reset_color%}"     # yellow circle  - tracked files modified
+# GIT_PROMPT_STAGED="%{$fg_bold[green]%}●%{$reset_color%}"        # green circle   - staged changes present = ready for "git push"
 
 # Use emacs keybindings even if our EDITOR is set to vi
 bindkey -e
@@ -13,6 +35,7 @@ bindkey -e
 HISTSIZE=1000
 SAVEHIST=1000
 HISTFILE=~/.zsh_history
+WORDCHARS=${WORDCHARS//\/[&.;]}
 
 # Use modern completion system
 autoload -Uz compinit
@@ -61,4 +84,4 @@ alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ex
 alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 
 # for pywal
-(cat ~/.cache/wal/sequences &)
+# (cat ~/.cache/wal/sequences &)
