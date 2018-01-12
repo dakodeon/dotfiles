@@ -265,7 +265,7 @@ exec_always  --no-startup-id unclutter -idle 3
 
 # some startup programs
 # exec --no-startup-id volumeicon
-# exec --no-startup-id nm-applet
+exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
 exec --no-startup-id compton -b
