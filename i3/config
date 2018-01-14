@@ -264,7 +264,7 @@ exec_always  --no-startup-id autocutsel
 exec_always  --no-startup-id unclutter -idle 3
 
 # some startup programs
-# exec --no-startup-id volumeicon
+exec --no-startup-id transmission-daemon && sleep 0.5 && transmission-remote -t all -S
 exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
@@ -291,7 +291,7 @@ set $fileman    urxvt -e ranger
 set $editor     emacsclient -c
 set $mail       thunderbird
 set $browser    waterfox
-set $torrent    transmission-gtk
+set $torrent    urxvt -e tremc
 set $writer     libreoffice --writer
 set $player     smplayer
 set $imgview    viewnior
@@ -335,6 +335,7 @@ for_window [class="SuperCollider"]    floating enable
 for_window [title="calc"]             floating enable
 for_window [title="youtube-dl"]       floating enable
 for_window [class="Transmission-gtk"] floating enable
+for_window [title="tremc"]            floating enable
 
 # focused on startup
 for_window [class="Darktable"] focus
@@ -343,6 +344,7 @@ for_window [class="Viewnior"]  focus
 # attach programs on workspaces
 assign [class="Viewnior"]         $ws6
 assign [class="Transmission-gtk"] $ws9
+assign [title="tremc"]            $ws9
 assign [class="Thunderbird"]      $ws9
 assign [class="Darktable"]        $ws0
 
