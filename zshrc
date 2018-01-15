@@ -81,7 +81,8 @@ setopt prompt_subst
 # PROMPT="%B%{$fg[cyan]%}%(4~|%-1~/.../%2~|%~)%u%b >%{$fg[cyan]%}>%B%(?.%{$fg[cyan]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
 PROMPT="[%B%{$fg[green]%}%1~%b%u] >%B%(?.%{$fg[green]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
 # Print a greeting message when shell is started
-echo $USER@$HOST  $(uname -srm) $(lsb_release -rcs)
+cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
+echo -e "\033[32m" $USER@$HOST  $(uname -srm) $(lsb_release -rcs)
 
 ### Git prompt functions
 
