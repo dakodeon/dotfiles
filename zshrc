@@ -82,8 +82,7 @@ setopt prompt_subst
 PROMPT="[%B%{$fg[green]%}%1~%b%u] >%B%(?.%{$fg[green]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
 # Print a greeting message when shell is started
 cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
-echo -e "\033[32m" $USER@$HOST  $(uname -srm) $(lsb_release -rcs)
-
+echo -e "\033[32;1m>>>\033[34;3m"$USER@$HOST"\033[32m>>>\033[34;3m"$(uname -srm) $(lsb_release -rcs)"\033[32m>>>\n"
 ### Git prompt functions
 
 # Modify the colors and symbols in these variables as desired.

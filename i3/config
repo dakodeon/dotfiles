@@ -1,4 +1,4 @@
-## i3 configuration -- 20171118
+## i3 configuration
 
 ##### APPEARENCE
 
@@ -168,27 +168,27 @@ bindsym $mod+o  resize shrink height 5 px or 5 ppt
 bindsym $mod+p  resize grow width 5 px or 5 ppt
 
 # split in horizontal / vertical orientation
-bindsym $mod+v  split toggle
+bindsym $mod+backslash   split toggle
 
 # enter fullscreen mode for the focused container
-bindsym $mod+Shift+f  fullscreen
+bindsym $mod+Shift+f     fullscreen
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+w   layout toggle tabbed stacking
-bindsym $mod+e   layout toggle split
+bindsym $mod+w    layout toggle tabbed stacking
+bindsym $mod+e    layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space    focus mode_toggle
+bindsym $mod+space       focus mode_toggle
 
 # toggle sticky
-bindsym $mod+Shift+s  sticky toggle
+bindsym $mod+Shift+s     sticky toggle
 
 # focus the parent / child container
-bindsym $mod+Shift+a  focus parent
-bindsym $mod+Shift+d  focus child
+bindsym $mod+Shift+a     focus parent
+bindsym $mod+Shift+d     focus child
 
 ##### WORKSPACES
 
@@ -278,7 +278,6 @@ bar {
 
         font            pango: FontAwesome 8, IcoMoon 8, Abel 9
         status_command  i3blocks -c ~/.i3/i3blocks.conf
-        # status_command ~/.source/bumblebee-status/bumblebee-status -t gruvbox -m title nic weather cpu memory layout datetime battery -p memory.format="{percent:05.02f}%"
 }
 
 # show/hide bar
@@ -293,7 +292,8 @@ set $mail       thunderbird
 set $browser    waterfox
 set $torrent    urxvt -e tremc
 set $writer     libreoffice --writer
-set $player     smplayer
+set $video      smplayer
+set $audio      urxvt -e mocp
 set $imgview    viewnior
 set $photo      darktable
 set $calc       urxvt -e calc
@@ -303,10 +303,10 @@ bindsym $mod+Return       exec $term
 bindsym $mod+slash        exec $editor
 bindsym $mod+apostrophe   exec $photo
 bindsym $mod+comma        exec $browser
-bindsym $mod+backslash    exec $writer
+# bindsym $mod+backslash    exec $writer
 bindsym $mod+period       exec $fileman
 bindsym $mod+equal        exec $mail
-# bindsym $mod+minus        exec $player
+# bindsym $mod+minus        exec $audio
 bindsym $mod+bracketright exec $calc
 
 # launcher mode (emacs-like shortcuts)
@@ -320,7 +320,8 @@ mode "launcher" {
      bindsym b exec $browser;     mode "default"
      bindsym t exec $torrent;     mode "default"
      bindsym w exec $writer;      mode "default"
-     bindsym p exec $player;      mode "default"
+     bindsym p exec $audio;       mode "default"
+     bindsym v exec $video;       mode "default"
      bindsym i exec $imgview;     mode "default"
      bindsym d exec $photo;       mode "default"
      bindsym q exec $calc;        mode "default"
@@ -348,8 +349,14 @@ assign [title="tremc"]            $ws9
 assign [class="Thunderbird"]      $ws9
 assign [class="Darktable"]        $ws0
 
-##### MISC FUNCTIONS
+##### DOWNLOAD MODE (URL must be on the clipboard)
+set $mode_download download (v)ideo, (a)udio from video, (m)agnet link
+bindsym $mod+v mode "$mode_download"
 
-# youtube downloads (video URL must be on the clipboard)
-bindsym $mod+Shift+comma   exec urxvt -e youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
-bindsym $mod+Shift+period  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"
+mode "$mode_download" {
+     bindsym v  exec urxvt -e youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"; mode "default"
+     bindsym a  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"; mode "default"
+     bindsym m  exec transmission-remote -a "$(xclip -selection clipboard -o)"; [title="tremc"] focus; mode "default"
+
+     bindsym Escape  mode "default"
+}
