@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Display song info if mocp is playing
+# If artist and title is set, display those. If not, display filename
+
+if [[ -n $(pidof mocp) ]] ; then
+    if [[ $(mocp -Q %state) == PLAY ]] ; then
+        state=" "
+    elif [[ $(mocp -Q %state) == PAUSE ]] ; then
+        state=" "
+    fi
+    if [[ -z $(mocp -Q %artist) || -z $(mocp -Q %song) ]] ; then
+        info=$(mocp -Q %file | rev | cut -d'/' -f1 | rev)
+    else
+        info=$(mocp -Q "%artist - %song")
+    fi
+    text=$state$info
+    echo $text
+    exit 0
+else
+    text=""
+    echo $text
+    exit 23
+fi

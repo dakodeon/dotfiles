@@ -282,7 +282,8 @@ bar {
 
 # show/hide bar
 bindsym $mod+b bar mode toggle
-##### PROGRAMS
+
+##### DEFAULT APPLICATIONS
 
 # program variables
 set $term       urxvt
@@ -298,22 +299,14 @@ set $imgview    viewnior
 set $photo      darktable
 set $calc       urxvt -e calc
 
-# programs shortcuts
-bindsym $mod+Return       exec $term
-bindsym $mod+slash        exec $editor
-bindsym $mod+apostrophe   exec $photo
-bindsym $mod+comma        exec $browser
-# bindsym $mod+backslash    exec $writer
-bindsym $mod+period       exec $fileman
-bindsym $mod+equal        exec $mail
-# bindsym $mod+minus        exec $audio
-bindsym $mod+bracketright exec $calc
+# launch terminal outside launcher mode
+bindsym $mod+Return  exec $term
 
 # launcher mode (emacs-like shortcuts)
 bindsym $mod+x mode "launcher"
 
 mode "launcher" {
-     bindsym x exec $term;        mode "default"
+     bindsym Enter exec $term;    mode "default"
      bindsym r exec $fileman;     mode "default"
      bindsym e exec $editor;      mode "default"
      bindsym m exec $mail;        mode "default"
@@ -329,7 +322,7 @@ mode "launcher" {
      bindsym Escape mode "default"
 }
 
-##### PROGRAM OPTIONS
+##### APPLICATIONS OPTIONS
 
 # always floating
 for_window [class="SuperCollider"]    floating enable
@@ -360,3 +353,10 @@ mode "$mode_download" {
 
      bindsym Escape  mode "default"
 }
+
+##### MUSIC CONTROLS (MOCP)
+bindsym $mod+slash        exec --no-startup-id mocp --toggle-pause
+bindsym $mod+period       exec --no-startup-id mocp --next
+bindsym $mod+comma        exec --no-startup-id mocp --previous
+bindsym $mod+Shift+period exec --no-startup-id mocp --seek +5
+bindsym $mod+Shift+comma  exec --no-startup-id mocp --seek -5
