@@ -26,8 +26,14 @@ Note that the scripts directory must be added to your path
 - System: Manjaro Linux with the i3 window manager (some scripts and stuff used are part of the installation and thus not yet included here, for example the shutdown scripts).
 - Window manager: i3 (i3-gaps)
 - Terminal emulator: urxvt (rxvt-unicode)
-- Editor: Emacs (run as daemon, using clients)
-- File manager: Ranger
+- Editor: emacs (run as daemon, using clients)
+- File manager: ranger
+- Browser: waterfox
+- Mail client: thunderbird
+- Music player: mocp
+- Video player: smplayer
+- net management: NetworkManager
+- Torrent manager: transmission-daemon with tremc frontend
 - Display settings: xrandr, xbacklight, compton, feh, w3m
 - Audio management: pulseaudio, pactl
 - Notifications: dunst, conky (with default scripts from Manjaro)
