@@ -20,5 +20,5 @@ if [[ -n $(pidof mocp) ]] ; then
 else
     text=""
     echo $text
-    exit 23
+    exit 0
 fi
