@@ -174,15 +174,21 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# alias emacs -nw
-alias emacst='emacsclient -t '
+# alias for emacs client
+alias ec='emacsclient -c '
+alias et='emacsclient -t '
 
-# youtube download (URL must be in clipboard)
+# access conf files
+alias cni='emacsclient -t /home/louk/.i3/config'
+alias cnr='emacsclient -t /home/louk/.config/ranger/rc.conf'
+alias cnz='emacsclient -t /home/louk/.zshrc'
+alias cnx='emacsclient -t /home/louk/.Xresources'
+alias cnf='emacsclient -t "/sudo:root@dubajamaman:/etc/fstab"'
+
+# downloads (URL must be in clipboard)
 alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
-
-# torrent downloads
 alias Trm='transmission-remote -a "$(xclip -selection clipboard -o)"'
 
 # for pywal
-# (cat ~/.cache/wal/sequences &)
+# (cat ~/.cache/wal/sequences)
