@@ -122,7 +122,7 @@ exec_always              xbacklight set 100
 bindsym Control+F7       "exec xbacklight -inc 10; exec notify-send -t 1 brightness up"
 bindsym Control+F6       "exec xbacklight -dec 10; exec notify-send -t 1 brightness down"
 bindsym Shift+Control+F7 "exec xbacklight -set 100; exec notify-send -t 1 brightness max"
-bindsym Shift+Control+F6 "exec xbacklight -set 50; exec notify-send -t 1 brightness low"
+bindsym Shift+Control+F6 "exec xbacklight -set 50; exec notify-send ?-t 1 brightness low"
 
 ##### AUDIO
 
