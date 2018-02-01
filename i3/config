@@ -256,7 +256,8 @@ bindsym $mod+minus          scratchpad show
 ##### STARTUP
 
 # wallpaper
-exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
+# exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
+exec_always --no-startup-id remember_bg.sh
 # exec_always --no-startup-id wal -R
 
 # keyboard layout -- settings in /etc/X11/xorg.conf
