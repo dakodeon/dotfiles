@@ -22,6 +22,8 @@ font pango:Jura Light 10
 # deafult border size for windows
 for_window [class="^.*"] border pixel 2
 
+smart_borders on
+
 ##### BASIC SETUP
 
 # basic mod key (win key)
@@ -40,8 +42,8 @@ gaps outer 0
 # toggle gaps
 ### fix toggle script and set it to $mod+Shift+backslash
 
-bindsym $mod+g        gaps inner all set 20, gaps outer all set 0
-bindsym $mod+Shift+g  gaps inner all set 0, gaps outer all set 0
+bindsym $mod+g        gaps inner current set 20, gaps outer current set 0
+bindsym $mod+Shift+g  gaps inner current set 0, gaps outer current set 0
 
 # change current gaps size
 bindsym $mod+Shift+i gaps outer current minus 5
@@ -97,7 +99,7 @@ mode "$mode_system" {
 
 ##### DISPLAYS
 
-# detect monitors
+# detect VGA monitors
 exec --no-startup-id xrandr --output LVDS1 --primary --auto --output VGA1 --auto --left-of LVDS1
 
 # change monitor position (open monitor if closed)
