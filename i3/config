@@ -76,9 +76,9 @@ bindsym $mod+q        kill
 bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 
 # mount - unmount
-# exec                      sudo /home/zob203/bin/mnt.sh -a
-# bindsym $mod+grave        exec sudo /home/zob203/bin/mnt.sh -a
-# bindsym $mod+Shift+grave  exec sudo /home/zob203/bin/umnt.sh -a
+exec sudo $HOME/.config/scripts/mnt.sh -a
+bindsym $mod+grave        exec sudo $HOME/.config/scripts/mnt.sh -a
+bindsym $mod+Shift+grave  exec sudo $HOME/.config/scripts/umnt.sh -a
 
 # system mode (shutdown, restart, logout)
 bindsym $mod+Escape mode "$mode_system"
@@ -99,22 +99,57 @@ mode "$mode_system" {
 
 ##### DISPLAYS
 
-# detect VGA monitors
-exec --no-startup-id xrandr --output LVDS1 --primary --auto --output VGA1 --auto --left-of LVDS1
+# auto-detect VGA and HDMI monitors
+exec --no-startup-id xrandr --output LVDS1 --primary --auto --output VGA1 --auto --left-of LVDS1 --output HDMI1 --auto --left-of LVDS1
 
-# change monitor position (open monitor if closed)
-bindsym $mod+Control+Shift+h     exec --no-startup-id xrandr --output VGA1 --auto --left-of LVDS1
-bindsym $mod+Control+Shift+j     exec --no-startup-id xrandr --output VGA1 --auto --below LVDS1
-bindsym $mod+Control+Shift+k     exec --no-startup-id xrandr --output VGA1 --auto --above LVDS1
-bindsym $mod+Control+Shift+l     exec --no-startup-id xrandr --output VGA1 --auto --right-of LVDS1
-# also with arrows
-bindsym $mod+Control+Shift+Left  exec --no-startup-id xrandr --output VGA1 --auto --left-of LVDS1
-bindsym $mod+Control+Shift+Down  exec --no-startup-id xrandr --output VGA1 --auto --below LVDS1
-bindsym $mod+Control+Shift+Up    exec --no-startup-id xrandr --output VGA1 --auto --above LVDS1
-bindsym $mod+Control+Shift+Right exec --no-startup-id xrandr --output VGA1 --auto --right-of LVDS1
+# monitor position and rotate modes
+set $monitor_pos    "Monitor position mode - Ctrl: VGA, Alt: HDMI, Shift+Pause to disable, (r) for rotate mode, ESC or RET to exit"
+set $monitor_rotate "Monitor rotate mode - Ctrl: VGA, Alt: HDMI, ESC or RET to Monitor position mode"
 
-# turn off secondary monitor
-bindsym $mod+Control+Pause       exec --no-startup-id xrandr --output VGA1 --off
+bindsym $mod+Shift+Pause mode $monitor_pos
+
+mode $monitor_pos {
+     # change monitor position
+     bindsym Control+h     exec --no-startup-id xrandr --output VGA1 --auto --left-of LVDS1
+     bindsym Control+j     exec --no-startup-id xrandr --output VGA1 --auto --below LVDS1
+     bindsym Control+k     exec --no-startup-id xrandr --output VGA1 --auto --above LVDS1
+     bindsym Control+l     exec --no-startup-id xrandr --output VGA1 --auto --right-of LVDS1
+     bindsym Mod1+h        exec --no-startup-id xrandr --output HDMI1 --auto --left-of LVDS1
+     bindsym Mod1+j        exec --no-startup-id xrandr --output HDMI1 --auto --below LVDS1
+     bindsym Mod1+k        exec --no-startup-id xrandr --output HDMI1 --auto --above LVDS1
+     bindsym Mod1+l        exec --no-startup-id xrandr --output HDMI1 --auto --right-of LVDS1
+     # also with arrows
+     bindsym Control+Left  exec --no-startup-id xrandr --output VGA1 --auto --left-of LVDS1
+     bindsym Control+Down  exec --no-startup-id xrandr --output VGA1 --auto --below LVDS1
+     bindsym Control+Up    exec --no-startup-id xrandr --output VGA1 --auto --above LVDS1
+     bindsym Control+Right exec --no-startup-id xrandr --output VGA1 --auto --right-of LVDS1
+     bindsym Mod1+Left     exec --no-startup-id xrandr --output HDMI1 --auto --left-of LVDS1
+     bindsym Mod1+Down     exec --no-startup-id xrandr --output HDMI1 --auto --below LVDS1
+     bindsym Mod1+Up       exec --no-startup-id xrandr --output HDMI1 --auto --above LVDS1
+     bindsym Mod1+Right    exec --no-startup-id xrandr --output HDMI1 --auto --right-of LVDS1
+     
+     # turn off VGA and HDMI monitors
+     bindsym Shift+Pause   exec --no-startup-id xrandr --output VGA1 --off --output HDMI1 --off
+
+
+     bindsym r mode $monitor_rotate
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+
+mode $monitor_rotate {
+     bindsym Control+Left  exec --no-startup-id xrandr --output VGA1 --auto --rotate left
+     bindsym Control+Down  exec --no-startup-id xrandr --output VGA1 --auto --rotate inverted
+     bindsym Control+Up    exec --no-startup-id xrandr --output VGA1 --auto --rotate normal
+     bindsym Control+Right exec --no-startup-id xrandr --output VGA1 --auto --rotate right
+     bindsym Mod1+Left     exec --no-startup-id xrandr --output HDMI1 --auto --rotate left
+     bindsym Mod1+Down     exec --no-startup-id xrandr --output HDMI1 --auto --rotate inverted
+     bindsym Mod1+Up       exec --no-startup-id xrandr --output HDMI1 --auto --rotate normal
+     bindsym Mod1+Right    exec --no-startup-id xrandr --output HDMI1 --auto --rotate right
+     
+     bindsym Return mode $monitor_pos
+     bindsym Escape mode $monitor_pos
+}
 
 ##### BRIGHTNESS CONTROLS
 
@@ -129,7 +164,7 @@ bindsym Shift+Control+F6 "exec xbacklight -set 50; exec notify-send ?-t 1 bright
 ##### AUDIO
 
 # send a signal to init volume indicator
-exec pkill -RTMIN+10 i3blocks
+# exec pkill -RTMIN+10 i3blocks
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume          exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
