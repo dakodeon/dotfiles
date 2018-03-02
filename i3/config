@@ -36,13 +36,13 @@ focus_follows_mouse no
 ##### GAPS
 
 # set gaps
-gaps inner 20
+gaps inner 10
 gaps outer 0
 
 # toggle gaps
 ### fix toggle script and set it to $mod+Shift+backslash
 
-bindsym $mod+g        gaps inner current set 20, gaps outer current set 0
+bindsym $mod+g        gaps inner current set 10, gaps outer current set 0
 bindsym $mod+Shift+g  gaps inner current set 0, gaps outer current set 0
 
 # change current gaps size
@@ -326,8 +326,9 @@ exec --no-startup-id transmission-daemon && sleep 0.5 && transmission-remote -t 
 exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
-# exec --no-startup-id compton -b
-exec --no-startup-id start_conky_maia
+exec --no-startup-id compton -b
+# exec --no-startup-id start_conky_maia
+exec --no-startup-id conky -c /usr/share/conky/conky_maia
 
 # status bar
 bar {
