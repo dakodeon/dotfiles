@@ -31,7 +31,7 @@ set $mod Mod4
 
 # use mod and mouse to drag floating window
 floating_modifier   $mod
-focus_follows_mouse no
+focus_follows_mouse yes
 
 ##### GAPS
 
