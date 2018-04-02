@@ -23,6 +23,7 @@ font pango:Jura Light 10
 for_window [class="^.*"] border pixel 2
 
 smart_borders on
+smart_gaps    on
 
 ##### BASIC SETUP
 
@@ -82,7 +83,7 @@ bindsym $mod+Shift+grave  exec sudo $HOME/.config/scripts/umnt.sh -a
 
 # system mode (shutdown, restart, logout)
 bindsym $mod+Escape mode "$mode_system"
-set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (S)hutdown
+set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, reboot to (w)indows, (S)hutdown
 mode "$mode_system" {
     bindsym l         exec --no-startup-id i3exit lock, mode "default"
     bindsym s         exec --no-startup-id i3exit suspend, mode "default"
@@ -90,6 +91,7 @@ mode "$mode_system" {
     bindsym e         exec --no-startup-id i3exit logout, mode "default"
     bindsym h         exec --no-startup-id i3exit hibernate, mode "default"
     bindsym r         exec --no-startup-id i3exit reboot, mode "default"
+    bindsym w         exec --no-startup-id i3exit reboot-win, mode "default"
     bindsym Shift+s   exec --no-startup-id i3exit shutdown, mode "default"
 
     # exit system mode: "Enter" or "Escape"
@@ -349,7 +351,7 @@ set $term       urxvt
 set $fileman    urxvt -e ranger
 set $editor     emacsclient -c
 set $mail       thunderbird
-set $browser    waterfox
+set $browser    palemoon
 set $torrent    urxvt -e tremc
 set $writer     libreoffice --writer
 set $video      smplayer
