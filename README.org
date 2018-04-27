@@ -28,16 +28,17 @@ Note that the scripts directory must be added to your path
 - Terminal emulator: urxvt (rxvt-unicode)
 - Editor: emacs (run as daemon, using clients)
 - File manager: ranger
-- Browser: waterfox
+- Browser: palemoon
 - Mail client: thunderbird
 - Music player: mocp
 - Video player: smplayer
-- net management: NetworkManager
+- Net management: NetworkManager
 - Torrent manager: transmission-daemon with tremc frontend
 - Display settings: xrandr, xbacklight, compton, feh, w3m
 - Audio management: pulseaudio, pactl
 - Notifications: dunst, conky (with default scripts from Manjaro)
 - Status bar: i3blocks
+- Mount/unmount: udiskie
 - Misc: youtube-dl, xkb-switch
 - System fonts: Jura, Abel, FontAwesome, IcoMoon
 
@@ -45,9 +46,5 @@ Note that the scripts directory must be added to your path
 
 *** TODO
 Write sync script to add and manage config files
-
-*** TODO
-Add all used configurations and useful entries from the original i3 config file
-
 *** TODO
 Include a folder with system configs only for reference (eg sudoers, fstab etc)
