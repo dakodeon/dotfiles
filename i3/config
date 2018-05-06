@@ -23,7 +23,6 @@ font pango:Jura Light 10
 for_window [class="^.*"] border pixel 2
 
 smart_borders on
-smart_gaps    on
 
 ##### BASIC SETUP
 
@@ -37,6 +36,9 @@ focus_follows_mouse yes
 ##### GAPS
 
 # set gaps
+
+smart_gaps on
+
 gaps inner 10
 gaps outer 0
 
@@ -317,7 +319,7 @@ exec_always --no-startup-id remember_bg.sh
 
 # keyboard layout -- settings in /etc/X11/xorg.conf
 # there is a bug (?) in i3status, using xkb-switch. On startup there is no display of the keyboard layout, until it is changed for the first time. This is used to monitor the layout on startup
-exec_always --no-startup-id notify-send layout: $(xkb-switch)
+# exec_always --no-startup-id notify-send layout: $(xkb-switch)
 
 # clipboard -- not sure if this works
 exec_always  --no-startup-id autocutsel
@@ -335,6 +337,7 @@ exec --no-startup-id xfce4-power-manager
 exec --no-startup-id udiskie -s
 # exec --no-startup-id start_conky_maia
 exec --no-startup-id conky -c /usr/share/conky/conky_maia
+exec --no-startup-id compton
 
 # status bar
 bar {
