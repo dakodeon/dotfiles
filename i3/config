@@ -19,34 +19,21 @@ client.urgent             $urgent-bg-color    $urgent-bg-color    $text-color   
 # default font for windows
 font pango:Jura Light 10
 
+##### GAPS & BORDERS
+
 # deafult border size for windows
-for_window [class="^.*"] border pixel 2
+default_border pixel 2
 
-smart_borders on
-
-##### BASIC SETUP
-
-# basic mod key (win key)
-set $mod Mod4
-
-# use mod and mouse to drag floating window
-floating_modifier   $mod
-focus_follows_mouse yes
-
-##### GAPS
+smart_borders  on
 
 # set gaps
-
 smart_gaps on
 
 gaps inner 10
 gaps outer 0
 
 # toggle gaps
-### fix toggle script and set it to $mod+Shift+backslash
-
-bindsym $mod+g        gaps inner current set 10, gaps outer current set 0
-bindsym $mod+Shift+g  gaps inner current set 0, gaps outer current set 0
+bindsym $mod+Shift+backslash  exec i3-toggle-gaps.sh toggle
 
 # change current gaps size
 bindsym $mod+Shift+i gaps outer current minus 5
@@ -59,6 +46,15 @@ bindsym $mod+Control+i gaps outer all minus 5
 bindsym $mod+Control+o gaps outer all plus 5
 bindsym $mod+Control+u gaps inner all minus 5
 bindsym $mod+Control+p gaps inner all plus 5
+
+##### BASIC SETUP
+
+# basic mod key (win key)
+set $mod Mod4
+
+# use mod and mouse to drag floating window
+floating_modifier   $mod
+focus_follows_mouse yes
 
 ##### BASIC FUNCTIONALITY
 
@@ -396,23 +392,23 @@ mode "launcher" {
 for_window [class="SuperCollider"]    floating enable
 for_window [title="calc"]             floating enable
 for_window [title="youtube-dl"]       floating enable
-for_window [class="Transmission-gtk"] floating enable
 for_window [title="tremc"]            floating enable
 
+for_window [class="SuperCollider"]    border pixel 8
+for_window [title="calc"]             border pixel 8
+for_window [title="youtube-dl"]       border pixel 8
+for_window [title="tremc"]            border pixel 8
 
 # focused on startup
 for_window [class="Darktable"] focus
-for_window [class="Viewnior"]  focus
 
 # attach programs on workspaces
-assign [class="Viewnior"]         $ws6
-assign [class="Transmission-gtk"] $ws9
 assign [title="tremc"]            $ws9
 assign [class="Thunderbird"]      $ws9
 assign [class="Darktable"]        $ws0
 
-##### DOWNLOAD MODE (URL must be on the clipboard)
-set $mode_download download (v)ideo, (a)udio from video, (m)agnet link
+##### DOWNLOAD MODE
+set $mode_download download (v)ideo, (a)udio from video, (m)agnet link -- URL MUST BE ON THE CLIPBOARD!
 bindsym $mod+v mode "$mode_download"
 
 mode "$mode_download" {

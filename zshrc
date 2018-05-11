@@ -189,6 +189,3 @@ alias cnf='emacsclient -t "/sudo:root@dubajamaman:/etc/fstab"'
 alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
 alias Trm='transmission-remote -a "$(xclip -selection clipboard -o)"'
-
-# for pywal
-# (cat ~/.cache/wal/sequences)
