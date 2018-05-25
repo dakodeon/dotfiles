@@ -140,14 +140,18 @@ mode $monitor_pos {
 }
 
 mode $monitor_rotate {
-     bindsym Control+Left  exec --no-startup-id xrandr --output VGA1 --auto --rotate left
-     bindsym Control+Down  exec --no-startup-id xrandr --output VGA1 --auto --rotate inverted
-     bindsym Control+Up    exec --no-startup-id xrandr --output VGA1 --auto --rotate normal
-     bindsym Control+Right exec --no-startup-id xrandr --output VGA1 --auto --rotate right
-     bindsym Mod1+Left     exec --no-startup-id xrandr --output HDMI1 --auto --rotate left
-     bindsym Mod1+Down     exec --no-startup-id xrandr --output HDMI1 --auto --rotate inverted
-     bindsym Mod1+Up       exec --no-startup-id xrandr --output HDMI1 --auto --rotate normal
-     bindsym Mod1+Right    exec --no-startup-id xrandr --output HDMI1 --auto --rotate right
+     bindsym Control+Shift+Left    exec --no-startup-id xrandr --output LVDS1 --auto --rotate left
+     bindsym Control+Shift+Down    exec --no-startup-id xrandr --output LVDS1 --auto --rotate inverted
+     bindsym Control+Shift+Up      exec --no-startup-id xrandr --output LVDS1 --auto --rotate normal
+     bindsym Control+Shift+Right   exec --no-startup-id xrandr --output LVDS1 --auto --rotate right
+     bindsym Control+Left          exec --no-startup-id xrandr --output VGA1 --auto --rotate left
+     bindsym Control+Down          exec --no-startup-id xrandr --output VGA1 --auto --rotate inverted
+     bindsym Control+Up            exec --no-startup-id xrandr --output VGA1 --auto --rotate normal
+     bindsym Control+Right         exec --no-startup-id xrandr --output VGA1 --auto --rotate right
+     bindsym Mod1+Left             exec --no-startup-id xrandr --output HDMI1 --auto --rotate left
+     bindsym Mod1+Down             exec --no-startup-id xrandr --output HDMI1 --auto --rotate inverted
+     bindsym Mod1+Up               exec --no-startup-id xrandr --output HDMI1 --auto --rotate normal
+     bindsym Mod1+Right            exec --no-startup-id xrandr --output HDMI1 --auto --rotate right
      
      bindsym Return mode $monitor_pos
      bindsym Escape mode $monitor_pos
@@ -156,31 +160,28 @@ mode $monitor_rotate {
 ##### BRIGHTNESS CONTROLS
 
 # this is because of a bug: backlight was not full by default after installing manjaro
-exec_always               xbacklight set 100
+exec_always       xbacklight set 100
 
-bindsym Control+F7        "exec xbacklight -inc 10; exec notify-send -t 1 brightness up"
-bindsym Control+F6        "exec xbacklight -dec 10; exec notify-send -t 1 brightness down"
-bindsym Shift+Control+F7  "exec xbacklight -set 100; exec notify-send -t 1 brightness max"
-bindsym Shift+Control+F6  "exec xbacklight -set 50; exec notify-send ?-t 1 brightness low"
+bindsym F7        "exec xbacklight -inc 10; exec notify-send -t 1 brightness up"
+bindsym F6        "exec xbacklight -dec 10; exec notify-send -t 1 brightness down"
+bindsym Shift+F7  "exec xbacklight -set 100; exec notify-send -t 1 brightness max"
+bindsym Shift+F6  "exec xbacklight -set 50; exec notify-send -t 1 brightness low"
 
 ##### AUDIO
 
-# send a signal to init volume indicator
-# exec pkill -RTMIN+10 i3blocks
-
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume          exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume          exec --no-startup-id pactl set-sink-volume 0 -5% && pkill -RTMIN+10 i3blocks
-bindsym Shift+XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
-bindsym Shift+XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 50% && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioMute                 exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
+bindsym F9        exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
+bindsym F8        exec --no-startup-id pactl set-sink-volume 0 -5% && pkill -RTMIN+10 i3blocks
+bindsym Shift+F9  exec --no-startup-id pactl set-sink-volume 0 100% && pkill -RTMIN+10 i3blocks
+bindsym Shift+F8  exec --no-startup-id pactl set-sink-volume 0 50% && pkill -RTMIN+10 i3blocks
+bindsym F3        exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
 
 # ALSA mixer controls
-bindsym Control+XF86AudioRaiseVolume         exec --no-startup-id amixer set 'Master' 5%+
-bindsym Control+XF86AudioLowerVolume         exec --no-startup-id amixer set 'Master' 5%-
-bindsym Control+Shift+XF86AudioRaiseVolume   exec --no-startup-id amixer set 'Master' 100%
-bindsym Control+Shift+XF86AudioLowerVolume   exec --no-startup-id amixer set 'Master' 50%
-bindsym Control+XF86AudioMute                exec --no-startup-id amixer set 'Speaker' toggle
+bindsym Control+F9        exec --no-startup-id amixer set 'Master' 5%+
+bindsym Control+F8        exec --no-startup-id amixer set 'Master' 5%-
+bindsym Control+Shift+F9  exec --no-startup-id amixer set 'Master' 100%
+bindsym Control+Shift+F8  exec --no-startup-id amixer set 'Master' 50%
+bindsym Control+F3        exec --no-startup-id amixer set 'Speaker' toggle
 
 ##### WINDOWS
 
@@ -309,13 +310,7 @@ bindsym $mod+minus          scratchpad show
 ##### STARTUP
 
 # wallpaper
-# exec_always --no-startup-id feh --bg-scale ~/.config/.wallpaper.jpg
 exec_always --no-startup-id remember_bg.sh
-# exec_always --no-startup-id wal -R
-
-# keyboard layout -- settings in /etc/X11/xorg.conf
-# there is a bug (?) in i3status, using xkb-switch. On startup there is no display of the keyboard layout, until it is changed for the first time. This is used to monitor the layout on startup
-# exec_always --no-startup-id notify-send layout: $(xkb-switch)
 
 # clipboard -- not sure if this works
 exec_always  --no-startup-id autocutsel
@@ -325,7 +320,7 @@ exec_always  --no-startup-id unclutter -idle 3
 
 # some startup programs
 exec --no-startup-id transmission-daemon && sleep 0.5 && transmission-remote -t all -S
-exec --no-startup-id nm-applet
+# exec --no-startup-id nm-applet
 exec --no-startup-id thunderbird
 exec --no-startup-id emacs --daemon
 exec --no-startup-id compton -b
@@ -366,6 +361,9 @@ set $calc       urxvt -e calc
 # launch terminal outside launcher mode
 bindsym $mod+Return  exec $term
 
+# launch nmtui
+bindsym F12 exec $term -e nmtui
+
 # launcher mode (emacs-like shortcuts)
 bindsym $mod+x mode "launcher"
 
@@ -393,17 +391,22 @@ for_window [class="SuperCollider"]    floating enable
 for_window [title="calc"]             floating enable
 for_window [title="youtube-dl"]       floating enable
 for_window [title="tremc"]            floating enable
+for_window [class="qjackctl"]         floating enable
+for_window [title="nmtui*"]           floating enable
+for_window [title="calcurse"]         floating enable
 
 for_window [class="SuperCollider"]    border pixel 8
 for_window [title="calc"]             border pixel 8
 for_window [title="youtube-dl"]       border pixel 8
 for_window [title="tremc"]            border pixel 8
+for_window [class="qjackctl"]         border pixel 8
+for_window [title="nmtui*"]           border pixel 8
+for_window [title="calcurse"]         border pixel 8
 
 # focused on startup
 for_window [class="Darktable"] focus
 
 # attach programs on workspaces
-assign [title="tremc"]            $ws9
 assign [class="Thunderbird"]      $ws9
 assign [class="Darktable"]        $ws0
 
