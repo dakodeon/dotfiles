@@ -415,7 +415,7 @@ set $mode_download download (v)ideo, (a)udio from video, (m)agnet link -- URL MU
 bindsym $mod+v mode "$mode_download"
 
 mode "$mode_download" {
-     bindsym v  exec urxvt -e youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"; mode "default"
+     bindsym v  exec urxvt -e youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)" && notify-send "Download complete"; mode "default"
      bindsym a  exec urxvt -e youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"; mode "default"
      bindsym m  exec transmission-remote -a "$(xclip -selection clipboard -o)"; [title="tremc"] focus; mode "default"
 
