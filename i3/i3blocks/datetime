@@ -1,0 +1,11 @@
+#!/bin/bash
+
+day=$(date '+%a'. | tr '[:lower:]' '[:upper:]')
+date=$(date '+%Y-%m-%d')
+time=$(date '+%H:%M:%S')
+
+echo "<span foreground='#BBBBBB'>$(echo $day)  </span><span foreground='#FFFFFF'>$(echo $date)  </span><span foreground='#5588BB'>$(echo $time)</span>"
+
+case $BLOCK_BUTTON in
+    1) urxvt -e calcurse ;;
+esac
