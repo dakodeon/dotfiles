@@ -1,0 +1,5 @@
+#!/bin/bash
+
+fulltext=$(sensors | grep 'Core 0')
+echo $fulltext
+

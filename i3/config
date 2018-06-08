@@ -310,6 +310,9 @@ bindsym $mod+minus          scratchpad show
 
 ##### STARTUP
 
+# temp fix for Xresources not loading
+exec_always --no-startup-id xrdb -load ~/.Xresources 
+
 # wallpaper
 exec_always --no-startup-id remember_bg.sh
 
