@@ -15,6 +15,8 @@ Configured programs:
 
 Some usefull scripts that come and go, rising briefly into glory and then falling to obscurity...
 
+- Important note: The logic behind this approach is that editing the hard link will edit the file itself. However this will not work if your editor keeps some kind of backup file that overwrites the original file, because it changes its inode number. For example, in emacs, I had to specify to keep backup files by copying the original file.
+
 ** FILES AND LOCATIONS
 - "compton.conf" "$HOME/.config/compton.conf"
 - "i3/config" "$HOME/.i3/config"

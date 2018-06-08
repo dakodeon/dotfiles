@@ -72,7 +72,6 @@ bindsym $mod+Shift+q  kill
 bindsym $mod+q        kill
 
 # start dmenu (program launcher)
-# bindsym $mod+d  exec dmenu_recency -fn "Jura-10"
 bindsym $mod+d exec dmenu_run -fn "Jura-10"
 
 # mount - unmount
