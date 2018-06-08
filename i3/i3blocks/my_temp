@@ -1,5 +1,11 @@
 #!/bin/bash
 
-fulltext=$(sensors | grep 'Core 0')
-echo $fulltext
+coreno=$BLOCK_INSTANCE
 
+# define high and critical values
+highval=95
+critval=105
+
+temp=$(sensors | grep "Core $(echo $coreno)" | cut -d'+' -f2 | cut -d' ' -f1)
+
+echo $temp

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+xkblayout-state print "%s"
+xkb-switch -W
+
+case $BLOCK_BUTTON in
+    1) exec xkb-switch -n ;;
+esac
