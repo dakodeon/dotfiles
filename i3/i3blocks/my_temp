@@ -1,11 +1,27 @@
 #!/bin/bash
 
+# Core number is defined by the block instance
 coreno=$BLOCK_INSTANCE
 
 # define high and critical values
-highval=95
-critval=105
+high=80
+crit=105
 
 temp=$(sensors | grep "Core $(echo $coreno)" | cut -d'+' -f2 | cut -d' ' -f1)
 
-echo $temp
+# fulltext and shorttext are the same
+echo +$temp
+echo +$temp
+
+# compare temerature to high and critical values to produce color output
+tempno=$(echo $temp | cut -d'.' -f1)
+
+if [ $tempno -lt $high ] ; then
+    # echo "#00FFAA"
+    echo "#AAAAAA"
+elif [ $tempno -lt $crit ] ; then
+    echo "#00FFFF"
+else
+    echo "#FF0000"
+fi
+

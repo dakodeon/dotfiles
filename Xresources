@@ -1,7 +1,7 @@
 ! Note: execute xrdb ~/.Xresources after editing the file
 
 URxvt.scrollBar: false
-URxvt.font: xft:monospace:size=8.5
+URxvt.font: xft:monospace:size=11
 
 ! style
 !URxvt.transparent: true
@@ -36,7 +36,13 @@ URxvt.color14: #34E2E2
 URxvt.color7: #D3D7CF
 URxvt.color15: #EEEEEC
 
-! Resize font
-URxvt.perl-ext-common: resize-font
-URxvt.resize-font.smaller: C-j
-URxvt.resize-font.bigger: C-k
+! Perl Scripts for urxvt
+URxvt.perl-ext-common: font-size, keyboard-select, vtwheel
+
+! resize fonts
+URxvt.keysym.C-equal: perl:font-size:increase
+URxvt.keysym.C-minus: perl:font-size:decrease
+URxvt.keysym.C-0: perl:font-size:reset
+
+! keyboard select
+URxvt.keysym.M-Escape: perl:keyboard-select:activate
