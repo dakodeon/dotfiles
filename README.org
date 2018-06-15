@@ -52,6 +52,9 @@ Note that the scripts directory must be added to your path
 ** TODO-list
 
 *** TODO
-Write sync script to add and manage config files
+Write sync script to add and manage config files.
+I started implementig this. The =filelist= file is part of this iplementation.
+*** TODO
+Link the file =filelist= to this README.
 *** TODO
 (Maybe) Include a folder with system configs only for reference (eg sudoers, fstab etc)

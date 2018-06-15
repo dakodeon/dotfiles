@@ -2,15 +2,27 @@
 
 case $1 in
     "-h"|"--help"|"")
-        echo 'Help prints here.
+        echo 'Update configuration files by using hard links from the repo to the correct place by using a file list. This is inteded to be used only for dotfiles placed in your home directory.
 
-This can be done and that can be done, and then the other thing.
-Some stuff here and some stuff there.'
+Usage:
+	-u --update: Updates config files:
+	   	     all: Updates all config files listed in the file list
+		     allb: Same as above but keeps backups of the original files
+		     Everything else is treated like a filename, so the script tries to update that file, if it exists.
+	-a --add: Adds a file to the repository
+	-l --list: Outputs a list of files currently in the repository.
+	-g --gen-list: Generates the file list according to the contents of the repository.'
         exit 0
         ;;
     "-u"|"--update")
         if [ $2 == all ] ; then
             echo "All files to be updated. The program will parse a list of files and, for each one, will create a new link to the correct place."
+	    while read f; do
+		source=$HOME/$(echo $f | cut -d'"' -f2)
+		dest=$HOME/$(echo $f | cut -d'"' -f4)
+		echo Linking $source to $dest
+		ln -f $source $dest
+	    done<$HOME/dotfiles/filelist
 	elif [ $2 == allb ] ; then
 	    echo "All files to be updated, while keeping backup files of the originals. For each file in the list, if the file exists in its path, it will first rename the file to file.BAK, and then function as above."
 	    
@@ -24,8 +36,10 @@ Some stuff here and some stuff there.'
         exit 0
         ;;
     "-l"|"--list")
-        echo "Here is the list of files"
+        cat $HOME/dotfiles/filelist
         exit 0
         ;;
+    "-g"|"--gen-list")
+	echo "Generate the filelist. Will ask for user prompt for the various locations of the config files."
 esac
 
