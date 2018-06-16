@@ -6,7 +6,7 @@ URxvt.font: xft:monospace:size=11
 ! style
 !URxvt.transparent: true
 !URxvt.shading: 30
-*fading: 30
+*fading: 15
 *fadeColor: black
 ! colors (Tango theme)
 URxvt.background: [80]#000000
