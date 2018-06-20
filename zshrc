@@ -174,6 +174,13 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# some folders aliases
+alias gh='cd'
+alias gD='cd $HOME/Downloads'
+alias gd='cd $HOME/Documents'
+alias gM='cd $HOME/Music'
+alias gm='cd /run/media/louk'
+
 # alias for emacs client
 alias ec='emacsclient -c '
 alias et='emacsclient -t '
