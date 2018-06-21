@@ -1,7 +1,12 @@
 #!/bin/bash
 
-# setup dotfiles repository location
+# setup default locations
 REPO=$HOME/dotfiles
+config_path=$HOME/.config
+i3_path=$config_path/i3
+i3blocks_path=$i3_path/i3blocks
+ranger_path=$config_path/ranger
+script_path=$config_path/scripts
 
 # define the help message
 helpmsg='Update configuration files by using hard links from the repo to the correct place by using a file list.\n
