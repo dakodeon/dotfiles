@@ -186,7 +186,7 @@ alias ec='emacsclient -c '
 alias et='emacsclient -t '
 
 # access conf files
-alias cni='emacsclient -t /home/louk/.i3/config'
+alias cni='emacsclient -t /home/louk/.config/i3/i3.conf'
 alias cnr='emacsclient -t /home/louk/.config/ranger/rc.conf'
 alias cnz='emacsclient -t /home/louk/.zshrc'
 alias cnx='emacsclient -t /home/louk/.Xresources'

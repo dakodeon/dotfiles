@@ -3,4 +3,6 @@ export TERMINAL="urxvt"
 export EDITOR="emacsclient -t"
 export BROWSER="palemoon"
 
-exec startx
+if [[ "$(tty)" = "/dev/tty1" ]]; then
+    pgrep i3 || startx
+fi
