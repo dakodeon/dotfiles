@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# a new approach --- mine!
+
+# define paths
+declare -A path=()
+
+REPO=$HOME/dotfiles
+
+path[config]=$HOME/.config
+path[HOME]=$HOME
+path[i3]=${path[config]}/i3
+path[i3blocks]=${path[i3]}/i3blocks
+path[ranger]=${path[config]}/ranger
+path[scripts]=${path[config]}/scripts
+
+while getopts ":ul" opt; do
+    case $opt in
+	u)
+	    for dir in "${!path[@]}"; do
+		# find command
+		find $REPO/$dir -type f | while read -r f; do
+		    t=${path[$dir]}/$(basename $f)
+		    finode=$(ls -i $f | cut -d' ' -f1)
+		    tinode=$(ls -i $t | cut -d' ' -f1)
+		    if [[ $finode -eq $tinode ]] ; then
+			echo === File $(basename $f) already linked
+		    else
+			if [ "$f" -nt "$t" ]; then
+			    echo Linking file $(basename $f)...
+			    ln -f $f $t
+			else
+			    echo File $(basename $f) is newer in destination. Aborting link.
+			fi
+		    fi
+		done
+	    done
+	    ;;
+	l)
+	    for dir in "${!path[@]}"; do
+		echo $dir === ${path[$dir]}:
+		find $REPO/$dir -type f | while read -r f; do
+		    echo -e "\t$(basename $f)"
+		done
+	    done
+	    exit 0
+	    ;;
+	\?)
+	    echo "Invalid option: -$OPTARG" >&2
+	    exit 1
+	    ;;
+    esac
+done

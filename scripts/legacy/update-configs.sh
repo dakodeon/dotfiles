@@ -3,8 +3,26 @@
 # setup dotfiles repository location
 REPO=$HOME/dotfiles
 
-# define the help message
-helpmsg='Update configuration files by using hard links from the repo to the correct place by using a file list.\n
+# create empty path array
+declare -A path=()
+
+find $REPO -maxdepth 1 -type d | grep -v .git | grep -v $REPO$ | while read -r dir; do
+    dirname=${dir#*$REPO/}
+    if [ -f $dir/.path ] ; then
+	target_path=$(cat $dir/.path)
+	echo setting path for $dirname to $target_path
+	path[$dirname]=$target_path
+    else
+	echo path not set!
+	path_isset=0
+	break
+    fi
+    path_isset=1
+    echo $path_isset
+done
+
+# messages
+help_msg='Update configuration files by using hard links from the repo to the correct place by using a file list.\n
 This is inteded to be used only for dotfiles placed in your home directory.\n\n
 
 Usage:\n\t
@@ -16,15 +34,22 @@ Usage:\n\t
 	-l --list: Outputs a list of files currently in the repository.\n\t
 	-g --gen-list: Generates the file list according to the contents of the repository.\n'
 
+no_path_msg='The path for one or more directories is not set. Use the -g option to generate paths'
+
 # if there are no arguments, print the help file
 if (($# == 0)); then
-    echo -e $helpmsg
+    echo -e $help_msg
 fi
 
 # parse options
 while getopts ":ua:lgbh" opt; do
     case $opt in
 	u)
+	    if [[ $path_isset -eq 0 ]] ; then
+		echo $no_path_msg
+		exit 1
+	    fi
+	    
 	    echo "-u was triggered. Updating..."
 	    while read line; do
 		source=$REPO/$(echo $line | cut -d'"' -f2)
@@ -46,11 +71,12 @@ while getopts ":ua:lgbh" opt; do
 	    ;;
 	g)
 	    # echo "-g was triggered, generating list"
-	    find $REPO -maxdepth 1 -type d | grep -v .git | grep -v $REPO$ | while read -r p; do
+	    # find $REPO -maxdepth 1 -type d | grep -v .git | grep -v $REPO$ | while read -r p; do
+	    find $REPO -type f | grep -v .git | while read -r p; do
 		echo =-=-=-= Setup path for ${p#*$REPO/}
-		find $p -type f | while read -r e; do
-		    echo ${e#*$REPO/}
-		done
+		# find $p -type f | while read -r e; do
+		#    echo ${e#*$REPO/}
+		# done
 	    done
 	    ;;
 	:)
@@ -60,7 +86,7 @@ while getopts ":ua:lgbh" opt; do
 	    echo "-b was triggered, keeping backups ON"
 	    ;;
 	h)
-	    echo -e $helpmsg
+	    echo -e $help_msg
 	    ;;
 	\?)
 	    echo "Invalid option: -$OPTARG" >&2
