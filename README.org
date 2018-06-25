@@ -8,7 +8,7 @@ These are my dotfiles and some scripts I use. They are organized in folders whic
 
 *** HOW DOES IT WORK?
 
-I use a script ([[./scripts/config_update][config_update]]) in the scripts folder, which keeps everything synced. It stores the corresponding paths of the various directories stored here in some variables and uses them to create hard links, if necessary (see [[#FILES LOCATIONS][files locations]] section below).
+I use a script ([[./scripts/config_update][config_update]]) in the scripts folder, which keeps everything synced. It stores the corresponding paths of the various directories stored here in some variables and uses them to create hard links, if necessary (see [[#files-locations][files locations]] section below).
 
 Note that I changed some default config locations, so that it is easier to manage them (eg conky.conf and dunstrc)
 
