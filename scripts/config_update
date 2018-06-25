@@ -14,23 +14,23 @@ path[i3blocks]=${path[i3]}/i3blocks
 path[ranger]=${path[config]}/ranger
 path[scripts]=${path[config]}/scripts
 
-while getopts ":ul" opt; do
+while getopts ":uld" opt; do
     case $opt in
 	u)
 	    for dir in "${!path[@]}"; do
 		# find command
-		find $REPO/$dir -type f | while read -r f; do
-		    t=${path[$dir]}/$(basename $f)
-		    finode=$(ls -i $f | cut -d' ' -f1)
-		    tinode=$(ls -i $t | cut -d' ' -f1)
-		    if [[ $finode -eq $tinode ]] ; then
-			echo === File $(basename $f) already linked
+		find $REPO/$dir -type f | while read -r file; do
+		    target=${path[$dir]}/$(basename $file)
+		    f_inode=$(ls -i $file | cut -d' ' -f1)
+		    t_inode=$(ls -i $target | cut -d' ' -f1)
+		    if [[ $f_inode -eq $t_inode ]] ; then
+			echo === File $(basename $file) already linked
 		    else
-			if [ "$f" -nt "$t" ]; then
-			    echo Linking file $(basename $f)...
-			    ln -f $f $t
+			if [ "$file" -nt "$target" ]; then
+			    echo Linking file $(basename $file)...
+			    ln -f $file $target
 			else
-			    echo File $(basename $f) is newer in destination. Aborting link.
+			    echo File $(basename $file) is newer in destination. Do a diff or something.
 			fi
 		    fi
 		done
@@ -38,10 +38,16 @@ while getopts ":ul" opt; do
 	    ;;
 	l)
 	    for dir in "${!path[@]}"; do
-		echo $dir === ${path[$dir]}:
-		find $REPO/$dir -type f | while read -r f; do
-		    echo -e "\t$(basename $f)"
+		echo $dir '->' ${path[$dir]}:
+		find $REPO/$dir -type f | while read -r file; do
+		    echo -e "\t$(basename $file)"
 		done
+	    done
+	    exit 0
+	    ;;
+	d)
+	    for dir in "${!path[@]}"; do
+		echo $dir '->' ${path[$dir]}
 	    done
 	    exit 0
 	    ;;
