@@ -1,60 +1,92 @@
 * MY CONFIG FILES
 
 ** OVERVIEW
-UNDER (constant) CONSTRUCTION
 
-Dakode's configuration files (also some scripts). Keeping them all in one place, then use hardlinks to copy them to the correct path (see [[FILES AND LOCATIONS]] section).
+These are my dotfiles and some scripts I use. They are organized in folders which correspond to various locations in my home folder.
 
-Configured programs:
-- i3 (window manager)
-- ranger (file manager)
-- zsh (shell)
-- urxvt (terminal emulator -- uses Xresources file)
-- dunst (notifications)
-- compton (compositor -- transparency and stuff)
+*UNDER (constant) CONSTRUCTION*
 
-Some usefull scripts that come and go, rising briefly into glory and then falling to obscurity...
+*** HOW DOES IT WORK?
 
-- Important note: The logic behind this approach is that editing the hard link will edit the file itself. However this will not work if your editor keeps some kind of backup file that overwrites the original file, because it changes its inode number. For example, in emacs, I had to specify to keep backup files by copying the original file.
+I use a script ([[./scripts/config_update][config_update]]) in the scripts folder, which keeps everything synced. It stores the corresponding paths of the various directories stored here in some variables and uses them to create hard links, if necessary (see [[FILES LOCATIONS]] section below).
 
-** FILES AND LOCATIONS
-- "compton.conf" "$HOME/.config/compton.conf"
-- "i3/config" "$HOME/.i3/config"
-- "i3/i3blocks.conf" "$HOME/.i3/i3blocks.conf"
-- "i3/i3blocks/*" "$HOME/.i3/i3blocks/*"
-- "ranger/*" "$HOME/.config/ranger/*"
-- "scripts/*" "$HOME/.config/scripts"
-- "zshrc" "$HOME/.zshrc"
-- "Xresources" "$HOME/.Xresources"
+Note that I changed some default config locations, so that it is easier to manage them (eg conky.conf and dunstrc)
 
-Note that the scripts directory must be added to your path
+Also note that the script has a kind of raw implementation, so if you want to change the defaults (eg default file locations) you have to edit the script itself.
 
-** SYSTEM, PROGRAMS, DEPENDENCIES
-- System: Manjaro Linux with the i3 window manager (some scripts and stuff used are part of the installation and thus not yet included here, for example the shutdown scripts).
-- Window manager: i3 (i3-gaps)
-- Terminal emulator: urxvt (rxvt-unicode)
-- Editor: emacs (run as daemon, using clients)
-- File manager: ranger
-- Browser: palemoon
-- Mail client: thunderbird
-- Music player: mocp
-- Video player: smplayer
-- Net management: NetworkManager
-- Torrent manager: transmission-daemon with tremc frontend
-- Display settings: xrandr, xbacklight, compton, feh, w3m
-- Audio management: pulseaudio, pactl
-- Notifications: dunst, conky (with default scripts from Manjaro)
-- Status bar: i3blocks
-- Mount/unmount: udiskie
-- Misc: youtube-dl, xkb-switch
-- System fonts: Jura, Abel, FontAwesome, IcoMoon
+- Why hard links?
+Hard links reference directly the inode of the file instead of the file itself. Thus, by editing the link, you edit the original file and vice versa. The drawback of hard links is that they are not valid across filesystems, so the repo must be stored on the same filesystem.
 
-** TODO-list
+- *Important note about hard links*: Some editors (like emacs, for example) keep backup files in memory and then save the original file by replacing it with the backup. This breaks the hard link, because it changes the inode of the linked file, basically creating two separate files. If this is the case, the creation of backup files should be disabled, or changed to keeping backups by copying.
 
-*** TODO
-Write sync script to add and manage config files.
-I started implementig this. The =filelist= file is part of this iplementation.
-*** TODO
-Link the file =filelist= to this README.
-*** TODO
-(Maybe) Include a folder with system configs only for reference (eg sudoers, fstab etc)
+** FILES LOCATIONS
+/generate a list here using bash code/
+
+
+** SYSTEM INFO (INSTALLED STUFF AND DEPENDENCIES)
+The purpose of this section is to be an analytical list of all programs installed that these config files use, directly or indirectly. Keep in mind that I might forget one or two things.
+
+*** Base
+- System: *Arch Linux*
+- Shell: *ZSH*
+- Terminal emulator: *URXVT*
+- Window manager: *i3-gaps*
+- File manager: *Ranger*
+
+*** System utilities
+- acpi
+- lm-sensors
+- htop
+- udiskie
+- xclip
+- xf86-input-synaptics
+- xkb-switch
+- jq
+- zsh-history-substring-search
+- zsh-syntax-highlighting
+
+*** System fonts
+- Jura
+- Abel
+- FontAwesome
+- Icomoon
+
+*** Display management
+- arandr
+- xbacklight
+- compton
+- feh
+
+*** Audio management
+- alsa-utils
+- pulseaudio
+- pulseaudio-alsa
+- pavucontrol
+- pactl
+
+*** Notifications
+- dunst
+- conky
+
+*** Networking
+- networkmanager
+- nmtui
+- wget
+- git
+- openssh
+- transmission-cli
+- tremc
+
+*** Misc utilities
+- youtube-dl
+- calcurse
+- bsd-games
+- python-eyed3
+- imagemagick
+
+*** "Big" software
+- smplayer
+- libreoffice
+- darktable
+- thunderbird
+- palemoon
