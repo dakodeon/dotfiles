@@ -2,6 +2,10 @@
 
 interval=1
 
+# send a notification for low battery once
+warn_at=10
+warned=0
+
 while true; do
 
     full_status=$(acpi | cut -d ":" -f2 | cut -d"," -f1 | tr -d " ")
@@ -9,6 +13,7 @@ while true; do
     
     if [ "$full_status" == "Charging" ]; then
 	stat="CHR"
+	warned=0
 	if [ $percent -eq 100 ]; then
 	    color="#00FF00"
 	else
@@ -31,7 +36,10 @@ while true; do
 	    color="#00FF00"
 	fi
     else
+	# this case is used to cover a failure of acpi to determine the status and outputs "Unknown".
+	# this occurs sometimes, I think only when the battery is charging, but I am not entirely sure
 	stat=""
+	warned=0
 	if [ $percent -eq 100 ]; then
 	    color="#00FF00"
 	else
@@ -39,6 +47,12 @@ while true; do
 	fi
     fi
 
+    if [[ $full_status -eq "Discharging" && $percent -le $warn_at && $warned -eq 0 ]]; then
+	notify-send -u critical 'Battery is running low. System will soon hibernate'
+	warned=1
+    fi
+
+    # pango markup syntax
     full_text="<span foreground='$(echo $color)'>$(echo $percent\% $stat)</span>"
 
     echo $full_text

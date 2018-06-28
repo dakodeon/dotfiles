@@ -19,7 +19,7 @@ tempno=$(echo $temp | cut -d'.' -f1)
 if [ $tempno -lt $high ] ; then
     echo "#AAAAAA"
 elif [ $tempno -lt $crit ] ; then
-    echo "#00FFFF"
+    echo "#FFFF00"
 else
     echo "#FF0000"
 fi
