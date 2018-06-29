@@ -47,7 +47,7 @@ while true; do
 	fi
     fi
 
-    if [[ $full_status -eq "Discharging" && $percent -le $warn_at && $warned -eq 0 ]]; then
+    if [ $full_status = "Discharging" ] && [ $percent -le $warn_at ] && [ $warned -eq 0 ] ; then
 	notify-send -u critical 'Battery is running low. System will soon hibernate'
 	warned=1
     fi
