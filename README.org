@@ -83,6 +83,7 @@ The purpose of this section is to be an analytical list of all programs installe
 - bsd-games
 - python-eyed3
 - imagemagick
+- texlive-core
 
 *** "Big" software
 - smplayer
