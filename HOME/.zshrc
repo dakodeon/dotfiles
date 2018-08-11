@@ -175,11 +175,11 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some folders aliases
-alias gh='cd'
-alias gD='cd $HOME/Downloads'
-alias gd='cd $HOME/Documents'
-alias gM='cd $HOME/Music'
-alias gm='cd /run/media/louk'
+alias h='cd'
+alias D='cd $HOME/Downloads'
+alias d='cd $HOME/Documents'
+alias M='cd $HOME/Music'
+alias m='cd /run/media/louk'
 
 # alias for emacs client
 alias ec='emacsclient -c '
