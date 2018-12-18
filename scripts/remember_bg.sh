@@ -1,1 +1,1 @@
-feh --bg-max /home/louk/.config/.wallpaper.jpg
+feh --bg-center /home/louk/.config/.wallpaper.jpg
