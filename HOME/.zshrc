@@ -174,6 +174,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# exit
+alias q='exit'
+
 # some folders aliases
 alias h='cd'
 alias D='cd $HOME/Downloads'
