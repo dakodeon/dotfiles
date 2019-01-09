@@ -68,3 +68,7 @@ case $BLOCK_BUTTON in
 esac
 
 volume | format
+
+case $BLOCK_BUTTON in
+    1) pavucontrol
+esac
