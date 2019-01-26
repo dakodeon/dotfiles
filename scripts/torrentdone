@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Used by transmission daemon to notify when a torrent finished downloading
+
+notify-send "  $TR_TORRENT_NAME finished downloading"

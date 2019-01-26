@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# select and position monitors
+
+primary=$(xrandr -q | sed -n '/primary/p' | awk '{ print $1 }')
+
+[ -n $primary ] &&
+    selected=$(xrandr -q | sed -n '/\sconnected/p' | grep -v $primary | awk '{ print $1 }' | dmenu -i -p "Select monitor: ") || exit 0
+
+[ -n $selected ] &&
+    pos=$(printf "left-of\nright-of\nabove\nbelow\nsame-as\nmanual\nsolo" | dmenu -i -p "$selected position (to $primary): ") || exit 0
+
+if [ $pos = "same-as" ] && [ $(printf "Yes\nNo" | dmenu -i -p "Fit image to monitor?" ) = "Yes" ] ; then
+    primary_X=$(xrandr -q | sed -n "/$primary/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
+    selected_X=$(xrandr -q | sed -n "/$selected/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
+    ratio=$(echo "$primary_X / $selected_X" | bc -l)
+fi
+
+[ -z $ratio ] && ratio=1
+
+if [ $pos = "manual" ] ; then
+    arandr
+elif [ $pos = "solo" ] ; then
+    xrandr --output $selected --primary --auto --output $primary --off && i3-msg restart
+else
+    xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$pos $primary && i3-msg restart # redraw screens
+fi
+exit 0

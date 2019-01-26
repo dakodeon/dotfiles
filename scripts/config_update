@@ -6,6 +6,7 @@
 declare -A path=()
 
 REPO=$HOME/dotfiles
+# check if repo dir exists, else exit with error
 
 path[config]=$HOME/.config
 path[HOME]=$HOME
@@ -14,7 +15,7 @@ path[i3blocks]=${path[i3]}/i3blocks
 path[ranger]=${path[config]}/ranger
 path[scripts]=${path[config]}/scripts
 
-while getopts ":uld" opt; do
+while getopts ":ua:ld" opt; do
     case $opt in
 	u)
 	    for dir in "${!path[@]}"; do
@@ -36,6 +37,18 @@ while getopts ":uld" opt; do
 		done
 	    done
 	    ;;
+	a)
+	    if [ -f $OPTARG ] ; then
+		echo Argument is a file
+		dest_dir=$(echo $OPTARG | awk 'BEGIN {FS = "/"} ; {print $(NF-1)}')
+		if [ -d $REPO/$dest_dir ] ; then
+		    mv $OPTARG $REPO/$dest_dir && ln -f $REPO/$dest_dir/$(basename $OPTARG) $OPTARG && echo File linked || (echo Linking failed! && exit 1)
+		fi
+	    else
+		echo Error: Not a valid filename
+		exit 1
+	    fi
+	    ;;
 	l)
 	    for dir in "${!path[@]}"; do
 		echo $dir '->' ${path[$dir]}:
@@ -53,6 +66,10 @@ while getopts ":uld" opt; do
 	    ;;
 	\?)
 	    echo "Invalid option: -$OPTARG" >&2
+	    exit 1
+	    ;;
+	:)
+	    echo "Option -$OPTARG requires an argument." >&2
 	    exit 1
 	    ;;
     esac

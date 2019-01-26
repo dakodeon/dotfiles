@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# download management for audio/video downloads (youtube) and magnet links.
+# using xclip, youtube-dl, transmission-daemon and tremc
+
+# youtube-dl download directory
+dl_dir=$HOME/Downloads/youtube-downloads
+
+link=$(xclip -selection clipboard -o)
+
+if [ $(echo $link | grep "^magnet") ] ; then
+    transmission-remote -a "$link" && notify-send "  Downloading torent" && (pgrep -f "urxvt -e tremc" && i3-msg "[title=tremc] focus" || urxvt -e tremc &) && exit 0 || notify-send "  Something went wrong!" && exit 1
+
+elif [ $(echo $link | grep "^http") ] ; then
+    type=$(printf "audio\nvideo" | dmenu -i -p "Download audio or video?")
+    if [ $type = "audio" ] ; then
+	audopt="-x --audio-format mp3"
+    elif [ $type = "video" ] ; then
+	audopt=""
+    else
+	notify-send "  ..." && exit 1
+    fi
+
+    notify-send "  Downloading $type"
+    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Download complete" && exit 0 || notify-send "  Download failed!" && exit 1
+
+else
+    notify-send "  No link in clipboard!" && exit 1
+fi
