@@ -2,27 +2,53 @@
 
 # select and position monitors
 
+connected=($(xrandr -q | sed -n '/\sconnected/p' | awk '{print $1}'))
 primary=$(xrandr -q | sed -n '/primary/p' | awk '{ print $1 }')
 
-[ -n $primary ] &&
-    selected=$(xrandr -q | sed -n '/\sconnected/p' | grep -v $primary | awk '{ print $1 }' | dmenu -i -p "Select monitor: ") || exit 0
+selected=$(printf "%s\n" "${connected[@]}" | dmenu -i -p "Select monitor: ") || exit 23
 
 [ -n $selected ] &&
-    pos=$(printf "left-of\nright-of\nabove\nbelow\nsame-as\nmanual\nsolo" | dmenu -i -p "$selected position (to $primary): ") || exit 0
+    if [ $selected = $primary ] ; then
+	option=$(printf "solo\nturn off\nmanual setup\nrotate" | dmenu -i -p "Primary monitor ($selected): ") || exit 23
+    else
+	option=$(printf "left-of $primary\nright-of $primary\nabove $primary\nbelow $primary\nsame-as $primary\nsolo\nturn off\nmanual setup\nrotate" | dmenu -i -p "Secondary monitor ($selected): ") || exit 23
+    fi
 
-if [ $pos = "same-as" ] && [ $(printf "Yes\nNo" | dmenu -i -p "Fit image to monitor?" ) = "Yes" ] ; then
-    primary_X=$(xrandr -q | sed -n "/$primary/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
-    selected_X=$(xrandr -q | sed -n "/$selected/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
-    ratio=$(echo "$primary_X / $selected_X" | bc -l)
-fi
 
-[ -z $ratio ] && ratio=1
+case $option in
+    "solo") # turn everything off except from selected
+	for i in "${connected[@]}" ; do
+	    [ $i = $selected ] && continue
+	    xrandr --output $i --off
+	done
+	xrandr --output $selected --auto --primary && i3-msg restart
+	;;
+    "turn off") # if other monitors are connected, turn off selected. If primary, set other
+	[ ${#connected[@]} -eq 1 ] && break
+	if [ $selected = $primary ] ; then
+	    new_primary=$(printf "%s\n" "${connected[@]}" | grep -v $selected | dmenu -i -p "New primary monitor: ") || exit 23
+	else
+	    new_primary=$primary
+	fi
+	xrandr --output $new_primary --auto --primary --output $selected --off && i3-msg restart
+	;;
+    "manual setup")
+	arandr
+	;;
+    "rotate")
+	rotation=$(printf "normal\nleft\n\right\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
+	xrandr --output $selected --rotate $rotation && i3-msg restart
+	;;
+    *$primary)
+	if [ "$option" = "same-as $primary" ] ; then
+	    primary_X=$(xrandr -q | sed -n "/$primary/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
+	    selected_X=$(xrandr -q | sed -n "/$selected/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
+	    ratio=$(echo "$primary_X / $selected_X" | bc -l)
+	else
+	    ratio=1
+	fi
+	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option && i3-msg restart
+	;;
+esac
 
-if [ $pos = "manual" ] ; then
-    arandr
-elif [ $pos = "solo" ] ; then
-    xrandr --output $selected --primary --auto --output $primary --off && i3-msg restart
-else
-    xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$pos $primary && i3-msg restart # redraw screens
-fi
 exit 0
