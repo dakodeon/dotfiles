@@ -15,7 +15,7 @@ path[i3blocks]=${path[i3]}/i3blocks
 path[ranger]=${path[config]}/ranger
 path[scripts]=${path[config]}/scripts
 
-while getopts ":ua:ld" opt; do
+while getopts ":ua:ldh" opt; do
     case $opt in
 	u)
 	    for dir in "${!path[@]}"; do
@@ -39,7 +39,6 @@ while getopts ":ua:ld" opt; do
 	    ;;
 	a)
 	    if [ -f $OPTARG ] ; then
-		echo Argument is a file
 		dest_dir=$(echo $OPTARG | awk 'BEGIN {FS = "/"} ; {print $(NF-1)}')
 		if [ -d $REPO/$dest_dir ] ; then
 		    mv $OPTARG $REPO/$dest_dir && ln -f $REPO/$dest_dir/$(basename $OPTARG) $OPTARG && echo File linked || (echo Linking failed! && exit 1)
@@ -63,6 +62,9 @@ while getopts ":ua:ld" opt; do
 		echo $dir '->' ${path[$dir]}
 	    done
 	    exit 0
+	    ;;
+	h)
+	    printf "Update config files.\n\nOptions:\n\t-u: Check if all files in the repo are linked to their location.\n\t-a: Add file to the repo and link it back in place.\n\t-l: Print out a list of files in the repo.\n\t-d: Print out a list of directories in the repo.\n\t-h: Print out this help message.\n\n\t\tby DAKODEON, 2019\n"
 	    ;;
 	\?)
 	    echo "Invalid option: -$OPTARG" >&2
