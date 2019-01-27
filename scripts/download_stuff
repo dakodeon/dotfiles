@@ -18,7 +18,7 @@ elif [ $(echo $link | grep "^http") ] ; then
     elif [ $type = "video" ] ; then
 	audopt=""
     else
-	notify-send "  ..." && exit 1
+	notify-send "  Download aborted" && exit 1
     fi
 
     notify-send "  Downloading $type"
