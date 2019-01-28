@@ -18,26 +18,26 @@ selected=$(printf "%s\n" "${connected[@]}" | dmenu -i -p "Select monitor: ") || 
 case $option in
     "solo") # turn everything off except from selected
 	for i in "${connected[@]}" ; do
-	    [ $i = $selected ] && continue
+	    [ $i = $selected ] && continue;
 	    xrandr --output $i --off
 	done
-	xrandr --output $selected --auto --primary && i3-msg restart && notify-send "  Monitor $selected solo"
+	xrandr --output $selected --auto --primary && notify-send "  Monitor $selected solo"
 	;;
     "turn off") # if other monitors are connected, turn off selected. If primary, set other
-	[ ${#connected[@]} -eq 1 ] && notify-send "  Monitor $selected is the only monitor! Aborting" && exit 1
+	[ ${#connected[@]} -eq 1 ] && notify-send "  Monitor $selected is the only monitor! Aborting." && exit 1
 	if [ $selected = $primary ] ; then
 	    new_primary=$(printf "%s\n" "${connected[@]}" | grep -v $selected | dmenu -i -p "New primary monitor: ") || exit 23
 	else
 	    new_primary=$primary
 	fi
-	xrandr --output $new_primary --auto --primary --output $selected --off && i3-msg restart && notify-send "  Monitor $selected off"
+	xrandr --output $new_primary --auto --primary --output $selected --off && notify-send "  Monitor $selected off"
 	;;
     "manual setup")
 	arandr
 	;;
     "rotate")
 	rotation=$(printf "normal\nleft\n\right\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
-	xrandr --output $selected --rotate $rotation && i3-msg restart && notify-send "  Monitor $selected orientation changed"
+	xrandr --output $selected --rotate $rotation && notify-send "  Monitor $selected orientation changed"
 	;;
     *$primary)
 	if [ "$option" = "same-as $primary" ] ; then
@@ -47,8 +47,10 @@ case $option in
 	else
 	    ratio=1
 	fi
-	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option && i3-msg restart && notify-send "  Monitor $selected placed $option"
+	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option && notify-send "  Monitor $selected placed $option"
 	;;
 esac
+
+remember_bg.sh
 
 exit 0

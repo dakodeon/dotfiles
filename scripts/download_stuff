@@ -25,5 +25,5 @@ elif [ $(echo $link | grep "^http") ] ; then
     youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Download complete" && exit 0 || notify-send "  Download failed!" && exit 1
 
 else
-    notify-send "  No link in clipboard!" && exit 1
+    notify-send "  No valid link in clipboard!" && exit 1
 fi
