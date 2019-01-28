@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# open once - if program is running, focus
+# better implementation needed: check if progrma exists, implement for scratchpad also
+
+pgrep -f $1 && wmctrl -a $1 || $1

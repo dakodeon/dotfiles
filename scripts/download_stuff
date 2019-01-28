@@ -22,7 +22,7 @@ elif [ $(echo $link | grep "^http") ] ; then
     fi
 
     notify-send "  Downloading $type"
-    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Download complete" && exit 0 || notify-send "  Download failed!" && exit 1
+    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Downloading $type complete" && exit 0 || notify-send "  Downloading $type failed!" && exit 1
 
 else
     notify-send "  No valid link in clipboard!" && exit 1
