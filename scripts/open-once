@@ -1,6 +1,19 @@
 #!/bin/bash
 
-# open once - if program is running, focus
-# better implementation needed: check if progrma exists, implement for scratchpad also
+# open once - if program is running, focus. Using wmctrl
 
-pgrep -f $1 && wmctrl -a $1 || $1
+prog=$(echo $1 | awk '{print $NF}') # this ensures the correct name in case of terminal based apps (eg. urxvt -e tremc)
+
+which $prog >/dev/null 2>&1 || exit 2
+
+if pgrep -fl $prog | cut -d' ' -f2 | grep -v $(basename "$0"); then # exclude this instance
+    where=$(wmctrl -l | grep -i $prog | awk '{print $2}')
+    if [ "$where" = -1 ] ; then # for i3, -1 means it is in the scratchpad
+	wmctrl -R $prog
+    else
+	wmctrl -a $prog
+    fi
+else
+    $1
+fi
+
