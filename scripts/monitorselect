@@ -21,7 +21,8 @@ case $option in
 	    [ $i = $selected ] && continue;
 	    xrandr --output $i --off
 	done
-	xrandr --output $selected --auto --primary && notify-send "  Monitor $selected solo"
+	xrandr --output $selected --auto --primary
+	notify_text="  Monitor $selected solo"
 	;;
     "turn off") # if other monitors are connected, turn off selected. If primary, set other
 	[ ${#connected[@]} -eq 1 ] && notify-send "  Monitor $selected is the only monitor! Aborting." && exit 1
@@ -30,14 +31,16 @@ case $option in
 	else
 	    new_primary=$primary
 	fi
-	xrandr --output $new_primary --auto --primary --output $selected --off && notify-send "  Monitor $selected off"
+	xrandr --output $new_primary --auto --primary --output $selected --off
+	notify_text="  Monitor $selected off"
 	;;
     "manual setup")
 	arandr
 	;;
     "rotate")
 	rotation=$(printf "normal\nleft\n\right\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
-	xrandr --output $selected --rotate $rotation && notify-send "  Monitor $selected orientation changed"
+	xrandr --output $selected --rotate $rotation
+	notify_text="  Monitor $selected orientation changed"
 	;;
     *$primary)
 	if [ "$option" = "same-as $primary" ] ; then
@@ -47,10 +50,21 @@ case $option in
 	else
 	    ratio=1
 	fi
-	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option && notify-send "  Monitor $selected placed $option"
+	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option
+	notify_text="  Monitor $selected placed $option"
 	;;
 esac
 
+# redraw desktop background
 remember_bg.sh
+
+# restart dunst to properly display notifications
+pgrep -x dunst >/dev/null && (killall dunst && setsid dunst &) || setsid dunst &
+
+# wait for dunst to run and then display notification
+while ! ps -ef | grep dunst | grep -v grep 2>&1; do
+    sleep 1
+done
+notify-send "$notify_text"
 
 exit 0
