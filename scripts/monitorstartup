@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# set a default primary monitor fallback
+def_primary="LVDS1"
+
+connected=($(xrandr -q | sed -n '/\sconnected/p' | awk '{print $1}'))
+disconnected=($(xrandr -q | sed -n '/\sdisconnected/p' | awk '{print $1}'))
+
+if [ -f ~/.config/scripts/xrandr_prev ] ; then
+    cmd=$(cat ~/.config/scripts/xrandr_prev)
+
+    for i in "${disconnected[@]}" ; do
+	cmd=$(printf "$cmd" | grep -v "$i")
+    done
+else
+    cmd=(xrandr --output "$def_primary" --primary --auto)
+fi
+
+cmd=$(echo $cmd | sed -e 's/\s\\//' -e '$s/ \\$//')
+
+$cmd
+
+remember_bg.sh
+
+# keep the current setup as an xrandr command --note: this still doesnt support rotation info
+
+xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/scripts/xrandr_prev
+
+exit 0

@@ -38,7 +38,7 @@ case $option in
 	arandr
 	;;
     "rotate")
-	rotation=$(printf "normal\nleft\n\right\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
+	rotation=$(printf "normal\nleft\nright\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
 	xrandr --output $selected --rotate $rotation
 	notify_text="  Monitor $selected orientation changed"
 	;;
@@ -66,5 +66,9 @@ while ! ps -ef | grep dunst | grep -v grep 2>&1; do
     sleep 1
 done
 notify-send "$notify_text"
+
+# keep the current setup as an xrandr command --note: this still doesnt support rotation info
+
+xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/scripts/xrandr_prev
 
 exit 0
