@@ -11,6 +11,7 @@ if [ -f ~/.config/scripts/xrandr_prev ] ; then
 
     for i in "${disconnected[@]}" ; do
 	cmd=$(printf "$cmd" | grep -v "$i")
+	xrandr --output "$i" --off
     done
 else
     cmd=(xrandr --output "$def_primary" --primary --auto)
