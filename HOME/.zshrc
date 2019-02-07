@@ -25,8 +25,8 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 HISTFILE=~/.zsh_history
-HISTSIZE=1000
-SAVEHIST=500
+HISTSIZE=10000
+SAVEHIST=5000
 export EDITOR=/usr/bin/nano
 export VISUAL=/usr/bin/nano
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
@@ -173,6 +173,11 @@ if [ -x /usr/bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
+
+# ls aliases
+alias ll='ls -l'
+alias la='ls -al'
+alias l.='ls -d .*'
 
 # exit
 alias q='exit'

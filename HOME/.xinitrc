@@ -1,3 +1,8 @@
+# load Xresources
+[[ -f ~/.Xresources ]] && xrdb -merge -I $HOME ~/.Xresources
+
+# load i3
+
 i3conf=$HOME/.config/i3/i3.conf
 
 if [ -f $i3conf ] ; then
