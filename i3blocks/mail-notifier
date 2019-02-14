@@ -1,0 +1,16 @@
+#!/bin/bash
+
+mail_dir=$HOME/.personal/Mail
+
+account=$BLOCK_INSTANCE
+
+msg_num=$(mu find maildir:/$account/Inbox AND flag:unread 2>/dev/null | wc -l)
+
+if [ $msg_num -ne 0 ] ; then
+    notify_text="\t$account has $msg_num new message(s):\n"
+    pnd=$(mu find maildir:/$account/Inbox AND flag:unread --fields="f s" | sed -n -e '/<.*@.*>/ s/ <.*@.*> /: /p' -e '/.*@.*/ s/ /: /p' | awk '{printf "\t\t>> %s\n", $0}')
+    notify_text=$notify_text$pnd
+    notify-send "$(echo -e $notify_text)"
+fi
+
+echo $msg_num
