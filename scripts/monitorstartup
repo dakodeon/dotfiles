@@ -27,4 +27,7 @@ remember_bg.sh
 
 xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/scripts/xrandr_prev
 
+# restart dunst to properly display notifications
+pgrep -x dunst >/dev/null && (killall dunst && setsid dunst &) || setsid dunst &
+
 exit 0
