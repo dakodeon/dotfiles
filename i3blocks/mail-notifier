@@ -1,7 +1,5 @@
 #!/bin/bash
 
-mail_dir=$HOME/.personal/Mail
-
 account=$BLOCK_INSTANCE
 
 msg_num=$(mu find maildir:/$account/Inbox AND flag:unread 2>/dev/null | wc -l)
@@ -14,3 +12,16 @@ if [ $msg_num -ne 0 ] ; then
 fi
 
 echo $msg_num
+
+case $BLOCK_BUTTON in
+    1)  emacsclient -c --eval "(mu4e-open-in-headers \"$account\")"
+	# this does not work, I dont know why
+	# if wmctrl -lx | grep emacs | grep mu4e >/dev/null ; then
+	#     wmctrl -R $(wmctrl -lx | grep emacs | grep mu4e | awk '{print $5}')
+	# elif wmctrl -lx | grep emacs >/dev/null ; then
+	#     wmctrl -R $(wmctrl -lx | grep emacs | awk '{print $5}')
+	# else
+	#     emacsclient -c --eval "(mu4e-open-in-headers \"$account\")"
+	# fi
+	;; # left-click opens mu4e, or focuses emacsclient if running
+esac
