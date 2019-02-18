@@ -192,18 +192,14 @@ alias m='cd /run/media/louk'
 # alias for emacs client
 alias ec='emacsclient -c '
 alias et='emacsclient -t '
+alias er='pkill emacs && emacs --daemon'
 
 # access conf files
-alias cni='emacsclient -t /home/louk/.config/i3/i3.conf'
-alias cnr='emacsclient -t /home/louk/.config/ranger/rc.conf'
-alias cnz='emacsclient -t /home/louk/.zshrc'
-alias cnx='emacsclient -t /home/louk/.Xresources'
+alias cni='emacsclient -t $HOME/.config/i3/i3.conf'
+alias cnr='emacsclient -t $HOME/.config/ranger/rc.conf'
+alias cnz='emacsclient -t $HOME/.zshrc'
+alias cnx='emacsclient -t $HOME/.Xresources'
 alias cnf='emacsclient -t "/sudo:root@dubajamaman:/etc/fstab"'
-
-# downloads (URL must be in clipboard)
-alias Ydv='youtube-dl -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
-alias Yda='youtube-dl -x --audio-format mp3 -i -c -o "$HOME/Downloads/youtube-downloads/%(title)s.%(ext)s" "$(xclip -selection clipboard -o)"'
-alias Trm='transmission-remote -a "$(xclip -selection clipboard -o)"'
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '
