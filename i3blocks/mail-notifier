@@ -7,8 +7,9 @@ msg_num=$(mu find maildir:/$account/Inbox AND flag:unread 2>/dev/null | wc -l)
 if [ $msg_num -ne 0 ] ; then
     # notify_text=$(printf "\t$account has $msg_num new message(s):")
     mlist=$(mu find maildir:/$account/Inbox AND flag:unread --fields="f s" | sed -n -e '/<.*@.*>/ s/ <.*@.*> /: /p' -e '/.*@.*/ s/ /: /p' | sed 's/^.*:/<b>&<\/b>/' | awk '{printf "\t>> %s\n", $0}')
-    notify_text=$(echo -e "\t$account has $msg_num new message(s):\n$mlist")
+    notify_text=$(echo -e "\t$account has <b>$msg_num</b> new message(s):\n$mlist")
     notify-send "$notify_text"
+    msg_num="<b>$msg_num</b>"
 fi
 
 echo $msg_num
