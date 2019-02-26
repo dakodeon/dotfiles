@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#weather report using wttr.in
+
+curl wttr.in/\?format=%c%20%t%20%20%20%h
+
+case $BLOCK_BUTTON in
+    1) urxvt -e w3m wttr.in ;;
+esac
