@@ -1,0 +1,5 @@
+#!/bin/bash
+
+## toggle the touchpad
+
+[ $(synclient | grep TouchpadOff | awk '{print $NF}') = 0 ] && synclient TouchpadOff=1 || synclient TouchpadOff=0
