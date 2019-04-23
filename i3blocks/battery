@@ -9,8 +9,10 @@ warned_full=0
 
 while true; do
 
-    full_status=$(acpi | cut -d ":" -f2 | cut -d"," -f1 | tr -d " ")
-    percent=$(acpi | cut -d ":" -f2 | cut -d"," -f2 | tr -d " " | tr -d "%")
+    # full_status=$(acpi | cut -d ":" -f2 | cut -d"," -f1 | tr -d " ")
+    full_status=$(acpi | awk '{print $3}' | tr -d ",")
+    # percent=$(acpi | cut -d ":" -f2 | cut -d"," -f2 | tr -d " " | tr -d "%")
+    percent=$(acpi | awk '{print $4}' | tr -d "%" | tr -d ",")
     
     if [ "$full_status" == "Charging" ]; then
 	stat="CHR"
@@ -25,7 +27,7 @@ while true; do
 	stat="DIS"
 	warned_full=0
 	if [ $percent -le 5 ]; then
-	    systemctl shutdown -h now
+	    systemctl suspend
 	elif [ $percent -le 20 ]; then
 	    color="#FF0000"
 	elif [ $percent -le 40 ]; then
