@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# A script to edit ID3 tags in mp3 files
+
+# TODO: option to edit specific fields
+#       option to remove all data
+#       option to rename file according to fields -- DONE
+
+
+while getopts ":ERh" opt; do
+    case $opt in
+	E) EDIT=true ;;
+	R) RENAME=true ;;
+	h) echo -e "Edit ID3 tags in mp3 files.\n\t
+	   	   Options:\n\t\t
+			-E: Edit tags\n\t\t
+		   	-R: Rename files according to existing or edited tags.\n\t\t
+		   	-h: Display this help message.\n\n
+		Under construction, for now it assumes all params refer to mp3 files and will try to perform actions.\n
+		Uses a format which is optimized for my rempetika collection, so..."
+    esac
+    shift $((OPTIND-1))
+done
+
+for i in "$@"; do
+    # retrieve existing data
+    def_artist=$(ffprobe -loglevel error -show_entries format_tags=artist "$i" | grep artist= | cut -d'=' -f2)
+    def_comp=$(ffprobe -loglevel error -show_entries format_tags=composer "$i" | grep composer= | cut -d'=' -f2)
+    def_title=$(ffprobe -loglevel error -show_entries format_tags=title "$i" | grep title= | cut -d'=' -f2)
+    def_year=$(ffprobe -loglevel error -show_entries format_tags=date "$i" | grep date= | cut -d'=' -f2)
+
+    if [[ $EDIT == true ]]; then
+	echo Entering data for: "$i"
+	
+	# initiate flags array
+	flags=()
+	
+	read -p "Title: " -i "$def_title" -e title
+	[ -n "$title" ] && flags+=(--title "$title")
+	
+	read -p "Artist: " -i "$def_artist" -e artist
+	[ -n "$artist" ] && flags+=(--artist "$artist")
+	
+	read -p "Composer: " -i "$def_comp" -e comp
+	[ -n "$comp" ] && flags+=(--text-frame=TCOM:"$comp")
+	
+	read -p "Year: " -i "$def_year" -e year
+	[ -n "$year" ] && flags+=(--release-year "$year")
+	
+	# assign tags to the file, if there are any
+	[ ${#flags[@]} -gt 0 ] && eyeD3 "$i" "${flags[@]}" >/dev/null || (echo Nothing to do. Exiting; exit 23)
+    fi
+
+    if [[ $RENAME == true ]]; then
+	# renaming process
+	[ -z "$title" ] && title=$def_title
+	[ -z "$artist" ] && artist=$def_artist
+	[ -z "$comp" ] && comp=$def_comp
+	
+	if [[ -n "$title" && -n "$artist" ]]; then
+	    if [[ -z "$comp" || "$comp" == "$artist" ]]; then
+		name="$artist - $title"
+	    else
+		name="$comp ($artist) - $title"
+	    fi
+	    
+	    old="$(dirname "$i")/$(basename "$i")"
+	    new="$(dirname "$i")/$name.mp3"
+	    if [[ $old != $new ]]; then
+		mv "$old" "$new"
+	    fi
+	fi
+    fi
+    
+    # initialize variables before next loop
+    title=""
+    artist=""
+    comp=""
+    year=""
+
+done
+
+exit 0
+
+# ## Thought for options:
+# -E: edit all tags
+# -e: takes one argument, and if it corresponds to a tag, edit only that
+# -D: clear all tags
+# -R: rename file according to tag
+# -h: help (of course)
