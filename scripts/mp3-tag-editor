@@ -21,6 +21,15 @@ while getopts ":ERh" opt; do
 		-h: Display this help message.
 
 	Under construction, as new ideas keep coming in!"
+	   ;;
+	\?)
+	    echo "Invalid option: -$OPTARG" >&2
+	    exit 1
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
+	    exit 1
+	    ;;
 
     esac
     shift $((OPTIND-1))
