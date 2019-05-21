@@ -1,18 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
 account=$BLOCK_INSTANCE
 
-msg_num=$(mu find maildir:/$account/Inbox AND flag:unread 2>/dev/null | wc -l)
+msg_num=$(mu find maildir:/"$account"/Inbox AND flag:unread 2>/dev/null | wc -l)
 
-if [ $msg_num -ne 0 ] ; then
+if [ "$msg_num" -ne 0 ] ; then
     # notify_text=$(printf "\t$account has $msg_num new message(s):")
-    mlist=$(mu find maildir:/$account/Inbox AND flag:unread --fields="f s" | sed -n -e '/<.*@.*>/ s/ <.*@.*> /: /p' -e '/.*@.*/ s/ /: /p' | sed 's/^.*:/<b>&<\/b>/' | awk '{printf "\t>> %s\n", $0}')
-    notify_text=$(echo -e "\t$account has <b>$msg_num</b> new message(s):\n$mlist")
-    notify-send "$notify_text"
+    mlist=$(mu find maildir:/"$account"/Inbox AND flag:unread --fields="f s" | sed -n -e '/<.*@.*>/ s/ <.*@.*> /: /p' -e '/.*@.*/ s/ /: /p' | sed 's/^.*:/<b>&<\/b>/' | awk '{printf " >> %s\n", $0}')
+    # notify_text=$(echo "\t$account has <b>$msg_num</b> new message(s):\\n$mlist")
+    notify-send "  $account has $msg_num new message(s):" "$mlist"
     msg_num="<b>$msg_num</b>"
 fi
 
-echo $msg_num
+echo "$msg_num"
 
 # case $BLOCK_BUTTON in
 #     1)  emacsclient -c --eval "(mu4e-open-in-headers \"$account\")"

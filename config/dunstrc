@@ -11,8 +11,9 @@
     # <http://developer.gnome.org/pango/stable/PangoMarkupFormat.html>.
     # If markup is not allowed, those tags will be stripped out of the
     # message.
-    allow_markup = yes
-    
+    # allow_markup = yes
+    markup = full    
+
     # The format of the message.  Possible variables are:
     #   %a  appname
     #   %s  summary

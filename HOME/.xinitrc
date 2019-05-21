@@ -1,6 +1,9 @@
 # load Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge -I $HOME ~/.Xresources
 
+# init bindings
+exec sxhkd -c $HOME/.config/sxhkdrc &
+
 # load i3
 
 i3conf=$HOME/.config/i3/i3.conf
