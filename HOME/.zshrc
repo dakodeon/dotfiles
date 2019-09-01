@@ -193,6 +193,9 @@ alias m='cd /run/media/louk'
 alias ec='emacsclient -c '
 alias et='emacsclient -t '
 alias er='pkill emacs && emacs --daemon'
+alias ra='ranger '
+alias z='zathura '
+
 
 # access conf files
 alias cni='emacsclient -t $HOME/.config/i3/i3.conf'

@@ -14,7 +14,7 @@ if [ $(echo $link | grep "^magnet") ] ; then
     # assuming that all links refer to downloadable links -- TODO: use youtube-dl to give errors for non-valid URLs
 elif [ $(echo $link | grep "^http") ] ; then
     f_name=$(youtube-dl -e "$link") # this takes extra time, but is cool dammit!
-    type=$(printf "audio\nvideo" | dmenu -i -p "Download audio or video?")
+    type=$(printf "audio\nvideo" | dmenu -i -p "Download \"$f_name\" as audio or video?")
     if [ $type = "audio" ] ; then
 	audopt="-x --audio-format mp3"
     elif [ $type = "video" ] ; then
@@ -23,8 +23,9 @@ elif [ $(echo $link | grep "^http") ] ; then
 	notify-send "  Download aborted" && exit 1
     fi
 
-    notify-send "  Downloading $type \"$f_name\""
-    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  \"$f_name\" download complete" && exit 0 || notify-send "  \"$f_name\" download failed!" && exit 1
+    notify-send "  Downloading $type:" "\"$f_name\""
+    # temporary bypass of the "no video title" error -- use alt_title instead. Should be fixed in next update
+    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Download complete:" "\"$f_name\"" && exit 0 || notify-send "  Download failed:" "\"$f_name\"" && exit 1
 
 else
     notify-send "  No valid link in clipboard!" && exit 1

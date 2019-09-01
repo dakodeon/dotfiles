@@ -62,11 +62,11 @@ for i in "$@"; do
 	read -p "Title: " -i "$def_title" -e title
 	[ -n "$title" ] && flags+=(--title "$title")
 	
-	read -p "Artist: " -i "$def_artist" -e artist
-	[ -n "$artist" ] && flags+=(--artist "$artist")
-	
 	read -p "Composer: " -i "$def_comp" -e comp
 	[ -n "$comp" ] && flags+=(--text-frame=TCOM:"$comp")
+	
+	read -p "Artist: " -i "$def_artist" -e artist
+	[ -n "$artist" ] && flags+=(--artist "$artist")
 	
 	read -p "Year: " -i "$def_year" -e year
 	[ -n "$year" ] && flags+=(--release-year "$year")
