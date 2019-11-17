@@ -1,1 +1,1 @@
-feh --bg-max /home/louk/.config/.wallpaper.jpg
+feh --bg-fill /home/louk/.config/.wallpaper.jpg

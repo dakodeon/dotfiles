@@ -2,7 +2,13 @@
 
 #weather report using wttr.in
 
-curl wttr.in/\?format=%c%20%t%20%20%20%h
+wtr=$(curl wttr.in/\?format=%c%20%t%20%20%20%h)
+
+if [[ $wtr == *"Unknown"* ]]; then
+    wtr="?"
+fi
+
+echo $wtr
 
 case $BLOCK_BUTTON in
     1) urxvt -e w3m wttr.in ;;
