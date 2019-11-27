@@ -2,6 +2,9 @@
 
 interval=1
 
+# define dunstify ID for low bat messages
+idlow=1234
+
 # send a notification for low battery once
 warn_at=10
 warned=0
@@ -9,14 +12,17 @@ warned_full=0
 
 while true; do
 
-    # full_status=$(acpi | cut -d ":" -f2 | cut -d"," -f1 | tr -d " ")
     full_status=$(acpi | awk '{print $3}' | tr -d ",")
-    # percent=$(acpi | cut -d ":" -f2 | cut -d"," -f2 | tr -d " " | tr -d "%")
     percent=$(acpi | awk '{print $4}' | tr -d "%" | tr -d ",")
     
     if [ "$full_status" == "Charging" ]; then
 	stat="CHR"
-	warned=0
+	
+	if [ $warned -eq 1 ]; then
+	    dunstify -C $idlow
+	    warned=0
+	fi
+	
 	if [ $percent -eq 100 ]; then
 	    color="#00FF00"
 	else
@@ -52,12 +58,12 @@ while true; do
     fi
 
     if [ $full_status = "Discharging" ] && [ $percent -le $warn_at ] && [ $warned -eq 0 ] ; then
-	notify-send -u critical '  Battery is running low.' 'System will soon hibernate'
+	dunstify -r $idlow -u critical '  Battery is running low.' 'System will soon hibernate'
 	warned=1
     fi
 
     if [ $full_status = "Charging" ] && [ $percent -eq 100 ] && [ $warned_full -eq 0 ] ; then
-	notify-send 'Battery is full'
+	dunstify 'Battery is full'
 	warned_full=1
     fi
     
