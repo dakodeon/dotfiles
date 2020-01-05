@@ -17,11 +17,11 @@ selected=$(printf "%s\n" "${connected[@]}" | dmenu -i -p "Select monitor: ") || 
 
 case $option in
     "solo") # turn everything off except from selected
+	xrandr --output $selected --auto --primary
 	for i in "${connected[@]}" ; do
 	    [ $i = $selected ] && continue;
 	    xrandr --output $i --off
 	done
-	xrandr --output $selected --auto --primary
 	notify_text="  Monitor $selected solo"
 	;;
     "turn off") # if other monitors are connected, turn off selected. If primary, set other
