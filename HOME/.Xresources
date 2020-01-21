@@ -1,7 +1,7 @@
 ! Note: execute xrdb ~/.Xresources after editing the file
 
 URxvt.scrollBar: false
-URxvt.font: xft:monospace:size=11
+URxvt.font: xft:FreeMono:size=10
 
 ! style
 !URxvt.transparent: true

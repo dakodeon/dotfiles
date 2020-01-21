@@ -25,7 +25,7 @@ case $option in
 	notify_text="  Monitor $selected solo"
 	;;
     "turn off") # if other monitors are connected, turn off selected. If primary, set other
-	[ ${#connected[@]} -eq 1 ] && notify-send "  Monitor $selected is the only monitor! Aborting." && exit 1
+	[ ${#connected[@]} -eq 1 ] && notify-send "⚠  Monitor $selected is the only monitor! Aborting." && exit 1
 	if [ $selected = $primary ] ; then
 	    new_primary=$(printf "%s\n" "${connected[@]}" | grep -v $selected | dmenu -i -p "New primary monitor: ") || exit 23
 	else

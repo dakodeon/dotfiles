@@ -23,30 +23,27 @@ while getopts ":ERh" opt; do
 	Under construction, as new ideas keep coming in!"
 	   ;;
 	\?)
-	    echo "Invalid option: -$OPTARG" >&2
+	    echo "Invalid option: -$OPTARG. Use -h for help." >&2
 	    exit 1
 	    ;;
-	:)
-	    echo "Missing argument for option -$OPTARG." >&2
-	    exit 1
-	    ;;
-
     esac
-    shift $((OPTIND-1))
+    
 done
+
+shift $((OPTIND-1))
 
 # options are skipped, next are the positional params
 for i in "$@"; do
 
     # test if file is mp3 or not -- TODO: check if it is a dir and do the work in there too
     if [[ ${i: -4} != ".mp3" ]]; then
-	echo File "$i" is not an mp3. Skipping...
+	# echo File "$i" is not an mp3. Skipping...
 	continue
     fi
 
     # ffprobe command to query data - use the same to get other info as well
     probe=(ffprobe\ -loglevel\ error\ -show_entries\ format_tags=artist,composer,title,album,track,date)
-    echo $probe
+    # echo $probe
     # retrieve existing data
     def_artist=$($probe "$i" | grep artist= | cut -d'=' -f2)
     def_comp=$($probe "$i" | grep composer= | cut -d'=' -f2)
@@ -54,7 +51,7 @@ for i in "$@"; do
     def_year=$($probe "$i" | grep date= | cut -d'=' -f2)
 
     if [[ $EDIT == true ]]; then
-	echo Entering data for: "$i"
+	echo Tags for: "$i"
 	
 	# initiate flags array
 	flags=()
@@ -93,8 +90,8 @@ for i in "$@"; do
 	    new="$(dirname "$i")/$name.mp3"
 	    if [[ $old != $new ]]; then
 		mv -n "$old" "$new"
-	    else
-		echo File "$i" is already correctly named. Skipping...
+	    # else
+		# echo File "$i" is already correctly named. Skipping...
 	    fi
 	else
 	    echo No artist and/or title info provided. Cannot rename. Skipping...
