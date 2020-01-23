@@ -50,7 +50,7 @@ signal=7
 
 # curl wttr.in and format string to display weather
 [weather]
-# label=
+# label=💩
 instance=Athens,Greece
 interval=1800
 

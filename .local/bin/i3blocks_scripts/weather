@@ -3,7 +3,7 @@
 #weather report using wttr.in
 
 # wtr=$(curl wttr.in/\?format=%c%20%t%20%20%20%h)
-wtr="$(curl wttr.in/Athens,Greece?format=%c%t%20%h)"
+wtr="$(curl wttr.in/Athens,Greece?format=%c%t%20🌊%h)"
 if [[ $wtr == *"Unknown"* ]]; then
     wtr="?"
 fi
