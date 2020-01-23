@@ -1,8 +1,0 @@
-* Migrating to stow-managed dotfiles
-
-** How?
-
-   - =dotfiles= repo goes in =~/.source= (or some other directory)
-   - dotfiles inside the repo are organized just like their corresponding places in the =HOME= directory
-   - running =stow dotfiles= in =~/.source= will link everything to the correct place
-   - write a script to fetch a config and add it to the repo, then linking it back to place (like stow's =--adopt= option, but selective)
