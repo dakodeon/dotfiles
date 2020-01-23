@@ -1,93 +1,17 @@
-* MY CONFIG FILES
+* My dotfiles
 
-** OVERVIEW
+  This is my config files in one place. I use =stow= to link everything to where it should be, so the structure of the repo is equivalent to the one of a typical HOME directory.
 
-These are my dotfiles and some scripts I use. They are organized in folders which correspond to various locations in my home folder.
+  Run =stow -v dotfiles= while on parent directory of the repo.
 
-*UNDER (constant) CONSTRUCTION*
+  Some files that should not be linked, or should be linked separately (like stuff that does not go to the HOME directory) are excluded by file:.stow-local-ignore.
 
-*** HOW DOES IT WORK?
+  - Usage note: The repo should not be cloned directly into the HOME directory, because this would cause a conflict on running =stow=. Instead, it should be cloned in a subdirectory (2nd level) of the HOME directory. Nothing's going to crash, but the linking will have to be made manually, and that negates the purpose of having everything in one place.
 
-I use a script ([[./scripts/config_update][config_update]]) in the scripts folder, which keeps everything synced. It stores the corresponding paths of the various directories stored here in some variables and uses them to create hard links, if necessary (see [[#files-locations][files locations]] section below).
+** Additional info
 
-Note that I changed some default config locations, so that it is easier to manage them (eg conky.conf and dunstrc)
+   Nothing here yet!
 
-Also note that the script has a kind of raw implementation, so if you want to change the defaults (eg default file locations) you have to edit the script itself.
-
-- Why hard links?
-Hard links reference directly the inode of the file instead of the file itself. Thus, by editing the link, you edit the original file and vice versa. The drawback of hard links is that they are not valid across filesystems, so the repo must be stored on the same filesystem.
-
-- *Important note about hard links*: Some editors (like emacs, for example) keep backup files in memory and then save the original file by replacing it with the backup. This breaks the hard link, because it changes the inode of the linked file, basically creating two separate files. If this is the case, the creation of backup files should be disabled, or changed to keeping backups by copying.
-
-** FILES LOCATIONS
-/generate a list here using bash code/
-
-
-** SYSTEM INFO (INSTALLED STUFF AND DEPENDENCIES)
-The purpose of this section is to be an analytical list of all programs installed that these config files use, directly or indirectly. Keep in mind that I might forget one or two things.
-
-*** Base
-- System: *Arch Linux*
-- Shell: *ZSH*
-- Terminal emulator: *URXVT*
-- Window manager: *i3-gaps*
-- File manager: *Ranger*
-
-*** System utilities
-- acpi
-- lm-sensors
-- htop
-- udiskie
-- xclip
-- xf86-input-synaptics
-- xkb-switch
-- jq
-- zsh-history-substring-search
-- zsh-syntax-highlighting
-
-*** System fonts
-- Jura
-- Abel
-- FontAwesome
-- Icomoon
-
-*** Display management
-- arandr
-- xbacklight
-- compton
-- feh
-
-*** Audio management
-- alsa-utils
-- pulseaudio
-- pulseaudio-alsa
-- pavucontrol
-- pactl
-
-*** Notifications
-- dunst
-- conky
-
-*** Networking
-- networkmanager
-- nmtui
-- wget
-- git
-- openssh
-- transmission-cli
-- tremc
-
-*** Misc utilities
-- youtube-dl
-- calcurse
-- bsd-games
-- python-eyed3
-- imagemagick
-- texlive-core
-
-*** "Big" software
-- smplayer
-- libreoffice
-- darktable
-- thunderbird
-- palemoon
+   Possible stuff to include:
+   - Configured program lists
+   - Other documentation
