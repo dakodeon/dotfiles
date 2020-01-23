@@ -50,7 +50,6 @@ signal=7
 
 # curl wttr.in and format string to display weather
 [weather]
-# label=💩
 instance=Athens,Greece
 interval=1800
 
@@ -66,7 +65,6 @@ separator=false
 separator_block_width=5
 
 [mail-notifier]
-# label=
 color=#BB8899
 interval=once
 instance=dakodeon
@@ -76,7 +74,6 @@ separator=false
 separator_block_width=5
 
 [mail-notifier]
-# label=
 color=#00AA66
 interval=once
 instance=gmail
