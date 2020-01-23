@@ -6,12 +6,12 @@
 
   Some files that should not be linked, or should be linked separately (like stuff that does not go to the HOME directory) are excluded by file:.stow-local-ignore.
 
-  - Usage note: The repo should not be cloned directly into the HOME directory, because this would cause a conflict on running =stow=. Instead, it should be cloned in a subdirectory (2nd level) of the HOME directory. Nothing's going to crash, but the linking will have to be made manually, and that negates the purpose of having everything in one place.
+  - Usage note: The repo should not be cloned directly into the HOME directory, because this would cause a conflict on running =stow=. Instead, it should be cloned in a subdirectory (2nd level) of the HOME directory. Nothing's going to crash, but the linking will have to be done manually, and that negates the purpose of having everything in one place.
 
 ** Additional info
 
    Nothing here yet!
 
    Possible stuff to include:
-   - Configured program lists
+   - Configured programs list
    - Other documentation
