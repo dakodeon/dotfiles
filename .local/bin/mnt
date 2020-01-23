@@ -73,18 +73,15 @@ while getopts ":d:l:m:hP" opt; do
 	    # ensure DEVICE refers to a path -- then check for validity 
 	    echo "$DEVICE" | grep -q '^\/dev\/' || DEVICE="/dev/$DEVICE"
 	    echo "$valid_devices" | grep -qw "$DEVICE" || scriptfail "$DEVICE is not valid!" 1
-	    # test $? -ne 0 && echo ERROR: "$DEVICE" is not a valid device. && exit 1
 	    ;;
 	l)
 	    LABEL="$OPTARG"
 	    echo "$valid_devices" | grep -qw "$LABEL" || scriptfail "$LABEL is not valid!" 1
-	    # test $? -ne 0 && echo ERROR: "$LABEL" is not a valid label. && exit 1
 	    ;;
 	m)
 	    MOUNTPOINT="$OPTARG"
 	    if test -d "$MOUNTPOINT"; then
 		mountpoint "$MOUNTPOINT" > /dev/null && scriptfail "$MOUNTPOINT is already a mountpoint!" 1
-		# test $? -eq 0 && echo ERROR: "$MOUNTPOINT" is already a mountpoint. && exit 1
 	    fi
 	    ;;
 	P) dirprompt=true
@@ -116,8 +113,6 @@ elif test -n "$LABEL"; then
 else
     if test -z "$DEVICE"; then
 	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')" || scriptfail "Aborted by user." 2
-	# test $? -ne 0 && echo Aborted by user. && exit 2
-	# DEVICE="$(echo "$DEVICE" | awk '{print $1}')"
     fi
     LABEL="$(lsblk -no path,label | grep -w "$DEVICE" | awk '{print $2}')"
 fi
@@ -127,12 +122,10 @@ fi
 if test -z "$MOUNTPOINT"; then
     if $dirprompt; then
 	MOUNTPOINT="$(find /mnt /mount /media /home -maxdepth 5 -type d $exclude_mounted 2>/dev/null | dmenu -i -p "Where to mount? ")" || scriptfail "Aborted by user." 2
-	# test $? -ne 0 && echo Aborted by user. && exit 2
     elif test -n "$LABEL"; then
 	MOUNTPOINT="$default_mountdir/$LABEL"
     else
 	MOUNTPOINT="$(echo "" | dmenu -i -p "Type in name to mountpoint: ")" || scriptfail "Aborted by user." 2
-	# test $? -ne 0 && echo Aborted by user. && exit 2
 	if test -n "$MOUNTPOINT"; then
 	    MOUNTPOINT="$default_mountdir/$MOUNTPOINT"
 	else

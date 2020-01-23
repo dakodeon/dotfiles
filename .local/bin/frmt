@@ -1,12 +1,104 @@
 #!/bin/env sh
 
+### --HELP START-- ###
+
 # Command-line and/or dmenu interface to format mountable drives
 
 # This program should:
 # - Read a list of valid drives to format (everything connected, mounted or unmounted, that is not system, like home, root, boot and swap partitions)
 # - Ask for partition type and label and do everything else on its own.
 
+# Disclaimer: for the sake of simplicity I assume that the devices used have only one partition on them, so the script reads a partition 'e.g sdb1' to format the drive (sdb). For devices with more than one partition this script throws an error.
+
+# Options:
+# -d: device to format. Devices with more than one partition will not be accepted
+# -l: label of the device to format. Like above.
+# -L: label for the newly formatted drive.
+# -t: fstype to format to. Valid values: fat32, exfat, ntfs, ext4
+# -h: this help message
+
+# dakodeon, 2020
+
+### --HELP END-- ###
+
 # valid devices
 valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$4~/part/ && $5 !~ /SWAP|"\/boot"|"\/home"|"\/"/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
 
+valid_types="$(printf "fat32\nexfat\nntfs\next4")"
+
 echo Devices to format: "$valid_devices"
+echo Valid types: "$valid_types"
+
+scriptfail() { \
+	       failmsg="$1"
+	       exitcode="$2"
+	       echo "$failmsg" >&2
+	       notify-send "⚠ Format" "$failmsg"
+	       exit $exitcode
+}
+
+
+while getopts ":d:l:t:h" opt; do
+    case $opt in
+	d)
+	    DEVICE="$OPTARG"
+	    # ensure DEVICE refers to a path -- then check for validity 
+	    echo "$DEVICE" | grep -q '^\/dev\/' || DEVICE="/dev/$DEVICE"
+	    echo "$valid_devices" | grep -qw "$DEVICE" || scriptfail "$DEVICE is not valid!" 1
+	    test -z "$(lsblk -no "path,mountpoint" | grep "$DEVICE" | awk '{print $2}')" && scriptfail "$DEVICE is mounted! Unmount it first." 1
+	    ;;
+	l)
+	    LABEL="$OPTARG"
+	    echo "$valid_devices" | grep -qw "$LABEL" || scriptfail "$LABEL is not valid!" 1
+	    ;;
+	L)
+	    NEWLABEL="$OPTARG"
+	    ;;
+	t)
+	    FSTYPE="$OPTARG"
+	    echo "$valid_types" | grep -qw "$FSTYPE" || scriptfail "$FSTYPE is not a valid filesystem!" 1
+	    ;;
+	h)
+	    sed '0,/HELP START/d;/HELP END/,$d' "$0"
+	    exit
+	    ;;
+	\?)
+	    echo "Unknown option. Run with -h for help." >&2
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
+	    ;;
+    esac
+done
+	
+test -z "$valid_devices" && scriptfail "No devices found" 0
+
+# choose a device
+if test -n "$DEVICE" && test -n "$LABEL"; then
+    scriptfail "Cannot have both -d and -l option! Choose one." 1
+elif test -n "$LABEL"; then
+    DEVICE=$(echo "$valid_devices" | grep -w "$LABEL" | cut -d' ' -f1)
+else
+    if test -z "$DEVICE"; then
+	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to format: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')" || scriptfail "Aborted by user." 2
+    fi
+    LABEL="$(lsblk -no path,label | grep -w "$DEVICE" | awk '{print $2}')"
+fi
+
+# what we need is the device not the partition
+DEVICE="$(echo "$DEVICE" | sed 's/[0-9]$//')"
+test "$(lsblk -no path,type | grep part | grep "$DEVICE" | wc -l)" -gt 1 && scriptfail "$DEVICE has more than one partitions!" 1
+
+# choose fstype
+if test -z "$FSTYPE"; then
+    FSTYPE="$(echo "$valid_types" | dmenu -i -p "Format to:")" || scriptfail "Aborted by user." 2
+fi
+
+if test -z "$NEWLABEL"; then
+    NEWLABEL="$(echo "$LABEL" | dmenu -i -p "Rename drive (defaults to $LABEL):")" || NEWLABEL="$LABEL"
+fi
+
+echo "formatting $DEVICE into $FSTYPE drive named $NEWLABEL"
+
+# TODO: ensure NEWLABEL is valid
+# TODO: the actual format command
