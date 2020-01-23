@@ -1,0 +1,168 @@
+#!/bin/env sh
+
+### --HELP START-- ###
+
+# Mount helper script
+
+# Options:
+# -d: device to mount (e.g /dev/sdx1 or sdx1).
+# -l: label of the device to mount. Conflicts with '-d', only one should exist.
+# -m: mountpoint, where to mount the device.
+# -P: prompt for mountpoint
+# -h: this help message
+
+# The way it works:
+
+# It mounts the selected device. By default, it automatically mounts to
+# '/media' (this can be changed in the code), in a directory named LABEL,
+# where LABEL is the label of the drive. If the drive has no label, the
+# user is prompted for a mountdir. If the option '-P' is provided, then the
+# mountpoint is selected manually.
+
+# If no arguments are provided, the user is prompted for a device with dmenu.
+
+# dakodeon, 2020
+
+### --HELP END-- ###
+
+# defaults
+# Because of the use of labels, the awk command becomes slightly more complicated as I need to use the '-P' flag for lsblk.
+valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$4~/part/ && $5~/""/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
+
+# validity of MOUNTPOINT
+exclude_mounted=$(lsblk -nlo "path,type,mountpoint" | awk '$2 == "part" && $3 !~ /\/boot|\/home$|SWAP/ && length($3)>1 {printf "-not \\( -path *%s -prune \\) \\ \n",$3}')
+
+# make this global?
+default_mountdir="/media"
+
+# do not prompt for dir by default
+dirprompt=false
+
+# functions definitions
+makedir() { \
+	    dir="$1"
+	    if test ! -d "$dir"; then
+		yorndir=$(printf "Yes\nNo" | dmenu -i -p "Directory \"$dir\" does not exist. Create it? " || scriptfail "Aborted!!!" 2)
+		test $? -ne 0 && echo Aborted by user. && exit 2
+		case $yorndir in
+		    "Yes")
+			# shellcheck disable=SC2015
+			sudo -A mkdir -p "$dir" && echo Dir "$dir" created successfully. || scriptfail "Failed to create dir $dir!" 1
+			# test $? -ne 0 && echo Failed to create "$dir" && exit 1
+			;;
+		    *)
+			scriptfail "Aborted by user." 2
+			;;
+		esac
+	    fi
+}
+
+scriptfail() { \
+	       failmsg="$1"
+	       exitcode="$2"
+	       echo "$failmsg"
+	       notify-send "⚠ Mount" "$failmsg"
+	       exit $exitcode
+}
+
+# parse options
+while getopts ":d:l:m:hP" opt; do
+    case $opt in
+	d)
+	    DEVICE="$OPTARG"
+	    # ensure DEVICE refers to a path -- then check for validity 
+	    echo "$DEVICE" | grep -q '^\/dev\/' || DEVICE="/dev/$DEVICE"
+	    echo "$valid_devices" | grep -qw "$DEVICE" || scriptfail "$DEVICE is not valid!" 1
+	    # test $? -ne 0 && echo ERROR: "$DEVICE" is not a valid device. && exit 1
+	    ;;
+	l)
+	    LABEL="$OPTARG"
+	    echo "$valid_devices" | grep -qw "$LABEL" || scriptfail "$LABEL is not valid!" 1
+	    # test $? -ne 0 && echo ERROR: "$LABEL" is not a valid label. && exit 1
+	    ;;
+	m)
+	    MOUNTPOINT="$OPTARG"
+	    if test -d "$MOUNTPOINT"; then
+		mountpoint "$MOUNTPOINT" > /dev/null && scriptfail "$MOUNTPOINT is already a mountpoint!" 1
+		# test $? -eq 0 && echo ERROR: "$MOUNTPOINT" is already a mountpoint. && exit 1
+	    fi
+	    ;;
+	P) dirprompt=true
+	   test "$dirprompt" && echo Manual selection of mountpoint enabled
+	   ;;
+	h)
+	    sed '0,/HELP START/d;/HELP END/,$d' "$0"
+	    exit
+	    ;;
+	\?)
+	    echo "Unknown option. Run with -h for help." >&2
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
+	    ;;
+    esac
+done
+
+# Check for default dir and prompt to create it
+makedir "$default_mountdir"
+
+test -z "$valid_devices" && scriptfail "No devices found" 0
+
+# choose a device
+if test -n "$DEVICE" && test -n "$LABEL"; then
+    scriptfail "Cannot have both -d and -l option! Choose one." 1
+elif test -n "$LABEL"; then
+    DEVICE=$(echo "$valid_devices" | grep -w "$LABEL" | cut -d' ' -f1)
+else
+    if test -z "$DEVICE"; then
+	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')" || scriptfail "Aborted by user." 2
+	# test $? -ne 0 && echo Aborted by user. && exit 2
+	# DEVICE="$(echo "$DEVICE" | awk '{print $1}')"
+    fi
+    LABEL="$(lsblk -no path,label | grep -w "$DEVICE" | awk '{print $2}')"
+fi
+
+# choose a mountpoint
+# shellcheck disable=SC2086
+if test -z "$MOUNTPOINT"; then
+    if $dirprompt; then
+	MOUNTPOINT="$(find /mnt /mount /media /home -maxdepth 5 -type d $exclude_mounted 2>/dev/null | dmenu -i -p "Where to mount? ")" || scriptfail "Aborted by user." 2
+	# test $? -ne 0 && echo Aborted by user. && exit 2
+    elif test -n "$LABEL"; then
+	MOUNTPOINT="$default_mountdir/$LABEL"
+    else
+	MOUNTPOINT="$(echo "" | dmenu -i -p "Type in name to mountpoint: ")" || scriptfail "Aborted by user." 2
+	# test $? -ne 0 && echo Aborted by user. && exit 2
+	if test -n "$MOUNTPOINT"; then
+	    MOUNTPOINT="$default_mountdir/$MOUNTPOINT"
+	else
+	    scriptfail "No mountpoint defined!" 1
+	fi
+    fi
+fi
+
+if test ! -d "$MOUNTPOINT"; then
+    # test if mountpoint is subdir of default_mountdir
+    if echo "$MOUNTPOINT" | grep -vq "^$default_mountdir/[a-zA-Z0-9]\{1,\}"; then
+	makedir "$MOUNTPOINT"
+    else
+	sudo -A mkdir -p "$MOUNTPOINT"
+    fi
+else
+    mountpoint "$MOUNTPOINT" > /dev/null && scriptfail "$MOUNTPOINT is already a mountpoint!" 1 
+fi
+
+fstype="$(lsblk -nlo "fstype" "$DEVICE")"
+case "$fstype" in
+    "vfat")
+	sudo -A mount -t vfat "$DEVICE" "$MOUNTPOINT" -o rw,umask=0000
+	;;
+    *)
+	us="$(whoami)"
+	ug="$(groups | awk '{print $1}')"
+	sudo -A chown "$us":"$ug" "$MOUNTPOINT"
+	sudo -A mount "$DEVICE" "$MOUNTPOINT"
+	;;
+esac
+
+test $? -eq 0 && echo "$DEVICE" labelled "$LABEL" mounted to "$MOUNTPOINT" && notify-send " Mount" "$DEVICE mounted to $MOUNTPOINT"

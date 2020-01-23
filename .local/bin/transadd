@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# from LukeSmith's voidrice
+
+pgrep -x transmission-da || (transmission-daemon && notify-send "Starting transmission daemon..." && sleep 3)
+
+transmission-remote -a "$@" && notify-send " Downloading torrent"

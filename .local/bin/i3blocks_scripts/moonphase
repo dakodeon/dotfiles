@@ -1,0 +1,11 @@
+#!/bin/env sh
+
+# moonphase!
+# pom is part of bsdgames
+
+mphase="$(curl wttr.in/\?format=%m)"
+
+txt="$(pom | sed 's/The Moon is //')"
+
+echo "$mphase $txt"
+# echo "$location"

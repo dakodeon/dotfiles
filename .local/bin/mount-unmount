@@ -1,0 +1,45 @@
+#!/bin/env sh
+
+### --HELP START-- ###
+
+# Mount - unmount. Wraps mnt and umnt
+
+# The way it works
+
+# It looks up for unmounted and mounted devices. If only mounted devices found,
+# immediately calls umnt. If only unmounted devices found, immediately calls
+# mnt. If both are detected, prompts the user.
+
+# For more, see 'mnt -h' and 'umnt -h'
+
+### --HELP END-- ###
+
+unmounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2=="" {print $0}' | wc -l)
+mounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2!~/^$|SWAP|\/boot|\/home$|^\/$/ {print $0}' | wc -l)
+
+if test $unmounted -ne 0 && test $mounted -ne 0; then
+    action="$(printf "Mount\nUnmount\nAbort" | dmenu -i -p "Both mounted and unmounted devices found. What do you want to do?")"
+    test $? -ne 0 && echo Aborted by user. && exit 2
+    case "$action" in
+	"Mount")
+	    mnt
+	    ;;
+	"Unmount")
+	    umnt
+	    ;;
+	"Abort")
+	    echo Aborted by user.
+	    exit 2
+	    ;;
+	*)
+	    exit 1
+    esac
+elif test $unmounted -ne 0; then
+    mnt
+elif test $mounted -ne 0; then
+    umnt
+else
+    notify-send " Mount/Unmount" "No device to mount/unmount!"
+fi
+
+    

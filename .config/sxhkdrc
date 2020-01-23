@@ -1,0 +1,64 @@
+# this is a test config
+
+### SYSTEM
+
+# audio controls (pulseaudio)
+
+{F8,F9}
+    pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
+    
+shift + {F8,F9}
+    pactl set-sink-volume 0 {50,100}% && pkill -RTMIN+10 i3blocks
+
+F3
+    pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
+
+# audio controls (alsa)
+
+ctrl + {F8,F9}
+    amixer set 'Master' 5%{-,+}
+
+shift + ctrl + {F8,F9}
+    amixer set 'Master' {50,100}%
+    
+ctrl + F3
+    amixer set 'Speaker' toggle
+
+# brightness controls
+
+{F6, F7}
+    xbacklight -{dec,inc} 10
+
+shift + {F6,F7}
+    xbacklight -set {50,100}
+
+# multi-monitor
+
+super + {F10,shift + F10}
+    {monitorselect,monitorstartup}
+
+# toggle touchpad
+
+F4
+    touchpad-toggle
+
+# mount-unmount
+
+super + grave
+      mount-unmount
+
+# dmenu_run
+
+super + d
+    dmenu_run -fn "Jura-10"
+
+# MOCP controls
+
+super + {slash,shift + slash}
+    mocp --{toggle-pause,stop} && pkill -RTMIN+7 i3blocks
+
+super + {comma,period}
+    mocp --{previous,next} && pkill -RTMIN+7 i3blocks
+
+super + shift + {comma, period}
+    mocp --seek {-,+}5 && pkill -RTMIN+7 i3blocks

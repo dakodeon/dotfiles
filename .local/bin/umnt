@@ -1,0 +1,137 @@
+#!/bin/env sh
+
+### --HELP START-- ###
+
+# Umount helper script
+
+# Options:
+
+# -d: device to unmount (e.g /dev/sdx1 or sdx1)
+# -l: label of device to unmount
+# -m: path to unmount
+# -I: asks to remove mountpoint after umount is done
+
+# The way it works:
+
+# Unmounts the selected drive. Only one of '-d', '-l' or '-m' should be present.
+# The default behaviour is to remove the mountpoint directory afterwards, but
+# only if it is empty. Should the mountpoint be kept, use '-I'. If umount fails
+# for some reason, the user is prompted (with dmenu) to force-unmount, by doing
+# 'fuser -mk' and then trying again.
+
+# If no arguments are provided, the user is prompted for a device with dmenu.
+
+# dakodeon 2020
+
+### --HELP END-- ###
+
+mounted_devices="$(lsblk -nlo "path,size,type,mountpoint" | awk '$3="part" && $4 !~ /^$|SWAP|\/boot|\/home$|^\/$/ {printf "%s (%s) -> %s\n", $1, $2, $4}')"
+
+# whether to delete directory on umount
+cleanup=true
+
+scriptfail() { \
+	       failmsg="$1"
+	       exitcode="$2"
+	       echo "$failmsg"
+	       notify-send "⚠ Unmount" "$failmsg"
+	       exit $exitcode
+}
+
+while getopts ":d:l:m:hI" opt; do
+    case $opt in
+	d)
+	    DEVICE="$OPTARG"
+	    # ensure DEVICE refers to a path -- then check for validity 
+	    echo "$DEVICE" | grep -q '^\/dev\/' || DEVICE="/dev/$DEVICE"
+	    echo "$mounted_devices" | grep -qw "$DEVICE" || scriptfail "$DEVICE is not valid!" 1
+	    # test $? -ne 0 && echo ERROR: "$DEVICE" is not a valid device. && exit 1
+	    ;;
+	l)
+	    LABEL="$OPTARG"
+	    echo "$mounted_devices" | grep -qw "$LABEL" || scriptfail "$LABEL is not valid!" 1
+	    # test $? -ne 0 && echo ERROR: "$LABEL" is not a valid label. && exit 1
+	    ;;
+	m)
+	    MOUNTPOINT="$OPTARG"
+	    test -d "$MOUNTPOINT" && mountpoint "$MOUNTPOINT" >/dev/null || scriptfail "$MOUNTPOINT is not a mountpoint!" 1
+	    # test $? -ne 0 && echo ERROR: "$MOUNTPOINT" is not a mountpoint. && exit 1
+	    ;;
+	I)
+	    cleanup=false
+	    ;;
+	h)
+	    sed '0,/HELP START/d;/HELP END/,$d' "$0"
+	    exit
+	    ;;
+	\?)
+	    echo "Unknown option. Run with -h for help." >&2
+	    exit 1
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
+	    exit 1
+	    ;;
+    esac
+done
+
+test -z "$mounted_devices" && scriptfail "No mounted devices found" 0
+
+if test -z "$DEVICE" && test -z "$LABEL" && test -z "$MOUNTPOINT"; then
+    MOUNTPOINT="$(echo "$mounted_devices" | dmenu -i -p "Choose device to unmount: " | awk '{print $NF}')" || scriptfail "Aborted by user." 2
+    # test $? -ne 0 && echo Aborted by user. && exit 2
+elif test -n "$DEVICE" && test -z "$LABEL" && test -z "$MOUNTPOINT"; then
+    MOUNTPOINT="$(echo "$mounted_devices" | grep -w "$DEVICE" | awk '{print $NF}')"
+elif test -z "$DEVICE" && test -n "$LABEL" && test -z "$MOUNTPOINT"; then
+    MOUNTPOINT="$(echo "$mounted_devices" | grep -w "$LABEL" | awk '{print $NF}')"
+elif test -z "$DEVICE" && test -z "$LABEL" && test -n "$MOUNTPOINT"; then
+    MOUNTPOINT="$MOUNTPOINT"
+else
+    scriptfail "Only one of -d, -l or -m may be used!" 1
+    # exit 1
+fi
+   
+echo Unmounting "$MOUNTPOINT"
+
+test -z "$DEVICE" && DEVICE="$(lsblk -no path,mountpoint | grep "$MOUNTPOINT" | awk '{print $1}')"
+
+sudo umount "$MOUNTPOINT"
+
+if test $? -ne 0; then
+    yornforce="$(printf "Yes\nNo" | dmenu -i -p "Unmounting failed! Use force?")" || scriptfail "Aborted by user." 2
+    # test $? -ne 0 && echo Aborted by user. && exit 2
+    case "$yornforce" in
+	"Yes")
+	    sudo -A fuser -mk "$MOUNTPOINT" && sudo umount "$MOUNTPOINT" || scriptfail "Still failed..." 1
+	    # test $? -ne 0 && echo Still failed... && exit 1
+	    ;;
+	*)
+	    scriptfail "Aborted by user." 2
+	    # exit 2
+	    ;;
+    esac
+else
+    if $cleanup; then
+	# rmdir does so only if dir is empty
+	rmdir "$MOUNTPOINT" 2>/dev/null || sudo -A rmdir "$MOUNTPOINT" 2>/dev/null || scriptfail "Directory $MOUNTPOINT could not be removed!" 1
+	# test $? -ne 0 && echo Directory could not be removed! >&2 && exit 1
+    else
+	yorndel="$(printf "Yes\nNo" | dmenu -i -p "Delete mountpoint directory, if empty?")"
+	case "$yorndel" in
+	    "Yes")
+		rmdir "$MOUNTPOINT" 2>/dev/null || sudo -A rmdir "$MOUNTPOINT" 2>/dev/null || scriptfail "Directory $MOUNTPOINT could not be removed!" 2
+		# test $? -ne 0 && echo Directory could not be removed! >&2 && exit 1
+		;;
+	    "No")
+		echo Leaving directory there
+		;;
+	    *)
+		scriptfail "Wrong answer!" 1
+		# exit 1
+		;;
+	esac
+    fi
+fi
+
+echo Device unmounted from "$MOUNTPOINT" && notify-send " Unmount" "$DEVICE unmounted from $MOUNTPOINT"
+
