@@ -1,0 +1,12 @@
+#!/bin/env sh
+
+# Command-line and/or dmenu interface to format mountable drives
+
+# This program should:
+# - Read a list of valid drives to format (everything connected, mounted or unmounted, that is not system, like home, root, boot and swap partitions)
+# - Ask for partition type and label and do everything else on its own.
+
+# valid devices
+valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$4~/part/ && $5 !~ /SWAP|"\/boot"|"\/home"|"\/"/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
+
+echo Devices to format: "$valid_devices"
