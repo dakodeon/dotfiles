@@ -25,6 +25,8 @@
 
 ### --HELP END-- ###
 
+did=999112
+
 mounted_devices="$(lsblk -nlo "path,size,type,mountpoint" | awk '$3="part" && $4 !~ /^$|SWAP|\/boot|\/home$|^\/$/ {printf "%s (%s) -> %s\n", $1, $2, $4}')"
 
 # whether to delete directory on umount
@@ -34,7 +36,7 @@ scriptfail() { \
 	       failmsg="$1"
 	       exitcode="$2"
 	       echo "$failmsg"
-	       notify-send "⚠ Unmount" "$failmsg"
+	       dunstify -r $did "⚠ Unmount" "$failmsg"
 	       exit $exitcode
 }
 
@@ -133,5 +135,5 @@ else
     fi
 fi
 
-echo Device unmounted from "$MOUNTPOINT" && notify-send " Unmount" "$DEVICE unmounted from $MOUNTPOINT"
+echo Device unmounted from "$MOUNTPOINT" && dunstify -r $did " Unmount" "$DEVICE unmounted from $MOUNTPOINT"
 

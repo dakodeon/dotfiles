@@ -35,7 +35,7 @@ markup=none
 interval=1
 color=#AAAAAA
 
-# Just for style
+# Yes, it just informs you about the phase of the moon
 [moonphase]
 interval=43200
 color=#DDDD00
@@ -135,19 +135,15 @@ separator_block_width=5
 instance=2
 interval=3
 
-# Wi-fi signal
 [wifi]
 label= 
 instance=wlp16s0
 interval=3
-min_width=30
+min_width=35
 separator=false
 separator_block_width=10
-
-# Network interface monitoring
 # wifi
 [iface]
-#instance=wlp16s0
 color=#00FF00
 interval=3
 

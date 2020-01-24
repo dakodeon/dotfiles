@@ -25,6 +25,9 @@
 
 ### --HELP END-- ###
 
+# all mount-related scripts will have the same did
+did=999112
+
 # defaults
 # Because of the use of labels, the awk command becomes slightly more complicated as I need to use the '-P' flag for lsblk.
 valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$4~/part/ && $5~/""/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
@@ -61,7 +64,7 @@ scriptfail() { \
 	       failmsg="$1"
 	       exitcode="$2"
 	       echo "$failmsg"
-	       notify-send "⚠ Mount" "$failmsg"
+	       dunstify -r $did "⚠ Mount" "$failmsg"
 	       exit $exitcode
 }
 
@@ -158,4 +161,4 @@ case "$fstype" in
 	;;
 esac
 
-test $? -eq 0 && echo "$DEVICE" labelled "$LABEL" mounted to "$MOUNTPOINT" && notify-send " Mount" "$DEVICE mounted to $MOUNTPOINT"
+test $? -eq 0 && echo "$DEVICE" labelled "$LABEL" mounted to "$MOUNTPOINT" && dunstify -r $did " Mount" "$DEVICE mounted to $MOUNTPOINT"

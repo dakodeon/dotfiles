@@ -14,6 +14,8 @@
 
 ### --HELP END-- ###
 
+did=999112
+
 unmounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2=="" {print $0}' | wc -l)
 mounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2!~/^$|SWAP|\/boot|\/home$|^\/$/ {print $0}' | wc -l)
 
@@ -39,7 +41,7 @@ elif test $unmounted -ne 0; then
 elif test $mounted -ne 0; then
     umnt
 else
-    notify-send " Mount/Unmount" "No device to mount/unmount!"
+    dunstify -r $did " Mount/Unmount" "No device to mount/unmount!"
 fi
 
     
