@@ -1,4 +1,5 @@
-xorg.conf.d
+# everything in this directory will be ignored
+nostow
 
 RCS
 .+,v
