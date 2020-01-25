@@ -125,7 +125,7 @@ size="$(lsblk -no path,size | grep -w "$P_DEVICE" | awk '{print $2}')"
 
 yornformat="$(printf "Yes\nNo" | dmenu -i -p "Will format $DEVICE ($size) to $FSTYPE filesystem labeled $NEWLABEL. Proceed?")" || scriptfail "Aborted by user." 2
 
-test "$FSTYPE" == "ntfs" && dunstify -r $did " Format" "This will take some time..."
+test "$FSTYPE" = "ntfs" && dunstify -r $did " Format" "This will take some time..."
 
 case "$yornformat" in
     "Yes")
