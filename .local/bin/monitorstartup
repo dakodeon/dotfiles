@@ -1,32 +1,7 @@
-#!/bin/bash
+#!/bin/env sh
 
-# set a default primary monitor fallback
-def_primary="LVDS1"
+# checks if there are connected monitors, if yes it runs the monitorselect script
 
-connected=($(xrandr -q | sed -n '/\sconnected/p' | awk '{print $1}'))
-disconnected=($(xrandr -q | sed -n '/\sdisconnected/p' | awk '{print $1}'))
+connected="$(xrandr -q | awk '/ connected/ {printf "%s ",$1}' | sed 's/[ \t]$//')"
 
-if [ -f ~/.config/.xrandr_prev ] ; then
-    cmd=$(cat ~/.config/.xrandr_prev)
-
-    for i in "${disconnected[@]}" ; do
-	cmd=$(printf "$cmd" | grep -v "$i")
-	xrandr --output "$i" --off
-    done
-else
-    cmd=(xrandr --output "$def_primary" --primary --auto)
-fi
-
-cmd=$(echo $cmd | sed -e 's/\s\\//' -e '$s/ \\$//')
-
-$cmd
-
-~/.fehbg
-
-# keep the current setup as an xrandr command --note: this still doesnt support rotation info
-
-xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/.xrandr_prev
-
-# restart dunst to properly display notifications
-pgrep -x dunst >/dev/null && killall dunst
-setsid dunst &
+test "$(echo "$connected" | wc -w)" -gt 1 && monitorselect
