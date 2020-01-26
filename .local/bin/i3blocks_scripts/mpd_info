@@ -1,0 +1,18 @@
+#!/bin/env sh
+
+# display info about what mpd is playing
+
+is_playing=false
+
+state="$(mpc | awk '$1 ~ /\[[a-z]*\]/ {print $1}' | tr -d '[]')"
+
+case $state in
+    "playing") state=""; is_playing=true ;;
+    "paused") state=""; is_playing=true;;
+    *) state="" ;;
+esac
+
+if test $is_playing; then
+    info="$(mpc current)"
+    echo "$state $info"
+fi

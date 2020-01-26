@@ -59,11 +59,21 @@ super + d
 
 # MOCP controls
 
+# super + {slash,shift + slash}
+    # mocp --{toggle-pause,stop} && pkill -RTMIN+7 i3blocks
+
+# super + {comma,period}
+    # mocp --{previous,next} && pkill -RTMIN+7 i3blocks
+
+# super + shift + {comma, period}
+    # mocp --seek {-,+}5 && pkill -RTMIN+7 i3blocks
+
+# MPC controls
 super + {slash,shift + slash}
-    mocp --{toggle-pause,stop} && pkill -RTMIN+7 i3blocks
+      mpc {toggle,stop} && pkill -RTMIN+7 i3blocks
 
 super + {comma,period}
-    mocp --{previous,next} && pkill -RTMIN+7 i3blocks
+      mpc {prev,next} && pkill -RTMIN+7 i3blocks
 
-super + shift + {comma, period}
-    mocp --seek {-,+}5 && pkill -RTMIN+7 i3blocks
+super + shift + {comma,period}
+      mpc seek {-,+}5 && pkill -RTMIN+7 i3blocks

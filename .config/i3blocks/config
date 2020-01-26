@@ -35,18 +35,19 @@ markup=none
 interval=1
 color=#AAAAAA
 
+# audio player info
+[mpd_info]
+color=#336699
+interval=once
+signal=7
+separator=false
+separator_width=10
+
 # Yes, it just informs you about the phase of the moon
 [moonphase]
 interval=43200
 color=#DDDD00
 separator=false
-
-# audio player info
-[mocp-info]
-color=#336699
-#interval=once
-interval=1
-signal=7
 
 # curl wttr.in and format string to display weather
 [weather]
