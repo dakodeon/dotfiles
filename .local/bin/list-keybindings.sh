@@ -2,7 +2,7 @@
 
 # Generate a file with i3 keybindings organized alphabetically
 
-i3conf=$HOME/dotfiles/i3/i3.conf
+i3conf=$HOME/.source/dotfiles/.config/i3/i3.conf
 # rcconf=$HOME/dotfiles/ranger/rc.conf
 
 sed -n '/^mode/,/}/d; /bindsym/s/bindsym //p;' "$i3conf" | # remove all 'mode' sections, and print only 'bindsym' lines, but without 'bindsym'

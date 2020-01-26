@@ -1,48 +1,50 @@
-#!/bin/bash
+#!/bin/env sh
 
 # select and position monitors
 
-connected=($(xrandr -q | sed -n '/\sconnected/p' | awk '{print $1}'))
-primary=$(xrandr -q | sed -n '/primary/p' | awk '{ print $1 }')
+connected="$(xrandr -q | awk '/ connected/ {printf "%s ",$1}' | sed 's/[ \t]$//')"
+primary="$(xrandr -q | awk '/primary/ { print $1 }')"
 
-selected=$(printf "%s\n" "${connected[@]}" | dmenu -i -p "Select monitor: ") || exit 23
+selected="$(echo "$connected" | tr " " "\n" | dmenu -i -p "Select monitor:")" || exit 23
 
-[ -n $selected ] &&
-    if [ $selected = $primary ] ; then
-	option=$(printf "solo\nturn off\nmanual setup\nrotate" | dmenu -i -p "Primary monitor ($selected): ") || exit 23
+test -n "$selected"  &&
+    if  test "$selected" = "$primary"; then
+	option="$(printf "solo\nturn off\nmanual setup\nrotate" | dmenu -i -p "Primary monitor ($selected):")" || exit 23
     else
-	option=$(printf "left-of $primary\nright-of $primary\nabove $primary\nbelow $primary\nsame-as $primary\nsolo\nturn off\nmanual setup\nrotate" | dmenu -i -p "Secondary monitor ($selected): ") || exit 23
+	option="$(printf "left-of primary\nright-of primary\nabove primary\nbelow primary\nsame-as primary\nsolo\nturn off\nmanual setup\nrotate" | sed "s/primary/$primary/g" | dmenu -i -p "Secondary monitor ($selected):")" || exit 23
     fi
 
-
-case $option in
+case "$option" in
     "solo") # turn everything off except from selected
-	xrandr --output $selected --auto --primary
-	for i in "${connected[@]}" ; do
-	    [ $i = $selected ] && continue;
-	    xrandr --output $i --off
+	xrandr --output "$selected" --auto --primary
+	i=0
+	while test "$i" -ne "$(echo "$connected" | wc -w)"; do
+	    i=$((i + 1))
+	    mon="$(echo "$connected" | awk -v i=$i '{print $i}')"
+	    test "$mon" = "$selected" && continue
+	    xrandr --output "$mon" --off
 	done
-	notify_text="  Monitor $selected solo"
+	notify_text="Monitor $selected solo"
 	;;
     "turn off") # if other monitors are connected, turn off selected. If primary, set other
-	[ ${#connected[@]} -eq 1 ] && notify-send "⚠  Monitor $selected is the only monitor! Aborting." && exit 1
-	if [ $selected = $primary ] ; then
-	    new_primary=$(printf "%s\n" "${connected[@]}" | grep -v $selected | dmenu -i -p "New primary monitor: ") || exit 23
+	test "$(echo "$connected" | wc -w)" -eq 1  && notify-send "⚠  Monitor $selected is the only monitor! Aborting." && exit 1
+	if  test "$selected" = "$primary"; then
+	    new_primary="$(echo "$connected" | tr " " "\n" | grep -v "$selected" | dmenu -i -p "New primary monitor:")" || exit 23
 	else
-	    new_primary=$primary
+	    new_primary="$primary"
 	fi
-	xrandr --output $new_primary --auto --primary --output $selected --off
-	notify_text="  Monitor $selected off"
+	xrandr --output "$new_primary" --auto --primary --output "$selected" --off
+	notify_text="Monitor $selected off"
 	;;
     "manual setup")
 	arandr
 	;;
     "rotate")
-	rotation=$(printf "normal\nleft\nright\ninverted" | dmenu -i -p "Set rotation for $selected: ") || exit 23
-	xrandr --output $selected --rotate $rotation
-	notify_text="  Monitor $selected orientation changed"
+	rotation="$(printf "normal\nleft\nright\ninverted" | dmenu -i -p "Set rotation for $selected:")" || exit 23
+	xrandr --output "$selected" --rotate "$rotation"
+	notify_text="Monitor $selected orientation changed"
 	;;
-    *$primary)
+    *)
 	if [ "$option" = "same-as $primary" ] ; then
 	    primary_X=$(xrandr -q | sed -n "/$primary/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
 	    selected_X=$(xrandr -q | sed -n "/$selected/,/\\+/p" | tail -n 1 | awk '{ print $1 }' | cut -d'x' -f1)
@@ -50,25 +52,25 @@ case $option in
 	else
 	    ratio=1
 	fi
-	xrandr --output $selected --auto --scale "$ratio"x"$ratio" --$option
-	notify_text="  Monitor $selected placed $option"
+	xrandr --output "$selected" --auto --scale "$ratio"x"$ratio" --$option
+	notify_text="Monitor $selected placed $option"
 	;;
 esac
 
 # redraw desktop background
-remember_bg.sh
+# remember_bg.sh
+~/.fehbg
 
 # restart dunst to properly display notifications
-pgrep -x dunst >/dev/null && (killall dunst && setsid dunst &) || setsid dunst &
+pgrep -x dunst >/dev/null && killall dunst
+setsid dunst &
 
 # wait for dunst to run and then display notification
-while ! ps -ef | grep dunst | grep -v grep 2>&1; do
+while test $(pgrep -c dunst) -eq 0; do
     sleep 1
 done
-notify-send "$notify_text"
+notify-send " Monitor setup" "$notify_text"
 
 # keep the current setup as an xrandr command --note: this still doesnt support rotation info
 
-xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/scripts/xrandr_prev
-
-exit 0
+xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/.xrandr_prev
