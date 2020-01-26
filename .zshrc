@@ -193,15 +193,22 @@ alias h='cd'
 alias D='cd $HOME/Downloads'
 alias d='cd $HOME/Documents'
 alias M='cd $HOME/Music'
-alias m='cd /run/media/louk'
+alias P='cd $HOME/Pictures'
+alias m='cd /media'
 
 # alias for emacs client
 alias ec='emacsclient -c '
 alias et='emacsclient -t '
-alias er='pkill emacs && emacs --daemon'
+alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
 alias ra='ranger '
 alias z='zathura '
 
+# alias for git
+
+alias gc='git clone '
+alias ga='git add .'
+alias gA='git add . && git commit -m '
+alias gp='git push'
 
 # access conf files
 alias cni='emacsclient -t $HOME/.config/i3/i3.conf'

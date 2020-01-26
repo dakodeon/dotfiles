@@ -1,6 +1,11 @@
 # this is a test config
 
 ### SYSTEM
+super + {q,shift + q}
+      xdo {close, kill}
+
+super + Pause
+      i3lock
 
 # audio controls (pulseaudio)
 
