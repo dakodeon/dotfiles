@@ -68,6 +68,9 @@ super + d
 # super + shift + {comma, period}
     # mocp --seek {-,+}5 && pkill -RTMIN+7 i3blocks
 
+super + {v,shift + v}
+      {download_stuff,download_link}
+
 # MPC controls
 super + {slash,shift + slash}
       mpc {toggle,stop} && pkill -RTMIN+7 i3blocks

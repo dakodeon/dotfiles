@@ -1,0 +1,69 @@
+#!/bin/env sh
+
+# download copied link with wget. Prompts for location with dmenu. Throws error on non-existent location.
+
+
+# LAYOUT
+#
+# Input is a link or list of links (clipboard or arg -- for now only one arg will be read)
+# Check input for validity. Loop through the lines and check. If there is an invalid link exit with error
+# read directory to save at. if nonexistent, prompt to create it. No sudo, only in home dir. (maybe do previous step after this one to iterate only once)
+# Main loop. Iterate through the links and perform wget command. Maybe check for same-name files? Nah, just handle duplicates later.
+# done
+
+did=123456
+
+scriptfail() { \
+	       failmsg="$1"
+	       exitcode="$2"
+	       echo "$failmsg"
+	       dunstify -r $did " Save link(s)" "$failmsg"
+	       exit $exitcode
+}
+
+# reads links from universal args or clipboard
+test -n "$1" && links="$1" || links="$(xclip -selection clipboard -o)"
+
+test -z "$links" && scriptfail "No links provided!" 1
+
+# check for validity
+# make links list so that awk can read it
+links="$(echo "$links" | tr "\n" " " | sed 's/[ \t]$//')"
+
+i=0
+m=$(echo "$links" | wc -w)
+
+while test $i -ne $m; do
+    i=$((i+1))
+    l="$(echo "$links" | awk -v i=$i '{print $i}')"
+    # the expr statement below should represent a full URL -- TODO
+    if ! expr "$l" : '^[http(s)?]'>/dev/null; then
+	scriptfail "Link list contains invalid links!" 2
+    fi
+done
+
+# dunstify -r $did " Save link(s)" "$links"
+
+# read location -- prompt if non-existent
+location="$(find $HOME -maxdepth 3 -type d | sed 's/^\/home\/[a-zA-Z0-9]*/~/' | dmenu -i -p "Save link(s) in:")" && location="$HOME$(echo "$location" | sed 's/^~//')" || exit 23
+
+if test ! -d "$location"; then
+    yorndir="$(printf "Yes\nNo" | dmenu -i -p "Directory $location does not exist! Create it?")" || exit 23
+    case "$yorndir" in
+	"Yes")
+	    mkdir -p "$location"
+	    ;;
+	*)
+	    scriptfail "Aborted by user." 23
+	    ;;
+    esac
+fi
+
+# main loop -- once again -- m is defined upstream, init i
+i=0
+
+while test $i -ne $m; do
+    i=$((i+1))
+    l="$(echo "$links" | awk -v i=$i '{print $i}')"
+    wget -P "$location" "$l" && dunstify -r $did " Save link(s)" "$i: Saved at $location"
+done

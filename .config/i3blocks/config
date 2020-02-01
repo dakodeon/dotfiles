@@ -80,7 +80,15 @@ interval=once
 instance=gmail
 signal=2
 markup=pango
+separator=false
+separator_block_width=5
 
+[mail-notifier]
+color=#CCAA00
+interval=once
+instance=gmail_luc
+signal=2
+markup=pango
 # Volume indicator
 #
 # The first parameter sets the step (and units to display)
