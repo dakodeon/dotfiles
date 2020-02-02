@@ -51,7 +51,6 @@ makedir() { \
 		    "Yes")
 			# shellcheck disable=SC2015
 			sudo -A mkdir -p "$dir" && echo Dir "$dir" created successfully. || scriptfail "Failed to create dir $dir!" 1
-			# test $? -ne 0 && echo Failed to create "$dir" && exit 1
 			;;
 		    *)
 			scriptfail "Aborted by user." 2

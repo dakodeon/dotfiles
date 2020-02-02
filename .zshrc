@@ -77,7 +77,7 @@ setopt prompt_subst
 # PROMPT="%(!.%{$fg[red]%}[%n@%m %1~]%{$reset_color%}# .%{$fg[green]%}[%n@%m %1~]%{$reset_color%}$ "
 # Maia prompt
 # PROMPT="%B%{$fg[cyan]%}%(4~|%-1~/.../%2~|%~)%u%b >%{$fg[cyan]%}>%B%(?.%{$fg[cyan]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
-PROMPT="[%B%{$fg[green]%}%1~%b%u] >%B%(?.%{$fg[green]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
+PROMPT="%B%{$fg[green]%}%1~%b%u >%B%(?.%{$fg[green]%}.%{$fg[red]%})>%{$reset_color%}%b " # Print some system information when the shell is first started
 # Print a greeting message when shell is started
 cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
 echo -e "\033[32;1m>>>\033[34;3m"$USER@$HOST"\033[32m>>>\033[34;3m"$(uname -srm) $(lsb_release -rcs)"\033[32m>>>\n"
