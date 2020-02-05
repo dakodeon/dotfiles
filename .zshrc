@@ -1,5 +1,5 @@
  ## Options section
-setopt correct                                                  # Auto correct mistakes
+# setopt correct                                                  # Auto correct mistakes
 setopt extendedglob                                             # Extended globbing. Allows using regular expressions with *
 setopt nocaseglob                                               # Case insensitive globbing
 setopt rcexpandparam                                            # Array expension with parameters
@@ -10,7 +10,6 @@ setopt appendhistory                                            # Immediately ap
 setopt histignorealldups                                        # If a new command is a duplicate, remove the older one
 setopt autocd                                                   # if only directory path is entered, cd there.
 eval "$(dircolors -b)"
-
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'       # Case insensitive tab completion
 zstyle ':completion:*' completer _expand _complete _correct _approximate
@@ -29,29 +28,12 @@ HISTSIZE=10000
 SAVEHIST=5000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
-
 ## Keybindings section
 bindkey -e
 bindkey '^[[2~' overwrite-mode                                  # Insert key
 bindkey '^[[3~' delete-char                                     # Delete key
-# bindkey '^[[C'  forward-char                                    # Right key
-# bindkey '^[[D'  backward-char                                   # Left key
 bindkey '^[[5~' history-beginning-search-backward               # Page up key
 bindkey '^[[6~' history-beginning-search-forward                # Page down key
-
-# Navigate words with ctrl+arrow keys
-bindkey '^[Oc' forward-word                                     #
-bindkey '^[Od' backward-word                                    #
-bindkey '^[[1;5D' backward-word                                 #
-bindkey '^[[1;5C' forward-word                                  #
-bindkey '^H' backward-kill-word                                 # delete previous word with ctrl+backspace
-bindkey '^[[Z' undo                                             # Shift+tab undo last action
-
-## Alias section 
-alias cp="cp -i"                                                # Confirm before overwriting something
-alias df='df -h'                                                # Human-readable sizes
-alias free='free -m'                                            # Show sizes in MB
-alias gitu='git add . && git commit && git push'
 
 ## Plugins section: Enable fish style features
 # Use syntax highlighting
@@ -70,15 +52,16 @@ autoload -U compinit colors zcalc
 compinit -d
 colors
 
+# Print a greeting message when shell is started
+cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
+echo -e "\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m➛ \033[34;3m"$(uname -srm) $(lsb_release -rs)"\033[32m➛\n"
+
 # enable substitution for prompt
 setopt prompt_subst
 
 # prompt message
 PROMPT="%B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%})〉%{$reset_color%}%b " # Print some system information when the shell is first started
 
-# Print a greeting message when shell is started
-cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
-echo -e "\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m➛ \033[34;3m"$(uname -srm) $(lsb_release -rs)"\033[32m➛\n"
 ### Git prompt functions
 
 # Modify the colors and symbols in these variables as desired.
@@ -178,6 +161,11 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+## Alias section 
+alias cp="cp -i"                                                # Confirm before overwriting something
+alias df='df -h'                                                # Human-readable sizes
+alias free='free -m'                                            # Show sizes in MB
+
 # ls aliases
 alias ll='ls -l'
 alias la='ls -al'
@@ -185,6 +173,23 @@ alias l.='ls -d .*'
 
 # exit
 alias q='exit'
+
+# aliases for programs
+alias ec='emacsclient -c '
+alias et='emacsclient -t '
+alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
+alias v='vim '
+alias ra='ranger '
+alias z='zathura '
+
+# aliases for git
+
+alias g.='git status'
+alias g\?='git diff'
+alias gc='git clone '
+alias ga='git add .'
+alias gA='git add . && git commit -m '
+alias gp='git push'
 
 # some folders aliases
 alias h='cd'
@@ -194,26 +199,15 @@ alias M='cd $HOME/Music'
 alias P='cd $HOME/Pictures'
 alias m='cd /media'
 
-# alias for emacs client
-alias ec='emacsclient -c '
-alias et='emacsclient -t '
-alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
-alias ra='ranger '
-alias z='zathura '
-
-# alias for git
-
-alias gc='git clone '
-alias ga='git add .'
-alias gA='git add . && git commit -m '
-alias gp='git push'
-
 # access conf files
-alias cni='emacsclient -t $HOME/.config/i3/i3.conf'
-alias cnr='emacsclient -t $HOME/.config/ranger/rc.conf'
-alias cnz='emacsclient -t $HOME/.zshrc'
-alias cnx='emacsclient -t $HOME/.Xresources'
-alias cnf='emacsclient -t "/sudo:root@dubajamaman:/etc/fstab"'
+alias cni='$EDITOR $HOME/.config/i3/i3.conf'
+alias cnr='$EDITOR $HOME/.config/ranger/rc.conf'
+alias cnz='$EDITOR $HOME/.zshrc'
+alias cnx='$EDITOR $HOME/.Xresources'
+alias cnf='$EDITOR "/sudo:root@dubajamaman:/etc/fstab"'
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '
+
+# added by broot
+source /home/louk/.config/broot/launcher/bash/br
