@@ -23,7 +23,7 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
-HISTFILE=~/.zsh_history
+HISTFILE=$XDG_CACHE_HOME/zsh_history
 HISTSIZE=10000
 SAVEHIST=5000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
