@@ -45,7 +45,7 @@ super + {F10,shift + F10}
 # toggle touchpad
 
 F4
-    touchpad-toggle
+      touchpad-toggle
 
 # mount-unmount
 
@@ -55,21 +55,16 @@ super + grave
 # dmenu_run
 
 super + d
-    dmenu_run -fn "Jura-10"
+      dmenu_run -fn "Jura-10"
 
-# MOCP controls
-
-# super + {slash,shift + slash}
-    # mocp --{toggle-pause,stop} && pkill -RTMIN+7 i3blocks
-
-# super + {comma,period}
-    # mocp --{previous,next} && pkill -RTMIN+7 i3blocks
-
-# super + shift + {comma, period}
-    # mocp --seek {-,+}5 && pkill -RTMIN+7 i3blocks
-
+# download stuff
 super + {v,shift + v}
       {download_stuff,download_link}
+
+# org-capture
+super + n
+      emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
+
 
 # MPC controls
 super + {slash,shift + slash}
