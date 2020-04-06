@@ -1,0 +1,17 @@
+#!/bin/env sh
+
+# save urls to bookmark file
+# do I really need surfraw for that?
+
+# default bookmarks file
+bookfile="$XDG_CONFIG_HOME/surfraw/bookmarks"
+
+# if the path does not exists, create it
+test -d "$(dirname "$bookfile")" || mkdir -p "$(dirname "$bookfile")"
+
+# the script assumes that the URL you want to store is in your clipboard
+url="$(xclip -selection clipboard -o)"
+
+bookname="$(echo "" | dmenu -i -p "Name for "$url"?")" || exit 23
+
+echo "$bookname $url" >> "$bookfile" && notify-send " Bookmark saved" "$bookname was stored successfully."

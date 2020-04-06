@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# mv interface using fzf
+
+filelist="$(fzf --no-info --prompt="Select files: " --multi)"
+
+test -z "$filelist" && echo "No file list specified!" && exit 2
+
+dest="$(sudo -A find . -type d | fzf --no-info --prompt="Destination: ")"
+
+test ! -d "$dest" && echo "Destination is not a directory!" && exit 2
+
+printf "%s" "$filelist" | xargs -I "x" mv x "$dest"
