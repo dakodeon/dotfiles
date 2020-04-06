@@ -1,0 +1,9 @@
+#!/bin/env sh
+
+# wraps around the surfraw program with dmenu and prompts for search query and elvi to use
+
+query="$(echo "" | dmenu -i -p "Search the web:")" || exit 23
+
+elvi="$(surfraw -elvi | awk '{print $1}' | dmenu -i -p "Search for \"$query\" with:")" || exit 23
+
+surfraw "$elvi" "$query"

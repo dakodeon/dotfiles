@@ -1,0 +1,36 @@
+#!/bin/env sh
+
+# close all external monitors
+
+mainmon="LVDS1"
+
+connected="$(xrandr -q | awk '/ connected/ {printf "%s ",$1}' | sed 's/[ \t]$//')"
+
+xrandr --output "$mainmon" --auto --primary
+
+i=0
+while test "$i" -ne "$(echo "$connected" | wc -w)"; do
+    i=$((i + 1))
+    mon="$(echo "$connected" | awk -v i=$i '{print $i}')"
+    test "$mon" = "$mainmon" && continue
+    xrandr --output "$mon" --off
+done
+notify_text="Monitor $selected solo"
+
+# redraw desktop background
+# remember_bg.sh
+~/.fehbg
+
+# restart dunst to properly display notifications
+pgrep -x dunst >/dev/null && killall dunst
+setsid dunst &
+
+# wait for dunst to run and then display notification
+while test $(pgrep -c dunst) -eq 0; do
+    sleep 1
+done
+notify-send " Monitor setup" "$notify_text"
+
+# keep the current setup as an xrandr command --note: this still doesnt support rotation info
+
+xrandr -q | sed -n '/\sconnected/p' | sed -e 's/\sconnected//' -e 's/\s(.*).*$//' | sed -e 's/^/--output /' -e 's/primary/--&/' -e 's/\s[0-9]*x[0-9]*/ --mode&/' -e 's/+[0-9]*+[0-9]*/ --pos &/' -e 's/\s+/ /' -e 's/+/x/' -e 's/^--output [a-zA-Z]*[0-9]$/& --off/' | sed -e 's/$/ \\/' -e '$s/ \\$//' -e '1 s/^/xrandr /' > ~/.config/.xrandr_prev

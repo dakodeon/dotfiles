@@ -7,8 +7,10 @@ super + {q,shift + q}
 super + Pause
       i3lock
 
+super + ctrl + r
+      pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
+      
 # audio controls (pulseaudio)
-
 {F8,F9}
     pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
     
@@ -19,7 +21,6 @@ F3
     pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
 
 # audio controls (alsa)
-
 ctrl + {F8,F9}
     amixer set 'Master' 5%{-,+}
 
@@ -30,7 +31,6 @@ ctrl + F3
     amixer set 'Speaker' toggle
 
 # brightness controls
-
 {F6, F7}
     xbacklight -{dec,inc} 10
 
@@ -38,22 +38,18 @@ shift + {F6,F7}
     xbacklight -set {50,100}
 
 # multi-monitor
-
-super + {F10,shift + F10}
-    {monitorselect,monitorstartup}
+super + {F10,shift + F10,ctrl + F10}
+    {monitorselect,monitorstartup,monitorsolo}
 
 # toggle touchpad
-
 F4
       touchpad-toggle
 
 # mount-unmount
-
 super + grave
       mount-unmount
 
 # dmenu_run
-
 super + d
       dmenu_run -fn "Jura-10"
 
@@ -65,6 +61,9 @@ super + {v,shift + v}
 super + n
       emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
 
+# store/visit bookmarks
+super + s; {s, f, shift + f}
+      {booksave, bookvisit, surfmenu}
 
 # MPC controls
 super + {slash,shift + slash}
