@@ -1,32 +1,64 @@
-#!/bin/bash
+#!/bin/env sh
 
-# download management for audio/video downloads (youtube) and magnet links.
-# using xclip, youtube-dl, transmission-daemon and tremc
+### --HELP START-- ###
 
-# youtube-dl download directory
+# Automate youtube-dl downloads
+
+# The URL you are trying to download should be in your clipboard.
+
+# The way it works:
+
+# Options:
+# -a: Download only audio
+# -h: This help message
+
+# dakodeon, 2020
+
+# TODO list:
+# * Add functionality to also give url(s) as positional parameters
+
+### --HELP END-- ###
+
+# for dunstify
+did=123987
+
 dl_dir=$HOME/Downloads/youtube-downloads
 
-link=$(xclip -selection clipboard -o)
+link="$(xclip -selection clipboard -o)"
 
-if [ $(echo $link | grep "^magnet") ] ; then
-    transmission-remote -a "$link" && notify-send "  Downloading torent" && (pgrep -f "urxvt -e tremc" && i3-msg "[title=tremc] focus" || urxvt -e tremc &) && exit 0 || notify-send "  Something went wrong!" && exit 1
+# defaults to video
+media="video"
 
-    # assuming that all links refer to downloadable links -- TODO: use youtube-dl to give errors for non-valid URLs
-elif [ $(echo $link | grep "^http") ] ; then
-    f_name=$(youtube-dl -e "$link") # this takes extra time, but is cool dammit!
-    type=$(printf "audio\nvideo" | dmenu -i -p "Download \"$f_name\" as audio or video?")
-    if [ $type = "audio" ] ; then
-	audopt="-x --audio-format mp3"
-    elif [ $type = "video" ] ; then
-	audopt=""
-    else
-	notify-send "  Download aborted" && exit 1
-    fi
+# exit if no valid link
+! expr "$link" : '^http' >/dev/null && dunstify -r $did " Download stuff" "No valdid link in clipboard" && exit 23
 
-    notify-send "  Downloading $type:" "\"$f_name\""
-    # temporary bypass of the "no video title" error -- use alt_title instead. Should be fixed in next update
-    youtube-dl $audopt -i -c -o "$(echo $dl_dir)/%(title)s.%(ext)s" "$(echo $link)" && notify-send "  Download complete:" "\"$f_name\"" && exit 0 || notify-send "  Download failed:" "\"$f_name\"" && exit 1
+while getopts ":ah" opt; do
+    case $opt in
+	a)
+	    audopt="-x --audio-format mp3"
+	    media="audio"
+	    ;;
+	h) 
+	    sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0"
+	    exit
+	    ;;
+	\?)
+	    echo "Unknown option. Run with -h for help." >&2
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
+	    ;;
+    esac
+done
 
-else
-    notify-send "  No valid link in clipboard!" && exit 1
-fi
+shift $((OPTIND-1))
+
+dunstify -r $did " Please wait" "Preparing for $media download "
+
+title="$(youtube-dl -e "$link")"
+
+dunstify -r $did " Downloading $media" "\"$title\""
+
+youtube-dl $audopt -q -i -c -o "$dl_dir/%(title)s.%(ext)s" "$link" && \
+    dunstify -r $did " Download complete" "\"$title\"" || \
+	dunstify -r $did "  Download failed:" "\"$title\""

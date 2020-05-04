@@ -7,6 +7,9 @@ super + {q,shift + q}
 super + Pause
       i3lock
 
+super + shift + Pause
+      notify-send "DUNST_COMMAND_TOGGLE"
+
 super + ctrl + r
       pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
       
@@ -54,8 +57,8 @@ super + d
       dmenu_run -fn "Jura-10"
 
 # download stuff
-super + {v,shift + v}
-      {download_stuff,download_link}
+super + {v; a, v; v, shift + v}
+      {download_stuff -a, download_stuff, download_link}
 
 # org-capture
 super + n

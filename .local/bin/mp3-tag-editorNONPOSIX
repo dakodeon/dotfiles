@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# A script to edit ID3 tags in mp3 files
+
+# TODO: option to edit specific fields
+#       option to remove all data
+#       option to rename file according to fields -- DONE
+#       add naming templates, with default to what I use here, or do
+#       that conditionally, depending on existing tags
+
+# parse options
+while getopts ":ERh" opt; do
+    case $opt in
+	E) EDIT=true ;;
+	R) RENAME=true ;;
+	h) echo -e \
+	   "Edit ID3 tags in mp3 files.
+	   Options:
+		-E: Edit tags
+		-R: Rename files according to existing or edited tags.
+		    For now, renaming uses a format which is optimized for my rempetika collection, which is <composer (artist) - title>, or <artist - title> if there is no composer, or if the composer is the artist.
+		-h: Display this help message.
+
+	Under construction, as new ideas keep coming in!"
+	   ;;
+	\?)
+	    echo "Invalid option: -$OPTARG. Use -h for help." >&2
+	    exit 1
+	    ;;
+    esac
+    
+done
+
+shift $((OPTIND-1))
+
+# options are skipped, next are the positional params
+for i in "$@"; do
+
+    # test if file is mp3 or not -- TODO: check if it is a dir and do the work in there too
+    if [[ ${i: -4} != ".mp3" ]]; then
+	# echo File "$i" is not an mp3. Skipping...
+	continue
+    fi
+
+    # ffprobe command to query data - use the same to get other info as well
+    probe=(ffprobe\ -loglevel\ error\ -show_entries\ format_tags=artist,composer,title,album,track,date)
+    # echo $probe
+    # retrieve existing data
+    def_artist=$($probe "$i" | grep artist= | cut -d'=' -f2)
+    def_comp=$($probe "$i" | grep composer= | cut -d'=' -f2)
+    def_title=$($probe "$i" | grep title= | cut -d'=' -f2)
+    def_year=$($probe "$i" | grep date= | cut -d'=' -f2)
+
+    if [[ $EDIT == true ]]; then
+	echo Tags for: "$i"
+	
+	# initiate flags array
+	flags=()
+	
+	read -p "Title: " -i "$def_title" -e title
+	[ -n "$title" ] && flags+=(--title "$title")
+	
+	read -p "Composer: " -i "$def_comp" -e comp
+	[ -n "$comp" ] && flags+=(--text-frame=TCOM:"$comp")
+	
+	read -p "Artist: " -i "$def_artist" -e artist
+	[ -n "$artist" ] && flags+=(--artist "$artist")
+	
+	read -p "Year: " -i "$def_year" -e year
+	[ -n "$year" ] && flags+=(--release-year "$year")
+	
+	# assign tags to the file, if there are any
+	[ ${#flags[@]} -gt 0 ] && eyeD3 "$i" "${flags[@]}" >/dev/null || (echo Nothing to do. Exiting; exit 23)
+    fi
+
+    if [[ $RENAME == true ]]; then
+
+	# renaming process
+	[ -z "$title" ] && title=$def_title
+	[ -z "$artist" ] && artist=$def_artist
+	[ -z "$comp" ] && comp=$def_comp
+	
+	if [[ -n "$title" && -n "$artist" ]]; then
+	    if [[ -z "$comp" || "$comp" == "$artist" ]]; then
+		name="$artist - $title"
+	    else
+		name="$comp ($artist) - $title"
+	    fi
+	    
+	    old="$(dirname "$i")/$(basename "$i")"
+	    new="$(dirname "$i")/$name.mp3"
+	    if [[ $old != $new ]]; then
+		mv -n "$old" "$new"
+	    # else
+		# echo File "$i" is already correctly named. Skipping...
+	    fi
+	else
+	    echo No artist and/or title info provided. Cannot rename. Skipping...
+	fi
+    fi
+    
+    # initialize variables before next loop
+    title=""
+    artist=""
+    comp=""
+    year=""
+
+done
+
+exit 0
+
+# ## Thought for options:
+# -E: edit all tags - DONE
+# -e: takes one argument, and if it corresponds to a tag, edit only that
+# -D: clear all tags
+# -R: rename file according to tag - DONE
+# -h: help (of course) - DONE

@@ -1,116 +1,213 @@
-#!/bin/bash
+#!/bin/env sh
 
-# A script to edit ID3 tags in mp3 files
+### --HELP START-- ###
 
-# TODO: option to edit specific fields
-#       option to remove all data
-#       option to rename file according to fields -- DONE
-#       add naming templates, with default to what I use here, or do that conditionally, depending on existing tags
+# A script to edit ID3 tags in mp3 files.
+
+# Depends on ffprobe (part of ffmpeg) to parse tags and ID3 (a python
+# program) to set them. ID3 is used specifically because it can handle
+# UTF-8 input without much hassle.
+
+# The way it works:
+
+# Options:
+# -E: Edit the tags.
+
+# -R: Rename the file according to pre-existing or edited tags.
+# For now, renaming uses a format which is optimized for my rempetika
+# collection, which is <composer (artist) - title>, or <artist -
+# title> if there is no composer, or if the composer is the artist.
+
+# -X: Non-interactive.
+# The script will not ask for user input, instead it will assume that
+# all info is provided through arguments (see next section)
+
+# -N: Do not use rebetika-specific tags.
+# If specified, omit asking for input about rebetika-specific tags in
+# interactive mode. Those are: composer, rhythm, dromos, tone. You can
+# still set these by using the options, if you like. This is here for the
+# case that I use this script for other kinds of songs as well.
+
+# -t [title], -c [composer], -a [artist], -y [year], -r [rhythm],
+# -d [dromos], -n [tone (note)]: Specify tags.
+# These options require an argument, as described above. When present,
+# these values will be used instead of user input. Even if the script
+# is called interactively, the user will not be prompted about a tag
+# of which the value is specified here. There are two use cases: when
+# using -X, thus replacing the default input mechanism, or for setting
+# a default value (eg the same composer for a bunch of files)
+
+# -h: This help message
+
+# TODO list:
+# * Add option to remove all data
+
+# * Add naming templates, with default to what I use here, or do that
+# conditionally, depending on already existing tags (e.g track
+# number - title)
+
+# * Add integration with my maintained lyrics archive, written in
+# org-mode. Each song has its own header and a set of properties
+# which correspond partialy to the ID3 tags. Maybe I could use this
+# script to update the properties based on the existing tags and
+# vice-versa.
+
+# dakodeon, 2020
+
+### --HELP END-- ###
+
+# init flags
+EDIT=false
+RENAME=false
+REBET=true
+EXT_CALL=false # whether the script is called indirectly (eg from within emacs)
 
 # parse options
-while getopts ":ERh" opt; do
+while getopts ":ERNXa:t:c:y:r:d:n:h" opt; do
     case $opt in
 	E) EDIT=true ;;
 	R) RENAME=true ;;
-	h) echo -e \
-	   "Edit ID3 tags in mp3 files.
-	   Options:
-		-E: Edit tags
-		-R: Rename files according to existing or edited tags.
-		    For now, renaming uses a format which is optimized for my rempetika collection, which is <composer (artist) - title>, or <artist - title> if there is no composer, or if the composer is the artist.
-		-h: Display this help message.
-
-	Under construction, as new ideas keep coming in!"
-	   ;;
+	N) REBET=false ;;
+	X) EXT_CALL=true ;;
+	a)
+	    x_artist="$OPTARG"
+	    echo "Artist is set to: $x_artist"
+	    ;;
+	t)
+	    x_title="$OPTARG"
+	    echo "Title is set to: $x_title"
+	    ;;
+	c)
+	    x_composer="$OPTARG"
+	    echo "Composer is set to: $x_composer"
+	    ;;
+	y)
+	    x_year="$OPTARG"
+	    echo "Year is set to: $x_year"
+	    ;;
+	r)
+	    x_rhythm="$OPTARG"
+	    echo "Rhythm is set to: $x_rhythm"
+	    ;;
+	d)
+	    x_dromos="$OPTARG"
+	    echo "Dromos is set to: $x_dromos"
+	    ;;
+	n)
+	    x_tone="$OPTARG"
+	    echo "Tone is set to: $x_tone"
+	    ;;
+	h)
+	    sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0"
+	    exit
+	    ;;
 	\?)
-	    echo "Invalid option: -$OPTARG. Use -h for help." >&2
-	    exit 1
+	    echo "Unknown option. Run with -h for help." >&2
+	    ;;
+	:)
+	    echo "Missing argument for option -$OPTARG." >&2
 	    ;;
     esac
-    
 done
 
 shift $((OPTIND-1))
 
-# options are skipped, next are the positional params
+test -z "$@" && echo "No files specified!" && exit 23
+
 for i in "$@"; do
+    # exclude non-mp3 files from the list
+    echo "$i" | grep -vq '\.mp3$' && continue
+    probe="ffprobe -loglevel error -show_entries format_tags=artist,composer,title,album,track,date,rhythm,dromos,tone"
+    query="$($probe "$i")"
+    
+    # retrieve defaults
+    def_artist="$(echo "$query" | awk -F= '/artist=/ {print $2}')"
+    def_composer="$(echo "$query" | awk -F= '/composer=/ {print $2}')"
+    def_title="$(echo "$query" | awk -F= '/title=/ {print $2}')"
+    def_year="$(echo "$query" | awk -F= '/date=/ {print $2}')"
+    def_rhythm="$(echo "$query" | awk -F= '/rhythm=/ {print $2}')"
+    def_dromos="$(echo "$query" | awk -F= '/dromos=/ {print $2}')"
+    def_tone="$(echo "$query" | awk -F= '/tone=/ {print $2}')"
+    
+    # User input if EDIT flag was set
+    if $EDIT; then
+	# if called externally, dont ask for user input
+	if $EXT_CALL; then
+	    title="$x_title"
+	    composer="$x_composer"
+	    artist="$x_artist"
+	    year="$x_year"
+	    rhythm="$x_rhythm"
+	    dromos="$x_dromos"
+	    tone="$x_tone"
+	else
+	    echo Editing tags for: "$(basename "$i")"
+	    echo "######################################"
+	    echo "Title:    * default: $def_title *"
+	    test -n "$x_title" && title="$x_title" || read -r title
+	    $REBET && { echo "Composer:    * default: $def_composer *"
+			test -n "$x_composer" && composer="$x_composer" \
+				|| read -r composer; }
+	    echo "Artist:    * default: $def_artist *"
+	    test -n "$x_artist" && artist="$x_artist" || read -r artist
+	    echo "Year:    * default: $def_year *"
+	    test -n "$year" && year="$x_year" || read -r year
+	    $REBET && { echo "Rhythm:    * default: $def_rhythm *"
+			test -n "$x_rhythm" && rhythm="$x_rhythm" \
+				|| read -r rhythm
+			echo "Dromos:    * default: $def_dromos *"
+			test -n "$x_dromos" && dromos="$x_dromos" \
+				|| read -r dromos
+			echo "Tone:    * default: $def_tone *"
+			test -n "$x_tone" && tone="$x_tone" \
+				|| read -r tone;}
+	    echo "######################################"
+	fi
 
-    # test if file is mp3 or not -- TODO: check if it is a dir and do the work in there too
-    if [[ ${i: -4} != ".mp3" ]]; then
-	# echo File "$i" is not an mp3. Skipping...
-	continue
+	# if not set, use defaults
+	test -z "$title" && title="$def_title"
+	test -z "$composer" && composer="$def_composer"
+	test -z "$artist" && artist="$def_artist"
+	test -z "year" && year="$def_year"
+	test -z "rhythm" && rhythm="$def_rhythm"
+	test -z "dromos" && dromos="$def_dromos"
+	test -z "tone" && tone="$def_tone"
+
+	# the actual command
+	eyeD3 "$i" \
+	      ${title:+ --title "$title"} \
+	      ${composer:+ --text-frame=TCOM:"$composer"} \
+	      ${artist:+ --artist "$artist"} \
+	      ${rhythm:+ --user-text-frame=rhythm:"$rhythm"} \
+	      ${dromos:+ --user-text-frame=dromos:"$dromos"} \
+	      ${tone:+ --user-text-frame=tone:"$tone"} \
+	      ${year:+ --release-year "$year"} >/dev/null
     fi
 
-    # ffprobe command to query data - use the same to get other info as well
-    probe=(ffprobe\ -loglevel\ error\ -show_entries\ format_tags=artist,composer,title,album,track,date)
-    # echo $probe
-    # retrieve existing data
-    def_artist=$($probe "$i" | grep artist= | cut -d'=' -f2)
-    def_comp=$($probe "$i" | grep composer= | cut -d'=' -f2)
-    def_title=$($probe "$i" | grep title= | cut -d'=' -f2)
-    def_year=$($probe "$i" | grep date= | cut -d'=' -f2)
+    if $RENAME; then
+	test -z "$title" && title="$def_title"
+	test -z "$composer" && composer="$def_composer"
+	test -z "$artist" && artist="$def_artist"
 
-    if [[ $EDIT == true ]]; then
-	echo Tags for: "$i"
-	
-	# initiate flags array
-	flags=()
-	
-	read -p "Title: " -i "$def_title" -e title
-	[ -n "$title" ] && flags+=(--title "$title")
-	
-	read -p "Composer: " -i "$def_comp" -e comp
-	[ -n "$comp" ] && flags+=(--text-frame=TCOM:"$comp")
-	
-	read -p "Artist: " -i "$def_artist" -e artist
-	[ -n "$artist" ] && flags+=(--artist "$artist")
-	
-	read -p "Year: " -i "$def_year" -e year
-	[ -n "$year" ] && flags+=(--release-year "$year")
-	
-	# assign tags to the file, if there are any
-	[ ${#flags[@]} -gt 0 ] && eyeD3 "$i" "${flags[@]}" >/dev/null || (echo Nothing to do. Exiting; exit 23)
-    fi
+	if test -n "$title" -a -n "$artist"; then
+	    test -z "$composer" -o "$composer" = "$artist" && \
+		name="$artist - $title" || \
+		    name="$composer ($artist) - $title"
 
-    if [[ $RENAME == true ]]; then
-
-	# renaming process
-	[ -z "$title" ] && title=$def_title
-	[ -z "$artist" ] && artist=$def_artist
-	[ -z "$comp" ] && comp=$def_comp
-	
-	if [[ -n "$title" && -n "$artist" ]]; then
-	    if [[ -z "$comp" || "$comp" == "$artist" ]]; then
-		name="$artist - $title"
-	    else
-		name="$comp ($artist) - $title"
-	    fi
-	    
 	    old="$(dirname "$i")/$(basename "$i")"
 	    new="$(dirname "$i")/$name.mp3"
-	    if [[ $old != $new ]]; then
+	    test "$old" != "$new" && \
 		mv -n "$old" "$new"
-	    # else
-		# echo File "$i" is already correctly named. Skipping...
-	    fi
 	else
-	    echo No artist and/or title info provided. Cannot rename. Skipping...
+	    echo No artist and/or title info provided. Cannot rename. Skip!
 	fi
+
     fi
     
-    # initialize variables before next loop
+    # init vars for next loop
     title=""
     artist=""
-    comp=""
+    composer=""
     year=""
 
 done
-
-exit 0
-
-# ## Thought for options:
-# -E: edit all tags - DONE
-# -e: takes one argument, and if it corresponds to a tag, edit only that
-# -D: clear all tags
-# -R: rename file according to tag - DONE
-# -h: help (of course) - DONE

@@ -6,6 +6,6 @@ bookfile="$XDG_CONFIG_HOME/surfraw/bookmarks"
 
 test -f "$bookfile" || exit 23
 
-bookname="$(sed 's/ / -- /' "$bookfile" | dmenu -i -p "Select a bookmark:" | awk '{print $1}')" || exit 23
+bookname="$(sed 's/ / -- /' "$bookfile" | dmenu -l 10 -i -p "Select a bookmark:" | awk '{print $1}')" || exit 23
 
 surfraw "$bookname"

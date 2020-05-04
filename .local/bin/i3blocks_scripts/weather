@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/bin/env sh
 
 #weather report using wttr.in
 
 # wtr=$(curl wttr.in/\?format=%c%20%t%20%20%20%h)
-wtr="$(curl wttr.in/Athens,Greece?format=%c%t%20💧%h)"
-if [[ $wtr == *"Unknown"* ]]; then
-    wtr="?"
-fi
+wtr="$(curl wttr.in/Athens,Greece\?format=%c%t%20💧%h)"
 
-echo $wtr
+expr  "$wtr" : '^[^a-zA-Z]' >/dev/null && echo "$wtr" || echo "?"
 
 case $BLOCK_BUTTON in
-    1) urxvt -e w3m wttr.in ;;
+    1) termite -e w3m wttr.in ;;
 esac
