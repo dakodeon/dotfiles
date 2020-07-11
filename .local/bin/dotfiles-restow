@@ -1,0 +1,8 @@
+#!/bin/env sh
+
+# update dotfiles - stow everything
+
+parent_dir="$HOME/.source"
+
+pushd $parent_dir
+ls

@@ -1,0 +1,19 @@
+#!/bin/env sh
+
+# interactive package cleanup
+# runs -Qi on all entries of -Qdtq and prompts for uninstalling
+
+for i in $(pacman -Qdtq) ; do
+	pacman -Qi "$i"
+	ans="y"
+	echo "Uninstall \"$i\"? (y/n, RET means y)"
+	read -r ans
+	[ "$ans" = "y" ] && sudo pacman -Rns "$i"
+done
+
+ans="y"
+echo "Finished cleanup, clean also the database?"
+read -r ans
+[ "$ans" = "y" ] && sudo pacman -Sc
+echo "Done!"
+exit 0

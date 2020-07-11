@@ -4,12 +4,14 @@
 
 # Automate youtube-dl downloads
 
-# The URL you are trying to download should be in your clipboard.
-
 # The way it works:
 
 # Options:
 # -a: Download only audio
+# -u: The URL to download. If not used, defaults to clipboard contents.
+# -d: The destination directory. If not used, defaults to
+# ~/Downloads/youtube-downloads.
+# -P: don't download, play in mpv
 # -h: This help message
 
 # dakodeon, 2020
@@ -20,24 +22,33 @@
 ### --HELP END-- ###
 
 # for dunstify
-did=123987
+dunst_id=123987
 
-dl_dir=$HOME/Downloads/youtube-downloads
+def_dl_dir="$HOME/Downloads/youtube-downloads"
 
-link="$(xclip -selection clipboard -o)"
-
-# defaults to video
+# media defaults to video
 media="video"
 
-# exit if no valid link
-! expr "$link" : '^http' >/dev/null && dunstify -r $did " Download stuff" "No valdid link in clipboard" && exit 23
+# default function download
+play=false
 
-while getopts ":ah" opt; do
+while getopts ":aPhu:d:" opt; do
     case $opt in
 	a)
 	    audopt="-x --audio-format mp3"
 	    media="audio"
 	    ;;
+	u)
+			# check if url contains 4anime and change url to point to video
+			url="$OPTARG"
+			echo "$url" | grep 4anime && url="$(curl "$url" | grep 'file:' | awk -F'"' '{print $2}')"
+			;;
+	d)
+			dl_dir="$OPTARG"
+			;;
+	P)
+			play=true
+			;;
 	h) 
 	    sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0"
 	    exit
@@ -53,12 +64,25 @@ done
 
 shift $((OPTIND-1))
 
-dunstify -r $did " Please wait" "Preparing for $media download "
+test -z "$url" && url="$(xclip -selection clipboard -o)"
+test -d "$dl_dir" || dl_dir="$def_dl_dir"
 
-title="$(youtube-dl -e "$link")"
+# check url for validity
+! expr "$url" : '^http' >/dev/null && dunstify -r $dunst_id " Download stuff" "No valid link provided" && exit 23
 
-dunstify -r $did " Downloading $media" "\"$title\""
+# check dl_dir for validity
+! test -d $dl_dir && dunstify -r $dunst_id " Download stuff" "No valid download dir provided" && exit 23
 
-youtube-dl $audopt -q -i -c -o "$dl_dir/%(title)s.%(ext)s" "$link" && \
-    dunstify -r $did " Download complete" "\"$title\"" || \
-	dunstify -r $did "  Download failed:" "\"$title\""
+dunstify -r $dunst_id " Please wait" "Preparing for $media download "
+
+title="$(youtube-dl -e "$url")"
+
+dunstify -r $dunst_id " Downloading $media" "\"$title\""
+
+[ $play = true ] && \
+		{ dunstify -r $dunst_id " Playing" "\"$title\"" && st -e mpv "$url"; }
+
+[ $play = false ] && \
+			{ youtube-dl $audopt -q -i -c -o "$dl_dir/%(title)s.%(ext)s" "$url" && \
+					dunstify -r $dunst_id " Download complete" "\"$title\"" || \
+				dunstify -r $dunst_id " Download failed:" "\"$title\""; }

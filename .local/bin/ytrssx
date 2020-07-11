@@ -1,0 +1,7 @@
+#!/bin/env sh
+
+# extract the RSS feed link from a Youtube account and put it on the clipboard
+
+feed="$(curl -s "$(xclip -selection clipboard -o)" | grep -o '"externalId":"[a-zA-Z0-9_\-]*"' | tr -d "\"" | awk -F':' '{print "https://www.youtube.com/feeds/videos.xml?channel_id="$2}')"
+
+[ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify "RSS feed in clipboard" "$(echo "$feed")"; } || dunstify "No RSS feed found!"

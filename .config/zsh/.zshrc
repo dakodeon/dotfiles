@@ -178,7 +178,7 @@ alias q='exit'
 alias ec='emacsclient -c '
 alias et='emacsclient -t '
 alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
-alias v='vim '
+alias v='nvim '
 alias ra='ranger '
 alias z='zathura '
 
@@ -190,6 +190,21 @@ alias gc='git clone '
 alias ga='git add .'
 alias gA='git add . && git commit -m '
 alias gp='git push'
+
+# pacman aliases
+
+alias pS='sudo pacman -S ' # install
+alias pU='sudo pacman -Syu ' # upgrade
+alias pf='pacman -Ss ' # find package
+alias pR='sudo pacman -Rns ' # remove
+alias pl='pacman -Qe' # list exp. installed packages
+alias plu='pacman -Qdt' # list unneeded packages installed as deps
+alias pi='pacman -Qi ' # info about installed package
+alias pis='pacman -Si ' # info about package
+alias pif='pacman -Ql ' # files of installed package
+alias pifs='pacman -Sl ' # files of package
+alias pC='sudo pacman -Sc' # clear database of uninstalled packages
+alias pCC='sudo pacman -Scc' # clear database of all packages
 
 # some folders aliases
 alias h='cd'

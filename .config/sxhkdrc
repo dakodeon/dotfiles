@@ -1,16 +1,16 @@
 # this is a test config
 
 ### SYSTEM
-super + {q,shift + q}
+alt + {q,shift + q}
       xdo {close, kill}
 
-super + Pause
+alt + Pause
       i3lock
 
-super + shift + Pause
+alt + shift + Pause
       notify-send "DUNST_COMMAND_TOGGLE"
 
-super + ctrl + r
+alt + ctrl + r
       pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
       
 # audio controls (pulseaudio)
@@ -41,7 +41,7 @@ shift + {F6,F7}
     xbacklight -set {50,100}
 
 # multi-monitor
-super + {F10,shift + F10,ctrl + F10}
+alt + {F10,shift + F10,ctrl + F10}
     {monitorselect,monitorstartup,monitorsolo}
 
 # toggle touchpad
@@ -49,31 +49,31 @@ F4
       touchpad-toggle
 
 # mount-unmount
-super + grave
+alt + grave
       mount-unmount
 
 # dmenu_run
-super + d
+alt + d
       dmenu_run -fn "Jura-10"
 
-# download stuff
-super + {v; a, v; v, shift + v}
-      {download_stuff -a, download_stuff, download_link}
-
-# org-capture
-super + n
-      emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
+# download stuff -- ytrssx extracts rss feed from youtube
+alt + v; {a, v, shift + v, r}
+      {download_stuff -a, download_stuff, download_stuff -P, ytrssx}
 
 # store/visit bookmarks
-super + s; {s, f, shift + f}
+alt + s; {s, f, shift + f}
       {booksave, bookvisit, surfmenu}
 
+# org-capture
+alt + n
+      emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
+
 # MPC controls
-super + {slash,shift + slash}
+alt + {slash,shift + slash}
       mpc {toggle,stop} && pkill -RTMIN+7 i3blocks
 
-super + {comma,period}
+alt + {comma,period}
       mpc {prev,next} && pkill -RTMIN+7 i3blocks
 
-super + shift + {comma,period}
+alt + shift + {comma,period}
       mpc seek {-,+}5 && pkill -RTMIN+7 i3blocks
