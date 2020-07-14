@@ -185,11 +185,15 @@ alias z='zathura '
 # aliases for git
 
 alias g.='git status'
-alias g\?='git diff'
+alias gd='git diff'
 alias gc='git clone '
 alias ga='git add .'
 alias gA='git add . && git commit -m '
 alias gp='git push'
+alias gO='git remote set-url origin git@github.com:'
+alias gu='git restore '
+alias gU='git restore .'
+alias f\?='alias | grep git'
 
 # pacman aliases
 
@@ -205,6 +209,7 @@ alias pif='pacman -Ql ' # files of installed package
 alias pifs='pacman -Sl ' # files of package
 alias pC='sudo pacman -Sc' # clear database of uninstalled packages
 alias pCC='sudo pacman -Scc' # clear database of all packages
+alias p\?='alias | grep pacman'
 
 # some folders aliases
 alias h='cd'
@@ -220,6 +225,10 @@ alias cnr='$EDITOR $HOME/.config/ranger/rc.conf'
 alias cnz='$EDITOR $HOME/.zshrc'
 alias cnx='$EDITOR $HOME/.Xresources'
 alias cnf='$EDITOR "/sudo:root@dubajamaman:/etc/fstab"'
+
+# my scripts
+alias sc='scriptsel -t'
+alias scn='newscript '
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '

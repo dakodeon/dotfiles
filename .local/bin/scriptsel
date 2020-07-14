@@ -1,0 +1,32 @@
+#!/bin/env sh
+
+# open a script
+# uses dmenu to locate the script and opens it in nvim in a new terminal
+# if -t is set, uses fzf, echo and the same terminal instead
+# if invoking from terminal, use -t
+
+scripts_dir="$HOME/.source/dotfiles/.local/bin"
+
+# -t for terminal
+[ "$1" = "-t" ] && {
+	alias edit_cmd='$EDITOR'
+	alias select_cmd='fzf --height=50% --reverse --prompt "Select script: "'
+	alias notify_cmd='dunstify'
+} || {
+	alias edit_cmd='$TERMINAL -e $EDITOR'
+	alias select_cmd='dmenu -l 5 -g 5 -i -p "Select script:"'
+	alias notify_cmd='echo'
+}
+
+[ ! -d "$scripts_dir" ] && {
+	notify_cmd " Script select" ">>\"$scripts_dir\" does not exist!"
+	exit 23
+}
+
+scripts="$(find "$scripts_dir" -type f -printf '%P\n')"
+
+name="$(echo "$scripts" | select_cmd)" || exit 23
+
+[ -f "$scripts_dir"/"$name" ] && \
+	edit_cmd "$scripts_dir"/"$name" || \
+	{ which newscript >/dev/null && newscript -x "$name"; }

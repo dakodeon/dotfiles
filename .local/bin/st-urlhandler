@@ -1,0 +1,24 @@
+#!/bin/env sh
+
+urlregex="(((http|https)://|www\\.)[a-zA-Z0-9.]*[:]?[a-zA-Z0-9./@$&%?$#=_-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)"
+
+# First remove linebreaks and mutt sidebars:
+urls="$(sed 's/.*│//g' | tr -d '\n' |
+	grep -aEo "$urlregex" | # grep only urls as defined above.
+	uniq | # Ignore neighboring duplicates.
+	sed 's/^www./http:\/\/www\./g')"
+
+[ -z "$urls" ] && exit
+
+[ "$1" = "-c" ] && {
+	action="Copy"
+	cmd() { echo "$1" | xclip -selection clipboard; }
+} || {
+	action="Follow"
+	cmd() { setsid xdg-open "$1" >/dev/null 2>&1; }
+}
+
+chosen="$(echo "$urls" | dmenu -i -p "$action url:" -l 10)"
+
+# setsid xdg-open "$chosen" >/dev/null 2>&1 &
+cmd "$chosen" &

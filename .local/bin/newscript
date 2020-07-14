@@ -1,0 +1,27 @@
+#!/bin/env sh
+
+# create a new shell script, make it executable, and open it in $EDITOR.
+# invoke with the name for the script as an argument. If called with
+# the -x option, opens $EDITOR in new $TERMINAL
+
+scripts_dir="$HOME/.source/dotfiles/.local/bin"
+
+[ "$1" = "-x" ] && external=true && shift
+[ -z "$1" ] && echo "No script name given" && exit 1
+
+name="$1"
+
+cd "$scripts_dir" || { echo "$scripts_dir does not exist!"; exit 1; }
+
+[ -f "$name" ] && echo "File \"$name\" already exists!" && exit 23
+
+echo "#!/bin/env sh" > "$1" && chmod +x "$name"
+
+[ "$external" = "true" ] && \
+	$TERMINAL -e $EDITOR "$scripts_dir"/"$name" || $EDITOR "$name"
+
+# check for my restow script and run it if file is written
+[ "$(wc -l "$name" | cut -d' ' -f 1)" = "1" ] && \
+	rm "$name" || \
+	  { which dotfiles-restow >/dev/null && dotfiles-restow; }
+

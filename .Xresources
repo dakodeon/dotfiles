@@ -1,50 +1,33 @@
-! Note: execute xrdb ~/.Xresources after editing the file
+! execute xrdb ~/.Xresources after editing the file
 
-URxvt.scrollBar: false
-URxvt.font: xft:mononoki Nerd Font:size=9
-! emacs.font: Iosevka Nerd Font Mono-10
+! st.font: xft:mononoki Nerd Font:size=9
+st.font: mononoki Nerd Font Mono-11
 
-! style
-!URxvt.transparent: true
-!URxvt.shading: 30
-*fading: 15
-*fadeColor: black
-! colors (Tango theme)
-URxvt.background: [80]#000000
-URxvt.foreground: gray
+!*fading: 15
+!*fadeColor: black
+
 ! black
-URxvt.color0: #2E3436
-URxvt.color8: #555753
+st.color0: #000000
+st.color8: #555753
 ! red
-URxvt.color1: #CC0000
-URxvt.color9: #EF2929
+st.color1: #CC0000
+st.color9: #EF2929
 ! green
-URxvt.color2: #CDCD60
-URxvt.color10: #8AE234
+st.color2: #CDCD60
+st.color10: #8AE234
 ! yellow
-URxvt.color3: #C4A000
-URxvt.color11: #FCE94F
+st.color3: #C4A000
+st.color11: #FCE94F
 ! blue
-URxvt.color4: #3465A4
-URxvt.color12: #729FCF
+st.color4: #3465A4
+st.color12: #729FCF
 ! magenta
-URxvt.color5: #75507B
-URxvt.color13: #AD7FA8
+st.color5: #75507B
+st.color13: #AD7FA8
 ! cyan
-URxvt.color6: #06989A
-URxvt.color14: #34E2E2
+st.color6: #06989A
+st.color14: #34E2E2
 ! white
-URxvt.color7: #D3D7CF
-URxvt.color15: #EEEEEC
+st.color7: #D3D7CF
+st.color15: #EEEEEC
 
-! Perl Scripts for urxvt
-URxvt.perl-ext-common: font-size,keyboard-select,vtwheel,selection-to-clipboard
-
-! resize fonts
-URxvt.keysym.C-equal: perl:font-size:increase
-URxvt.keysym.C-minus: perl:font-size:decrease
-URxvt.keysym.C-0: perl:font-size:reset
-
-! keyboard select
-URxvt.keysym.M-Escape: perl:keyboard-select:activate
-URxvt.keysym.M-s: perl:keyboard-select:search

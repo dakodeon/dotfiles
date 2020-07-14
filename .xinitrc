@@ -8,7 +8,7 @@ exec emacs --daemon &                             # everyone's favourite
 exec transmission-daemon &                        # torrenting
 exec dunst &                                      # notifications
 exec picom -b &                                   # transparency
-exec conky -c $HOME/.config/conky.conf &          # desktop ricing
+# exec conky -c $HOME/.config/conky.conf &          # desktop ricing
 exec monitorstartup &                             # autoconfig connected monitors
 
 # load i3

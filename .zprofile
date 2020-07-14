@@ -1,5 +1,5 @@
 # basic globals
-export TERMINAL="termite"
+export TERMINAL="st"
 export EDITOR="nvim"
 export VISUAL="nvim"
 export BROWSER="brave"

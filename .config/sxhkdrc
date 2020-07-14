@@ -1,5 +1,3 @@
-# this is a test config
-
 ### SYSTEM
 alt + {q,shift + q}
       xdo {close, kill}
@@ -13,6 +11,9 @@ alt + shift + Pause
 alt + ctrl + r
       pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
       
+alt + ctrl + shift + r
+			dotfiles-restow
+
 # audio controls (pulseaudio)
 {F8,F9}
     pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
@@ -54,15 +55,22 @@ alt + grave
 
 # dmenu_run
 alt + d
-      dmenu_run -fn "Jura-10"
+      dmenu_run
+
+# switch to window
+alt + shift + d
+			wm_menu
+
+alt + s
+			scriptsel
 
 # download stuff -- ytrssx extracts rss feed from youtube
 alt + v; {a, v, shift + v, r}
       {download_stuff -a, download_stuff, download_stuff -P, ytrssx}
 
 # store/visit bookmarks
-alt + s; {s, f, shift + f}
-      {booksave, bookvisit, surfmenu}
+# alt + s; {s, f, shift + f}
+#       {booksave, bookvisit, surfmenu}
 
 # org-capture
 alt + n

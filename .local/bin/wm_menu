@@ -1,0 +1,14 @@
+#!/bin/env sh
+
+# a window switcher using wmctrl and dmenu
+
+# TODO:
+# Fix what to do with same name progs (eg st). With the current implementation only the first instance can be accessed.
+# Fail if there is only one window open
+
+# {} is used as a separator, as it is unlikely to exist in the window name
+winlist="$(wmctrl -lx | awk '{printf $1"{}"; for(i=5;i<=NF;i++) printf $i" "; printf "\n"}')"
+
+winsel="$(echo "$winlist" | awk -F'{}' '{print $2}' | dmenu -i -c -l 10 -p "Switch to:")" || exit 23
+
+wmctrl -i -a "$(echo "$winlist" | grep "$winsel" | awk -F'{}' '{print $1}')"

@@ -2,7 +2,13 @@
 
 # update dotfiles - stow everything
 
-parent_dir="$HOME/.source"
+dunst_id=123476
 
-pushd $parent_dir
-ls
+which stow >/dev/null || { dunstify -r $dunst_id " Stow dotfiles" "Stow is not installed!" && exit 1; }
+
+parent_dir="$HOME/.source"
+dotfiles="dotfiles"
+
+cd "$parent_dir" || { dunstify -r $dunst_id  " Stow dotfiles" "Directory \"$parent_dir\" does not exist!" && exit 1; }
+
+stow -v "$dotfiles" && dunstify -r $dunst_id " Stow dotfiles" "Updated dotfiles" || { dunstify -r $dunst_id " Stow dotfiles" "Something failed!" && exit 1; }
