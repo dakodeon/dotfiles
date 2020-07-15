@@ -11,6 +11,8 @@ exec picom -b &                                   # transparency
 # exec conky -c $HOME/.config/conky.conf &          # desktop ricing
 exec monitorstartup &                             # autoconfig connected monitors
 
+exec wallset &
+
 # load i3
 
 i3conf=$HOME/.config/i3/i3.conf

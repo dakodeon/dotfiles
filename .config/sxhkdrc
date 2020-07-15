@@ -61,8 +61,8 @@ alt + d
 alt + shift + d
 			wm_menu
 
-alt + s
-			scriptsel
+alt + {s, shift + s}
+			{scriptsel, configsel}
 
 # download stuff -- ytrssx extracts rss feed from youtube
 alt + v; {a, v, shift + v, r}

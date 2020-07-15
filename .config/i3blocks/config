@@ -161,6 +161,7 @@ interval=3
 label=
 color=#BBBBBB
 interval=persist
+# signal=3
 min_width=30
 
 # Date Time
