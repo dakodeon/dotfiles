@@ -1,0 +1,44 @@
+#!/bin/env sh
+
+# xwallpaper wrapper -- copied for the most part from Luke Smith
+# uses dmenu for manual setting of the wallpaper position and imagemagick to convert tif files to jpg
+
+# case 1: a file: set the file as wallpaper
+# case 2: a bunch of files or a directory: random (maybe also slideshow)
+
+wall_loc=${XDG_DATA_HOME:-$HOME/.local/share}/wallpaper.jpg
+posarg=${XDG_DATA_HOME:-$HOME/.local/share}/.wallpos
+
+while getopts ":cmstzP" opt; do
+	case $opt in
+		c) pos="--center" ;;
+		m) pos="--maximize" ;;
+		s) pos="--stretch" ;;
+		t) pos="--tile" ;;
+		z) pos="--zoom" ;;
+		P) pos="--$(printf "center\nmaximize\nstretch\ntile\nzoom" | dmenu -i -p "Wallpaper position:")" ;;
+		*) exit 17 ;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+[ -f "$1" ] && file="$(readlink -f "$1")"
+
+[ -d "$1" ] && file="$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf -n 1)"
+
+[ -n "$file" ] && \
+	if echo "$file" | grep -q 'tiff\?$'; then
+		[ -L "$wall_loc" ] && rm "$wall_loc"
+		convert "$file" "$wall_loc" && allset=true || { dunstify " setbg error" "failed to convert tif file!"; exit 23; }
+	else
+		ln -sf "$file" "$wall_loc" && allset=true
+	fi
+
+[ "$allset" = "true" ] && dunstify -i "$wall_loc" "setbg" "changing wallpaper"
+
+[ -z "$pos" ] && [ -s "$posarg" ] && pos="$(cat "$posarg")"
+
+[ -n "$pos" ] && echo "$pos" > "$posarg"
+
+xwallpaper "${pos:-"--maximize"}" "$wall_loc"

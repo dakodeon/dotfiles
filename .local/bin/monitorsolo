@@ -18,8 +18,7 @@ done
 notify_text="Monitor $selected solo"
 
 # redraw desktop background
-# remember_bg.sh
-~/.fehbg
+wallset
 
 # restart dunst to properly display notifications
 pgrep -x dunst >/dev/null && killall dunst

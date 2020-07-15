@@ -1,0 +1,12 @@
+#!/bin/env sh
+
+# select an image for wallpaper with sxiv piping. Uses my other script, setbg. If argument is given and is a direactory, use that one non recursively
+
+# test wallpaper directory, change this to whatever
+walldir="$HOME/Pictures/wallpapers"
+
+[ -d "$1" ] && dir="$(readlink -f "$1")"
+
+file="$(readlink -f "$(find "${dir:-"$walldir"}" ${dir:+-maxdepth 1} -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf | sxiv -t -i -o)")"
+
+wallset "$file"

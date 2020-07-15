@@ -1,14 +1,13 @@
 #!/bin/env sh
 
-# update dotfiles - stow everything
+# update dotfiles - restow everything
 
-dunst_id=123476
+which stow >/dev/null || { dunstify " Stow dotfiles" "Stow is not installed!" && exit 1; }
 
-which stow >/dev/null || { dunstify -r $dunst_id " Stow dotfiles" "Stow is not installed!" && exit 1; }
+repos_dir="$HOME/.source"
+dotfiles_dir="dotfiles"
 
-parent_dir="$HOME/.source"
-dotfiles="dotfiles"
+[ -d "$repos_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$repos_dir\" does not exist!" && exit 1; }
+[ -d "$repos_dir/$dotfiles_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$dotfiles_dir\" does not exist!" && exit 1; }
 
-cd "$parent_dir" || { dunstify -r $dunst_id  " Stow dotfiles" "Directory \"$parent_dir\" does not exist!" && exit 1; }
-
-stow -v "$dotfiles" && dunstify -r $dunst_id " Stow dotfiles" "Updated dotfiles" || { dunstify -r $dunst_id " Stow dotfiles" "Something failed!" && exit 1; }
+stow -d "$repos_dir" -R "$dotfiles_dir" && dunstify " Stow dotfiles" "Updated dotfiles" || { dunstify " Stow dotfiles" "Something failed!" && exit 1; }

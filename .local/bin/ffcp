@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# cp interface using fzf
+# cp interface using fzf -- select/deselect with TAB/Shift+TAB
 
 filelist="$(fzf --no-info --prompt="Select files: " --multi)"
 

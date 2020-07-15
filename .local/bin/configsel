@@ -1,0 +1,31 @@
+#!/bin/env sh
+
+# choose to open config. assumes a centralized dotfiles repo, with symlinks to
+# the actual configs. uses dmenu or fzf if the -t flag is set
+
+dotfiles_repo="$HOME/.source/dotfiles"
+
+# -t for terminal
+if [ "$1" = "-t" ]; then
+	alias edit_cmd='$EDITOR'
+	alias select_cmd='fzf --height=50% --reverse --prompt "Select config: "'
+	alias notify_cmd='dunstify'
+else
+	alias edit_cmd='$TERMINAL -e $EDITOR'
+	alias select_cmd='dmenu -l 5 -g 5 -i -p "Select config:"'
+	alias notify_cmd='echo'
+fi
+
+[ ! -d "$dotfiles_repo" ] && {
+	notify_cmd " Config select" ">>\"$dotfiles_repo\" does not exist!"
+	exit 23
+}
+
+confs="$(find "$dotfiles_repo" -path "$dotfiles_repo"/.git -prune -o \
+	-path "$dotfiles_repo"/.local/bin -prune -o \
+	-name '.*ignore' -o -name 'README.*' -o \
+	-type f -printf '%P\n')"
+
+file="$dotfiles_repo"/"$(echo "$confs" | select_cmd)" || exit 23
+
+[ -f "$file" ] && edit_cmd "$file"

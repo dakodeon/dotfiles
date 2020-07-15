@@ -1,0 +1,5 @@
+#!/bin/env sh
+
+# just to avoid extra typing
+
+wallset -P
