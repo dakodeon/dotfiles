@@ -1,0 +1,33 @@
+#!/bin/env sh
+
+# update dotfiles - restow everything. With arguments, adds files to the repo.
+
+which stow >/dev/null || { dunstify " Stow dotfiles" "Stow is not installed!" && exit 1; }
+
+repos_dir="$HOME/.source"
+dotfiles_dir="dotfiles"
+
+[ -d "$repos_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$repos_dir\" does not exist!" && exit 1; }
+[ -d "$repos_dir/$dotfiles_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$dotfiles_dir\" does not exist!" && exit 1; }
+
+# if positional parameters are given, check for valid files to add
+for i in "$@"; do
+	file="$(readlink -f "$i")"
+	relpath="${file#$HOME/}"
+	dest="$repos_dir"/"$dotfiles_dir"/"$relpath"
+	
+	if [ -e "$dest" ] || expr "$file" : "^$repos_dir/$dotfiles_dir">/dev/null ; then
+		errorlist="$errorlist""\n""$relpath"
+		continue
+	fi
+
+	[ -d "$(dirname "$dest")" ] || mkdir -p "$(dirname "$dest")"
+	mv -n "$file" "$(dirname "$dest")"
+done
+
+[ -n "$errorlist" ] &&
+	dunstify " Stow dotfiles" "These files were not moved:$errorlist"
+
+stow -d "$repos_dir" -R "$dotfiles_dir" &&
+	dunstify " Stow dotfiles" "Updated dotfiles" ||
+	{ dunstify " Stow dotfiles" "Something failed!" && exit 1; }

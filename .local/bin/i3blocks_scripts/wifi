@@ -50,7 +50,7 @@ elif [[ $QUALITY -lt 40 ]]; then
 fi
 
 case $BLOCK_BUTTON in
-    1) urxvt -e nmtui-connect ;;
-    3) urxvt -e nmtui-edit ;;
+    1) $TERMINAL -e nmtui-connect ;;
+    3) $TERMINAL -e nmtui-edit ;;
 esac
 

@@ -1,9 +1,15 @@
 #!/bin/env sh
 
-xkblayout-state print "%s"
-xkb-switch -W
+printf "$(xkblayout-state print "%s")\n" && xkb-switch -W
 
-# why this does not work???
-case $BLOCK_BUTTON in
-    1) xkb-switch -n ;;
-esac
+# this way the block has to be persistent, so mouse buttons do not work.
+# The workaround is to use the code below in a script that will be run on
+# startup and will signal i3blocks when the layout changes.
+
+# while true; do
+# 	xkb-switch -w && pkill -RTMIN+3 i3blocks
+# done
+
+# case $BLOCK_BUTTON in
+#     1) xkb-switch -n && pkill -RTMIN+3 i3blocks ;;
+# esac
