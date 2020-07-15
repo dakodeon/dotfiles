@@ -11,12 +11,12 @@ posarg=${XDG_DATA_HOME:-$HOME/.local/share}/.wallpos
 
 while getopts ":cmstzP" opt; do
 	case $opt in
-		c) pos="--center" ;;
-		m) pos="--maximize" ;;
-		s) pos="--stretch" ;;
-		t) pos="--tile" ;;
-		z) pos="--zoom" ;;
-		P) pos="--$(printf "center\nmaximize\nstretch\ntile\nzoom" | dmenu -i -p "Wallpaper position:")" ;;
+		c) pos="center" ;;
+		m) pos="maximize" ;;
+		s) pos="stretch" ;;
+		t) pos="tile" ;;
+		z) pos="zoom" ;;
+		P) pos="$(printf "center\nmaximize\nstretch\ntile\nzoom" | dmenu -i -p "Wallpaper position:")" ;;
 		*) exit 17 ;;
 	esac
 done
@@ -37,8 +37,8 @@ shift $((OPTIND-1))
 
 [ "$allset" = "true" ] && dunstify -i "$wall_loc" "setbg" "changing wallpaper"
 
-[ -z "$pos" ] && [ -s "$posarg" ] && pos="$(cat "$posarg")"
+[ -n "$pos" ] && pos="--$pos" && echo "$pos" > "$posarg"
 
-[ -n "$pos" ] && echo "$pos" > "$posarg"
+[ -z "$pos" ] && [ -s "$posarg" ] && pos="$(cat "$posarg")"
 
 xwallpaper "${pos:-"--maximize"}" "$wall_loc"

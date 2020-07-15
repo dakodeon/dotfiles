@@ -175,7 +175,7 @@ alias l.='ls -d .*'
 alias q='exit'
 
 # aliases for programs
-alias ec='emacsclient -c '
+alias e='emacsclient -c '
 alias et='emacsclient -t '
 alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
 alias v='nvim '
@@ -227,8 +227,10 @@ alias cnx='$EDITOR $HOME/.Xresources'
 alias cnf='$EDITOR "/sudo:root@dubajamaman:/etc/fstab"'
 
 # my scripts
-alias sc='scriptsel -t'
-alias scn='newscript '
+alias es='scriptsel -t'
+alias esn='newscript '
+alias ec='configsel -t'
+alias ecn='dotfiles-update '
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '
