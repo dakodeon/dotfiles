@@ -12,7 +12,7 @@ alt + ctrl + r
       pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
       
 alt + ctrl + shift + r
-			dotfiles-restow
+			dotfiles-update
 
 # audio controls (pulseaudio)
 {F8,F9}
