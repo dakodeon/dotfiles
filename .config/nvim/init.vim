@@ -64,7 +64,6 @@ set shiftwidth=2
 " set numbers and see how it goes
 set number relativenumber
 
-autocmd BufWritePost $MYVIMRC :source $MYVIMRC
 
 " format text
 map Q gq
@@ -79,3 +78,6 @@ map <leader><leader> <C-w>w
 noremap <leader>G :Goyo<CR>
 noremap <leader>F :Files<CR>
 noremap <leader>gv :edit $MYVIMRC<CR>
+
+autocmd BufWritePost $MYVIMRC :source $MYVIMRC
+autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
