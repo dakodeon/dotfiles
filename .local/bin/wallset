@@ -1,10 +1,29 @@
 #!/bin/env sh
 
-# xwallpaper wrapper -- copied for the most part from Luke Smith
-# uses dmenu for manual setting of the wallpaper position and imagemagick to convert tif files to jpg
+# xwallpaper wrapper -- basic idea "stolen" from Luke Smith
+# uses dmenu for manual setting of the wallpaper position and imagemagick to
+# convert tif files to jpg
 
-# case 1: a file: set the file as wallpaper
-# case 2: a bunch of files or a directory: random (maybe also slideshow)
+# Without an argument sets the wallpaper from the default file
+# ($XDG_DATA_HOME/wallpaper.jpg)
+
+# Position is set by optionally using parameters:
+#   -c: center
+#   -m: maximize
+#   -s: stretch
+#   -t: tile
+#   -z: zoom
+#   -P: interactive selection with dmenu
+
+# The desired position is then stored in a file ($XDG_DATA_HOME/.wallpos) for
+# future use.
+
+# If the given argument is a file, then this file is set as the wallpaper. If
+# it is a directory, then a randomly selected image file is used. In both
+# cases, the selected image is symlinked to the default location. One exception
+# to this is when a tif/tiff file is selected. xwallpaper doesn't accept those
+# (but I have a lot!) so, instead of a symlink, a jpeg version of the image is
+# used, made using convert (imagemagick).
 
 wall_loc=${XDG_DATA_HOME:-$HOME/.local/share}/wallpaper.jpg
 posarg=${XDG_DATA_HOME:-$HOME/.local/share}/.wallpos
@@ -16,16 +35,21 @@ while getopts ":cmstzP" opt; do
 		s) pos="stretch" ;;
 		t) pos="tile" ;;
 		z) pos="zoom" ;;
-		P) pos="$(printf "center\nmaximize\nstretch\ntile\nzoom" | dmenu -i -p "Wallpaper position:")" ;;
+		P) pos="$(printf "center\nmaximize\nstretch\ntile\nzoom" | dmenu -r -i -p "Wallpaper position:")" || exit 23 ;;
 		*) exit 17 ;;
 	esac
 done
 
 shift $((OPTIND-1))
 
-[ -f "$1" ] && file="$(readlink -f "$1")"
-
-[ -d "$1" ] && file="$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf -n 1)"
+if [ $# -eq 0 ]; then
+	continue
+elif [ $# -eq 1 ]; then
+	[ -f "$1" ] && file="$(readlink -f "$1")"
+	[ -d "$1" ] && file="$(find "$(readlink -f "$1")" -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf -n 1)"
+else
+	file="$(printf "%s\n"  "$@" | sed -n '/\(jpe\?g\|png\|gif\|tiff\?\)$/p' | shuf -n 1 | xargs readlink -f)"
+fi
 
 [ -n "$file" ] && \
 	if echo "$file" | grep -q 'tiff\?$'; then
@@ -35,10 +59,9 @@ shift $((OPTIND-1))
 		ln -sf "$file" "$wall_loc" && allset=true
 	fi
 
-[ "$allset" = "true" ] && dunstify -i "$wall_loc" "setbg" "changing wallpaper"
-
 [ -n "$pos" ] && pos="--$pos" && echo "$pos" > "$posarg"
-
 [ -z "$pos" ] && [ -s "$posarg" ] && pos="$(cat "$posarg")"
 
-xwallpaper "${pos:-"--maximize"}" "$wall_loc"
+[ "$allset" = "true" ] && dunstify -i "$wall_loc" "setbg" "changing wallpaper"
+
+[ -f "$wall_loc" ] && xwallpaper "${pos:-"--maximize"}" "$wall_loc"

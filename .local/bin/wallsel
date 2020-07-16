@@ -1,12 +1,27 @@
 #!/bin/env sh
 
-# select an image for wallpaper with sxiv piping. Uses my other script, setbg. If argument is given and is a direactory, use that one non recursively
+# makes a wallpaper selector out of sxiv.
+# uses two of my scripts, wallset and sxivdir
+# the arguments provided are used to control sxivdir
 
-# test wallpaper directory, change this to whatever
+# with no args, runs on the default wallpaper dir
 walldir="$HOME/Pictures/wallpapers"
 
-[ -d "$1" ] && dir="$(readlink -f "$1")"
+while getopts ":1s" opt; do
+	case $opt in
+		1) norecur=true ;;
+		s) shuf=true ;;
+		:) exit 17 ;;
+		*) exit 17 ;;
+	esac
+done
 
-file="$(readlink -f "$(find "${dir:-"$walldir"}" ${dir:+-maxdepth 1} -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf | sxiv -t -i -o)")"
+shift $((OPTIND-1))
 
-wallset "$file"
+[ -z "$1" ] && files="$walldir" && norecur= && shuf=true
+
+[ -n "$1" ] && files="$@"
+
+# file="$(readlink -f "$(find "${dir:-"$walldir"}" ${dir:+-maxdepth 1} -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf | sxiv -t -i -o)")"
+
+sxivdir ${norecur:+-1} ${shuf:+-s} -o "$(printf "%s\n" "$files")" | xargs wallset

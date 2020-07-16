@@ -1,0 +1,43 @@
+#!/bin/env sh
+
+# run sxiv to all image files in a directory.
+# options given to control recursiveness and piping out.
+
+while getopts ":1son:" opt; do
+	case $opt in
+		1) norecur=true ;;
+		s) shuf=true ;;
+		o) pipeout=true ;;
+		n) img_num="$OPTARG" ;;
+		:) exit 17 ;;
+		*) exit 17 ;;
+	esac
+done
+
+shift $((OPTIND-1))
+
+[ $# -eq 0 ] && exit
+
+# well...
+# to have each entry in a new line, I printf a \n with a following 'x', which I
+# then remove with '%x'...
+for i in "$@"; do
+	[ -f "$i" ] &&
+		filelist="${filelist:+"$filelist"}$(readlink -f "$i")$(printf '\nx')" && filelist=${filelist%x}
+	[ -d "$i" ] &&
+		filelist="${filelist:+"$filelist"}$(find "$(readlink -f "$i")" ${norecur:+-maxdepth 1} \
+			-iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f)$(printf '\nx')" && filelist=${filelist%x}
+done
+
+# ...then remove the final '\n' after the loop. Better ideas?
+# actually, instead of removing '\n', I just print what I need
+filelist="$(echo "$filelist" | sed -n '/\(jpe\?g\|png\|gif\|tiff\?\)$/p')"
+
+[ "$(printf "%s\n" "$filelist" | wc -l)" -eq 1 ] && [ -f "$1" ] && sxiv -a "$1" && exit
+
+[ -n "$shuf" ] && filelist="$(printf "%s\n" "$filelist" | shuf)"
+
+printf "%s\n" "$filelist" | sxiv -a -t -i ${img_num:+-n "$img_num"} ${pipeout:+-o}
+
+# printf %s\\n "$filelist"
+
