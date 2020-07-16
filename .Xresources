@@ -31,3 +31,5 @@ st.color14: #34E2E2
 st.color7: #D3D7CF
 st.color15: #EEEEEC
 
+Sxiv.background: #2e3440
+Sxiv.font: mononoki Nerd Font Mono-9
