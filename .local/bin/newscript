@@ -23,5 +23,5 @@ echo "#!/bin/env sh" > "$1" && chmod +x "$name"
 # check for my restow script and run it if file is written
 [ "$(wc -l "$name" | cut -d' ' -f 1)" = "1" ] && \
 	rm "$name" || \
-	  { which dotfiles-restow >/dev/null && dotfiles-restow; }
+	  { which dotfiles-update >/dev/null && dotfiles-update; }
 
