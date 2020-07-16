@@ -1,14 +1,16 @@
 #!/bin/env sh
 
 # update dotfiles - restow everything. With arguments, adds files to the repo.
+# note that for stow to work correctly, the directory containing the dotfiles
+# should be exactly 2 levels deep from the home directory
 
-which stow >/dev/null || { dunstify " Stow dotfiles" "Stow is not installed!" && exit 1; }
+which stow >/dev/null || { dunstify " update dotfiles" "Stow is not installed!" && exit 1; }
 
 repos_dir="$HOME/.source"
 dotfiles_dir="dotfiles"
 
-[ -d "$repos_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$repos_dir\" does not exist!" && exit 1; }
-[ -d "$repos_dir/$dotfiles_dir" ] || { dunstify  " Stow dotfiles" "Directory \"$dotfiles_dir\" does not exist!" && exit 1; }
+[ -d "$repos_dir/$dotfiles_dir" ] ||
+	{ dunstify  " update dotfiles" "Directory \"$dotfiles_dir\" does not exist!" && exit 1; }
 
 # if positional parameters are given, check for valid files to add
 for i in "$@"; do
@@ -26,8 +28,8 @@ for i in "$@"; do
 done
 
 [ -n "$errorlist" ] &&
-	dunstify " Stow dotfiles" "These files were not moved:$errorlist"
+	dunstify " update dotfiles" "These files were not moved:$errorlist"
 
 stow -d "$repos_dir" -R "$dotfiles_dir" &&
-	dunstify " Stow dotfiles" "Updated dotfiles" ||
-	{ dunstify " Stow dotfiles" "Something failed!" && exit 1; }
+	dunstify " update dotfiles" "Updated dotfiles" ||
+	{ dunstify " update dotfiles" "Something failed!" && exit 1; }
