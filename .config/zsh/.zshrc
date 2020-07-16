@@ -19,11 +19,11 @@ zstyle ':completion:*' rehash true                              # automatically 
 # Speed up completions
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path ~/.zsh/cache
+zstyle ':completion:*' cache-path ~/.cache/zsh/cache
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
-HISTFILE=$XDG_CACHE_HOME/zsh_history
+HISTFILE=$XDG_CACHE_HOME/zsh/zsh_history
 HISTSIZE=10000
 SAVEHIST=5000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
@@ -185,15 +185,17 @@ alias z='zathura '
 # aliases for git
 
 alias g.='git status'
-alias gd='git diff'
-alias gc='git clone '
-alias ga='git add .'
+alias gd='git diff '
+alias gC='git clone '
+alias ga='git add'
+alias gc='git commit -m '
 alias gA='git add . && git commit -m '
 alias gp='git push'
 alias gO='git remote set-url origin git@github.com:'
 alias gu='git restore '
 alias gU='git restore .'
-alias f\?='alias | grep git'
+alias gr='git restore --staged '
+alias g\?='alias | grep git'
 
 # pacman aliases
 
@@ -201,7 +203,7 @@ alias pS='sudo pacman -S ' # install
 alias pU='sudo pacman -Syu ' # upgrade
 alias pf='pacman -Ss ' # find package
 alias pR='sudo pacman -Rns ' # remove
-alias pl='pacman -Qe' # list exp. installed packages
+alias pl='pacman -Qe' # list expl. installed packages
 alias plu='pacman -Qdt' # list unneeded packages installed as deps
 alias pi='pacman -Qi ' # info about installed package
 alias pis='pacman -Si ' # info about package
