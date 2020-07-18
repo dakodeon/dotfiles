@@ -85,3 +85,10 @@ alt + {comma,period}
 
 alt + shift + {comma,period}
       mpc seek {-,+}5 && pkill -RTMIN+7 i3blocks
+
+# Programs
+alt + Return
+			$TERMINAL
+
+F12
+			$TERMINAL -e nmtui
