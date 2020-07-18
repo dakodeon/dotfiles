@@ -30,8 +30,8 @@ for i in "$@"; do
 done
 
 # ...then remove the final '\n' after the loop. Better ideas?
-# actually, instead of removing '\n', I just print what I need
-filelist="$(echo "$filelist" | sed -n '/\(jpe\?g\|png\|gif\|tiff\?\)$/p')"
+# actually, instead of removing '\n', I just print what I need -- also sort it!!!!
+filelist="$(echo "$filelist" | sed -n '/\(jpe\?g\|png\|gif\|tiff\?\)$/p' | sort)"
 
 [ "$(printf "%s\n" "$filelist" | wc -l)" -eq 1 ] && [ -f "$1" ] && sxiv -a "$1" && exit
 
