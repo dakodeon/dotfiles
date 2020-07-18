@@ -5,7 +5,7 @@ st.font: mononoki Nerd Font Mono-11
 
 !*fading: 15
 !*fadeColor: black
-
+st.alpha: 0.8
 ! black
 st.color0: #000000
 st.color8: #555753
