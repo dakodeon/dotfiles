@@ -23,10 +23,11 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.cache/zsh/cache
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+zmodload zsh/complist
 
 HISTFILE=$XDG_CACHE_HOME/zsh/zsh_history
 HISTSIZE=10000
-SAVEHIST=5000
+SAVEHIST=10000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 ## Keybindings section
@@ -37,6 +38,8 @@ export KEYTIMEOUT=1
 # edit lines in vim
 autoload edit-command-line; zle -N edit-command-line
 bindkey -M vicmd ' ' edit-command-line
+
+# how to make this work
 # bindkey -M vicmd 'ZZ' exit
 
 # these don't work?
@@ -63,6 +66,7 @@ zle -N zle-keymap-select
 # vi mode starts in insert, the cursor should reflect this
 echo -ne '\e[5 q'
 
+# these were already here
 # bindkey -e
 bindkey '^[[2~' overwrite-mode                                  # Insert key
 bindkey '^[[3~' delete-char                                     # Delete key
@@ -87,14 +91,14 @@ compinit -d
 colors
 
 # Print a greeting message when shell is started
-cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
-echo -e "\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m➛ \033[34;3m"$(uname -srm) $(lsb_release -rs)"\033[32m➛\n"
+# cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
+echo -e "\n\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m ➛ \033[34;3m"$(lsb_release -ds | tr -d '"')"\033[32;1m ➛ \033[34;3m"$(uname -r)" \033[32;1m➛\n"
 
 # enable substitution for prompt
 setopt prompt_subst
 
 # prompt message
-PROMPT="%B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%})〉%{$reset_color%}%b " # Print some system information when the shell is first started
+PROMPT="%B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%}) 〉%{$reset_color%}%b" # Print some system information when the shell is first started
 
 ### Git prompt functions
 
