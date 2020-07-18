@@ -62,9 +62,14 @@ function zle-keymap-select {
 }
 
 zle -N zle-keymap-select
+zle-line-init() {
+	zle -K viins
+	echo -ne "\e[5 q"
+}
 
-# vi mode starts in insert, the cursor should reflect this
-echo -ne '\e[5 q'
+zle -N zle-line-init
+echo -ne '\e[5 q' # vi mode starts in insert, the cursor should reflect this
+preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
 # these were already here
 # bindkey -e
