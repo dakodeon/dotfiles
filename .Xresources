@@ -3,6 +3,7 @@
 ! st.font: xft:mononoki Nerd Font:size=9
 st.font: mononoki Nerd Font Mono-11
 
+st.chscale: 1.3
 !*fading: 15
 !*fadeColor: black
 st.alpha: 0.8
