@@ -1,4 +1,5 @@
- ## Options section
+## Options section
+
 # setopt correct                                                  # Auto correct mistakes
 setopt extendedglob                                             # Extended globbing. Allows using regular expressions with *
 setopt nocaseglob                                               # Case insensitive globbing
@@ -29,7 +30,40 @@ SAVEHIST=5000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 ## Keybindings section
-bindkey -e
+# Enable vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+# edit lines in vim
+autoload edit-command-line; zle -N edit-command-line
+bindkey -M vicmd ' ' edit-command-line
+# bindkey -M vicmd 'ZZ' exit
+
+# these don't work?
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+
+bindkey "^?" backward-delete-char
+
+function zle-keymap-select {
+	if [[ ${KEYMAP} == vicmd ]] ||
+		 [[ $1 = 'block' ]]; then
+		echo -ne '\e[1 q'
+	elif [[ ${KEYMAP} == main ]] ||
+			 [[ ${KEYMAP} == viins ]] ||
+			 [[ $1 = 'beam' ]]; then
+		echo -ne '\e[5 q'
+	fi
+}
+
+zle -N zle-keymap-select
+
+# vi mode starts in insert, the cursor should reflect this
+echo -ne '\e[5 q'
+
+# bindkey -e
 bindkey '^[[2~' overwrite-mode                                  # Insert key
 bindkey '^[[3~' delete-char                                     # Delete key
 bindkey '^[[5~' history-beginning-search-backward               # Page up key
@@ -151,6 +185,18 @@ export LESS_TERMCAP_us=$'\E[01;36m'
 export LESS=-r
 export LESS=-r
 
+# functions to change window name -- these work with st, however the $TERM
+# variable should be "xterm*". This is not the case with st
+chpwd () {print -Pn "\e]0;$TERMINAL - %~\a"}
+# I don't prefer the method below as it occasionally prints weird names
+# preexec () {print -PDn "\e]0;$TERMINAL - $2\a"}
+# function to dynamically change the name of the terminal
+
+# custom function to change window name
+chname() {
+	printf "\033]2;$TERMINAL - $1\007"
+}
+
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -162,11 +208,16 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 ## Alias section 
-alias cp="cp -i"                                                # Confirm before overwriting something
-alias df='df -h'                                                # Human-readable sizes
-alias free='free -m'                                            # Show sizes in MB
 
-# ls aliases
+# add sensible options
+alias cp="cp -iv"     # Confirm before overwriting something
+alias mv="mv -iv"
+alias rm="rm -vI"
+alias df='df -h'      # Human-readable sizes
+alias du='du -h'
+alias free='free -m'  # Show sizes in MB
+
+# aliases for ls 
 alias ll='ls -l'
 alias la='ls -al'
 alias l.='ls -d .*'
@@ -175,11 +226,15 @@ alias l.='ls -d .*'
 alias q='exit'
 
 # aliases for programs
+# note the use of chname for terminal apps. caveat: the name remains after
+# exiting (run chname again if desired)
 alias e='emacsclient -c '
-alias et='emacsclient -t '
+alias et='chname emacs; emacsclient -t '
 alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
-alias v='nvim '
-alias ra='ranger '
+alias v='chname nvim; nvim '
+alias nb='chname newsboat; newsboat'
+alias ra='chname ranger; ranger '
+alias lf='chname lf; lf '
 alias z='zathura '
 
 # aliases for git
@@ -197,7 +252,7 @@ alias gU='git restore .'
 alias gr='git restore --staged '
 alias g\?='alias | grep git'
 
-# pacman aliases
+# aliases for pacman
 
 alias pS='sudo pacman -S ' # install
 alias pU='sudo pacman -Syu ' # upgrade
@@ -213,26 +268,36 @@ alias pC='sudo pacman -Sc' # clear database of uninstalled packages
 alias pCC='sudo pacman -Scc' # clear database of all packages
 alias p\?='alias | grep pacman'
 
-# some folders aliases
-alias h='cd'
-alias D='cd $HOME/Downloads'
-alias d='cd $HOME/Documents'
-alias M='cd $HOME/Music'
-alias P='cd $HOME/Pictures'
-alias m='cd /media'
+# aliases for directories
+alias h='cd; pwd'
+alias D='cd $HOME/Downloads; pwd'
+alias d='cd $HOME/Documents; pwd'
+alias M='cd $HOME/Music; pwd'
+alias P='cd $HOME/Pictures; pwd'
+alias R='cd /Music/Ρεμπέτικα; pwd'
+alias V='cd $HOME/Videos; pwd'
+alias m='cd /media; pwd'
+alias p='cd $HOME/.personal; pwd'
+alias R='cd $HOME/.source; pwd'
+alias Rd='cd $HOME/.source/dotfiles; pwd'
+alias E='cd $HOME/.emacs.d; pwd'
+alias C='cd $HOME/.config; pwd'
+alias S='cd $HOME/.local/bin; pwd'
 
-# access conf files
+# aliases for conf files
 alias cni='$EDITOR $HOME/.config/i3/i3.conf'
 alias cnr='$EDITOR $HOME/.config/ranger/rc.conf'
-alias cnz='$EDITOR $HOME/.zshrc'
+alias cnz='$EDITOR $ZDOTDIR/.zshrc'
 alias cnx='$EDITOR $HOME/.Xresources'
+alias cne='$EDITOR $HOME/.emacs.d/my-config.org'
 alias cnf='$EDITOR "/sudo:root@dubajamaman:/etc/fstab"'
 
-# my scripts
+# aliases for my scripts
 alias es='scriptsel -t'
 alias esn='newscript '
 alias ec='configsel -t'
 alias ecn='dotfiles-update '
+alias sx='sxivdir'
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '
