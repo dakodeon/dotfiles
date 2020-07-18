@@ -3,7 +3,8 @@
 # open a script
 # uses dmenu to locate the script and opens it in nvim in a new terminal
 # if -t is set, uses fzf, echo and the same terminal instead
-# if invoking from terminal, use -t
+# if invoking from terminal, use -t. If a positional parameter is set, it is
+# used to filter the results.
 
 scripts_dir="$HOME/.source/dotfiles/.local/bin"
 
@@ -18,12 +19,14 @@ scripts_dir="$HOME/.source/dotfiles/.local/bin"
 	alias notify_cmd='echo'
 }
 
+shift
+
 [ ! -d "$scripts_dir" ] && {
 	notify_cmd " Script select" ">>\"$scripts_dir\" does not exist!"
 	exit 23
 }
 
-scripts="$(find "$scripts_dir" -type f -printf '%P\n')"
+scripts="$(find "$scripts_dir" ${1:+-iregex ".*$1.*"} -type f -printf '%P\n')"
 
 name="$(echo "$scripts" | select_cmd)" || exit 23
 

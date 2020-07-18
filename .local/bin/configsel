@@ -1,7 +1,8 @@
 #!/bin/env sh
 
 # choose to open config. assumes a centralized dotfiles repo, with symlinks to
-# the actual configs. uses dmenu or fzf if the -t flag is set
+# the actual configs. uses dmenu or fzf if the -t flag is set. If a positional
+# parameter is set, this is used to filter the results.
 
 dotfiles_repo="$HOME/.source/dotfiles"
 
@@ -16,6 +17,8 @@ else
 	alias notify_cmd='echo'
 fi
 
+shift
+
 [ ! -d "$dotfiles_repo" ] && {
 	notify_cmd " Config select" ">>\"$dotfiles_repo\" does not exist!"
 	exit 23
@@ -24,7 +27,7 @@ fi
 confs="$(find "$dotfiles_repo" -path "$dotfiles_repo"/.git -prune -o \
 	-path "$dotfiles_repo"/.local/bin -prune -o \
 	-name '.*ignore' -o -name 'README.*' -o \
-	-type f -printf '%P\n')"
+	${1:+-iregex ".*$1.*"} -type f -printf '%P\n')"
 
 file="$dotfiles_repo"/"$(echo "$confs" | select_cmd)" || exit 23
 
