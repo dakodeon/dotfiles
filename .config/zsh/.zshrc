@@ -245,6 +245,7 @@ alias nb='chname newsboat; newsboat'
 alias ra='chname ranger; ranger '
 alias lf='chname lf; lf '
 alias z='zathura '
+alias vr='vimv '
 
 # aliases for git
 
