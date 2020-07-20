@@ -20,7 +20,7 @@ export WINEPREFIX="$XDG_DATA_HOME/wine"
 export FZF_DEFAULT_COMMAND="find . -path \"*/.git\" -prune -o -printf \"%P\\n\""
 
 # the path
-export PATH=$HOME/.local/bin/statusbar/:$HOME/.local/bin/:$PATH
+export PATH=$HOME/.local/bin/statusbar/dwm/:$HOME/.local/bin/statusbar/:$HOME/.local/bin/:$PATH
 
 # start WM in tty 1
 if [[ "$(tty)" = "/dev/tty1" ]]; then
