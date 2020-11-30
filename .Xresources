@@ -7,30 +7,58 @@ st.chscale: 1.3
 !*fading: 15
 !*fadeColor: black
 st.alpha: 0.8
+
+/* ! old theme */
+/* ! black */
+/* st.color0: #000000 */
+/* st.color8: #555753 */
+/* ! red */
+/* st.color1: #CC0000 */
+/* st.color9: #EF2929 */
+/* ! green */
+/* st.color2: #CDCD60 */
+/* st.color10: #8AE234 */
+/* ! yellow */
+/* st.color3: #C4A000 */
+/* st.color11: #FCE94F */
+/* ! blue */
+/* st.color4: #3465A4 */
+/* st.color12: #729FCF */
+/* ! magenta */
+/* st.color5: #75507B */
+/* st.color13: #AD7FA8 */
+/* ! cyan */
+/* st.color6: #06989A */
+/* st.color14: #34E2E2 */
+/* ! white */
+/* st.color7: #D3D7CF */
+/* st.color15: #EEEEEC */
+
+! dark+ theme
 ! black
 st.color0: #000000
-st.color8: #555753
+st.color8: #1E1E1E
 ! red
-st.color1: #CC0000
-st.color9: #EF2929
+st.color1: #D25252
+st.color9: #CE9178
 ! green
-st.color2: #CDCD60
-st.color10: #8AE234
+st.color2: #608B4E
+st.color10: #7FB347
 ! yellow
-st.color3: #C4A000
-st.color11: #FCE94F
+st.color3: #CCDF32
+st.color11: #D9E577
 ! blue
-st.color4: #3465A4
-st.color12: #729FCF
+st.color4: #569CD6
+st.color12: #BED6FF
 ! magenta
-st.color5: #75507B
-st.color13: #AD7FA8
+st.color5: #D197D9
+st.color13: #BFA4A4
 ! cyan
-st.color6: #06989A
-st.color14: #34E2E2
+st.color6: #4EC9B0
+st.color14: #9CDCFE
 ! white
-st.color7: #D3D7CF
-st.color15: #EEEEEC
+st.color7: #D8D8D8
+st.color15: #FFFFFF
 
 Sxiv.background: #2e3440
 Sxiv.font: mononoki Nerd Font Mono-9
