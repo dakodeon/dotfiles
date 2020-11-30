@@ -160,10 +160,16 @@ interval=3
 label=
 color=#BBBBBB
 interval=persist
-# signal=3
 min_width=30
 
 # Date Time
 [datetime]
 interval=1
 markup=pango
+separator=false
+separator_block_width=5
+
+[notifications_paused]
+interval=once
+min_width=12
+signal=13
