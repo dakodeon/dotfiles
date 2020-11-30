@@ -293,14 +293,7 @@ alias Rd='cd $HOME/.source/dotfiles; pwd'
 alias E='cd $HOME/.emacs.d; pwd'
 alias C='cd $HOME/.config; pwd'
 alias S='cd $HOME/.local/bin; pwd'
-
-# aliases for conf files
-alias cni='$EDITOR $HOME/.config/i3/i3.conf'
-alias cnr='$EDITOR $HOME/.config/ranger/rc.conf'
-alias cnz='$EDITOR $ZDOTDIR/.zshrc'
-alias cnx='$EDITOR $HOME/.Xresources'
-alias cne='$EDITOR $HOME/.emacs.d/my-config.org'
-alias cnf='$EDITOR "/sudo:root@dubajamaman:/etc/fstab"'
+alias W='cd /var/www/lukesrv; pwd'
 
 # aliases for my scripts
 alias es='scriptsel -t'
@@ -308,6 +301,10 @@ alias esn='newscript '
 alias ec='configsel -t'
 alias ecn='dotfiles-update '
 alias sx='sxivdir'
+
+# misc aliases
+# rsync my website!
+alias WS='rsync -rptzP --exclude "photoshow/photofull.html" --exclude "photoshow/diffs" /var/www/lukesrv/* root@lukebass.xyz:/var/www/lukesrv/'
 
 # copy file contents to clipboard
 alias yX='xclip -sel c < '
