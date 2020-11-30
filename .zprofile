@@ -14,6 +14,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export GOPATH="$XDG_CACHE_HOME/go"
 export MU_HOME="$XDG_CACHE_HOME/mu"
+export MAILDIR=".personal/Mail"
 export WINEPREFIX="$XDG_DATA_HOME/wine"
 
 # misc options
