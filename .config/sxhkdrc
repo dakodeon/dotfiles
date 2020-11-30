@@ -1,17 +1,19 @@
 ### SYSTEM
-alt + {q,shift + q}
+super + {q,shift + q}
       xdo {close, kill}
 
-alt + Pause
+super + Pause
       i3lock
 
-alt + shift + Pause
-      notify-send "DUNST_COMMAND_TOGGLE"
+# there's a bug in dunstctl so "dunstctl is-paused" is needed to show previous
+# notifications after un-pausing.
+super + shift + Pause
+			dunstctl set-paused toggle && dunstctl is-paused && pkill -RTMIN+13 i3blocks
 
-alt + ctrl + r
+super + ctrl + r
       pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
       
-alt + ctrl + shift + r
+super + ctrl + shift + r
 			dotfiles-update
 
 # audio controls (pulseaudio)
@@ -42,7 +44,7 @@ shift + {F6,F7}
     xbacklight -set {50,100}
 
 # multi-monitor
-alt + {F10,shift + F10,ctrl + F10}
+super + {F10,shift + F10,ctrl + F10}
     {monitorselect,monitorstartup,monitorsolo}
 
 # toggle touchpad
@@ -50,44 +52,44 @@ F4
       touchpad-toggle
 
 # mount-unmount
-alt + grave
+super + grave
       mount-unmount
 
 # dmenu_run
-alt + d
+super + d
       dmenu_run
 
 # switch to window
-alt + shift + d
+super + shift + d
 			wm_menu
 
-alt + {s, shift + s}
+super + {s, shift + s}
 			{scriptsel, configsel}
 
 # download stuff -- ytrssx extracts rss feed from youtube
-alt + v; {a, v, shift + v, r}
+super + v; {a, v, shift + v, r}
       {download_stuff -a, download_stuff, download_stuff -P, ytrssx}
 
 # store/visit bookmarks
-# alt + s; {s, f, shift + f}
+# super + s; {s, f, shift + f}
 #       {booksave, bookvisit, surfmenu}
 
 # org-capture
-alt + n
+super + n
       emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
 
 # MPC controls
-alt + {slash,shift + slash}
+super + {slash,shift + slash}
       mpc {toggle,stop} && pkill -RTMIN+7 i3blocks
 
-alt + {comma,period}
+super + {comma,period}
       mpc {prev,next} && pkill -RTMIN+7 i3blocks
 
-alt + shift + {comma,period}
+super + shift + {comma,period}
       mpc seek {-,+}5 && pkill -RTMIN+7 i3blocks
 
 # Programs
-alt + Return
+super + Return
 			$TERMINAL
 
 F12
