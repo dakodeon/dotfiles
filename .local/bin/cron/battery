@@ -1,0 +1,76 @@
+#!/bin/env sh
+
+interval=1
+
+# define dunstify ID for low bat messages
+idlow=1234
+
+# send a notification for low battery once
+warn_at=10
+warned=0
+warned_full=0
+
+while true; do
+
+    full_status=$(acpi | awk '{print $3}' | tr -d ",")
+    percent=$(acpi | awk '{print $4}' | tr -d "%" | tr -d ",")
+    
+    if [ "$full_status" = "Charging" ]; then
+	stat="CHR"
+	
+	if [ $warned -eq 1 ]; then
+	    dunstify -C $idlow
+	    warned=0
+	fi
+	
+	if [ $percent -eq 100 ]; then
+	    color="#00FF00"
+	else
+	    color="#AAAAAA"
+	fi
+	    
+    elif [ "$full_status" = "Discharging" ]; then
+	stat="DIS"
+	warned_full=0
+	if [ $percent -le 5 ]; then
+	    systemctl suspend
+	elif [ $percent -le 20 ]; then
+	    color="#FF0000"
+	elif [ $percent -le 40 ]; then
+	    color="#FFAE00"
+	elif [ $percent -le 60 ]; then
+	    color="#FFF600"
+	elif [ $percent -lt 85 ]; then
+	    color="#A8FF00"
+	else
+	    color="#00FF00"
+	fi
+    else
+	# this case is used to cover a failure of acpi to determine the status and outputs "Unknown".
+	# this occurs sometimes, I think only when the battery is charging, but I am not entirely sure
+	stat=""
+	warned=0
+	if [ $percent -eq 100 ]; then
+	    color="#00FF00"
+	else
+	    color="#AAAAAA"
+	fi
+    fi
+
+    if [ "$full_status" = "Discharging" ] && [ $percent -le $warn_at ] && [ $warned -eq 0 ] ; then
+	dunstify -r $idlow -u critical '  Battery is running low.' 'System will soon hibernate'
+	warned=1
+    fi
+
+    if [ "$full_status" = "Charging" ] && [ $percent -eq 100 ] && [ $warned_full -eq 0 ] ; then
+	dunstify 'Battery is full'
+	warned_full=1
+    fi
+    
+    # pango markup syntax
+    full_text="<span foreground='$color'>$percent% $stat</span>"
+
+    echo "$full_text"
+
+    sleep $interval
+done

@@ -1,0 +1,52 @@
+#!/bin/env sh
+
+# HTML gallery generator - generates a static HTML gallery of images, based on a template page and a list of jpegs. It outputs a bunch of HTML files, each showing the image and linking to it's previous and next files.
+
+# Takes two arguments, the file containing the template and a directory containing the image files. (TODO: or a file with a list of paths)
+
+# How to use:
+# First of all, the sript should be run in place, preferably in a dedicated directory, as it reads the arguments as relative paths and it generates the files in citu.
+# The template file contains these three basic elements: a link to the previous page, a link to the next page and the image to be displayed. These are defined in the file as "goto-prev", "goto-next" and "the-image-path". These strings get replaced by the generated values, for example, the template will contain <a href="goto-last">, which will be replaced by <a href="actual/path/to/link.html"> in the final file.
+# The output HTML filenames are of the form: <template name>-###, where ### is an incrementing number, 3 digits long.
+# Individual changes can be made on the output files, which will be taken into account when regenerating the files. In this case, a copy of the modified file should be kept in a subdirectory named 'diffs' with the same filename as the original file. When generating each file, the script checks this directory and replaces the generated file with the one kept there.
+
+templatefile="$1"
+imgdir="$2"
+
+template="$(echo "$templatefile" | sed 's/\.html$//')"
+filelist="$(ls -1 "$imgdir"/*jpg)"
+numfiles="$(echo "$filelist" | wc -l)"
+
+for i in $(seq 1 $numfiles); do
+	currcount=$((i))
+	prevcount=$((i-1))
+	nextcount=$((i+1))
+
+	# looping - prev of first is last and next of last is first
+	test $prevcount -eq 0 && prevcount=$numfiles
+	test $nextcount -gt $numfiles && nextcount=1
+
+	# create three digit long counters
+	prevcount="$(printf "%03d" $prevcount)"
+	currcount="$(printf "%03d" $currcount)"
+	nextcount="$(printf "%03d" $nextcount)"
+
+	# generate filenames
+	imgfile="$(echo "$filelist" | head -n $i | tail -n 1)"
+	prevhtml="$template-$prevcount.html"
+	currhtml="$template-$currcount.html"
+	nexthtml="$template-$nextcount.html"
+
+	# debug
+	echo RUN $i
+	echo image is: "$imgfile"
+	echo prev html filename is: "$prevhtml"
+	echo curr html filename is: "$currhtml"
+	echo next html filename is: "$nexthtml"
+	echo +++++++++++++++++++
+
+	# writing the files, also checking for diffs
+	sed -e "s|goto-previous|./$prevhtml|" -e "s|goto-next|./$nexthtml|" -e "s|the-image-path|$imgfile|" "$templatefile" > "$currhtml"
+	test -f "./diffs/$currhtml" && cp -f "./diffs/$currhtml" "$currhtml" || true # just so the script doesn't end with exit code 1
+done
+
