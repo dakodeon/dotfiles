@@ -16,6 +16,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'terryma/vim-expand-region'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'dahu/vim-help'
+Plug 'tomasiser/vim-code-dark'
 
 call plug#end()
 
@@ -38,7 +39,7 @@ set hidden
 set wildmode=longest,list,full
 
 " This is how you set a colorscheme:
-" colorscheme slate
+colorscheme codedark
 
 " truecolors?
 set termguicolors
