@@ -14,7 +14,8 @@ scripts_dir="$HOME/.source/dotfiles/.local/bin"
 	alias select_cmd='fzf --height=50% --reverse --prompt "Select script: "'
 	alias notify_cmd='dunstify'
 } || {
-	alias edit_cmd='$TERMINAL -e $EDITOR'
+	# alias edit_cmd='$TERMINAL -e $EDITOR'
+	alias edit_cmd='emacsclient -c'
 	alias select_cmd='dmenu -l 5 -g 5 -i -p "Select script:"'
 	alias notify_cmd='echo'
 }

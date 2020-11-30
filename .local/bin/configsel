@@ -12,7 +12,7 @@ if [ "$1" = "-t" ]; then
 	alias select_cmd='fzf --height=50% --reverse --prompt "Select config: "'
 	alias notify_cmd='dunstify'
 else
-	alias edit_cmd='$TERMINAL -e $EDITOR'
+	alias edit_cmd='emacsclient -c'
 	alias select_cmd='dmenu -l 5 -g 5 -i -p "Select config:"'
 	alias notify_cmd='echo'
 fi
