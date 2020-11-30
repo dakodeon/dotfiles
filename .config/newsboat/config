@@ -67,3 +67,4 @@ macro v set browser "download_stuff -u %u -d ~/Downloads"; open-in-browser-and-m
 macro a set browser "download_stuff -a -u %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
 macro y set browser "straw-viewer %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
 macro c set browser "straw-viewer --comments %u"; open-in-browser ; set browser "`echo $BROWSER`"
+macro t set browser "transadd %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
