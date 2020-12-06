@@ -6,3 +6,4 @@
 .config/mpd/mpdstate
 .config/mpd/playlists/*
 .config/ncmpcpp/lyrics/*
+.config/newsboat/urls
