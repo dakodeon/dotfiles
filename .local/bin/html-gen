@@ -13,7 +13,7 @@
 templatefile="$1"
 imgdir="$2"
 
-template="$(echo "$templatefile" | sed 's/\.html$//')"
+template="$(echo "$templatefile" | sed 's/-temp\.html$//')"
 filelist="$(ls -1 "$imgdir"/*jpg)"
 numfiles="$(echo "$filelist" | wc -l)"
 
