@@ -6,7 +6,7 @@ st.font: mononoki Nerd Font Mono-11
 st.chscale: 1.3
 !*fading: 15
 !*fadeColor: black
-st.alpha: 0.8
+st.alpha: 0.9
 
 /* ! old theme */
 /* ! black */
@@ -37,27 +37,27 @@ st.alpha: 0.8
 ! dark+ theme
 ! black
 st.color0: #000000
-st.color8: #1E1E1E
+st.color8: #1C1C1C
 ! red
-st.color1: #D25252
-st.color9: #CE9178
+st.color1: #DD6666
+st.color9: #DB8877
 ! green
-st.color2: #608B4E
-st.color10: #7FB347
+st.color2: #559944
+st.color10: #33CCAA
 ! yellow
-st.color3: #CCDF32
-st.color11: #D9E577
+st.color3: #DDBB77
+st.color11: #DDDDAA
 ! blue
-st.color4: #569CD6
-st.color12: #BED6FF
+st.color4: #114477
+st.color12: #3399DD
 ! magenta
-st.color5: #D197D9
-st.color13: #BFA4A4
+st.color5: #662277
+st.color13: #CC88CC
 ! cyan
-st.color6: #4EC9B0
-st.color14: #9CDCFE
+st.color6: #2277AA
+st.color14: #5FD7FF
 ! white
-st.color7: #D8D8D8
+st.color7: #A8A8A8
 st.color15: #FFFFFF
 
 Sxiv.background: #2e3440
