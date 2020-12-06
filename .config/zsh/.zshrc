@@ -103,7 +103,7 @@ echo -e "\n\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m ➛ \033[34;3m"$(lsb_re
 setopt prompt_subst
 
 # prompt message
-PROMPT="%B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%}) 〉%{$reset_color%}%b" # Print some system information when the shell is first started
+PROMPT="%{$fg[cyan]%}$USER%{$fg[white]%}@%{$fg[yellow]%}$HOST %B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%}) 〉%{$reset_color%}%b" # Print some system information when the shell is first started
 
 ### Git prompt functions
 
