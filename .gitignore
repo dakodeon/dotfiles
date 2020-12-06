@@ -7,3 +7,4 @@
 .config/mpd/playlists/*
 .config/ncmpcpp/lyrics/*
 .config/newsboat/urls
+.config/zsh/.zcompdump
