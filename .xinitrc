@@ -7,8 +7,7 @@ exec unclutter --timeout 1 --ignore-scrolling &   # hide mouse pointer
 exec emacs --daemon &                             # everyone's favourite
 exec transmission-daemon &                        # torrenting
 exec dunst &                                      # notifications
-exec picom -b &                                   # transparency
-# exec conky -c $HOME/.config/conky.conf &          # desktop ricing
+exec picom -b --experimental-backends &           # transparency
 exec monitorstartup &                             # autoconfig connected monitors
 
 exec wallset &
