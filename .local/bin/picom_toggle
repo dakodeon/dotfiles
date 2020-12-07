@@ -1,0 +1,5 @@
+#!/bin/env sh
+
+# toggle compositor (picom) on and off
+
+pgrep -c picom >/dev/null && killall picom || picom --experimental-backends -b
