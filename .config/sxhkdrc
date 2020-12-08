@@ -16,40 +16,45 @@ super + ctrl + r
 super + ctrl + shift + r
 			dotfiles-update
 
+XF86Audio{LowerVolume,RaiseVolume}
+	pactl set-sink-volume @DEFAULT_SINK@ {-,+}5% && pkill -RTMIN+10 i3blocks
+
+XF86AudioMute
+	pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks
 # audio controls (pulseaudio)
-{F8,F9}
-    pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
+# {F8,F9}
+#     pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
     
-shift + {F8,F9}
-    pactl set-sink-volume 0 {50,100}% && pkill -RTMIN+10 i3blocks
+# shift + {F8,F9}
+#     pactl set-sink-volume 0 {50,100}% && pkill -RTMIN+10 i3blocks
 
-F3
-    pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
+# F3
+#     pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
 
-# audio controls (alsa)
-ctrl + {F8,F9}
-    amixer set 'Master' 5%{-,+}
+# # audio controls (alsa)
+# ctrl + {F8,F9}
+#     amixer set 'Master' 5%{-,+}
 
-shift + ctrl + {F8,F9}
-    amixer set 'Master' {50,100}%
+# shift + ctrl + {F8,F9}
+#     amixer set 'Master' {50,100}%
     
-ctrl + F3
-    amixer set 'Speaker' toggle
+# ctrl + F3
+#     amixer set 'Speaker' toggle
 
-# brightness controls
-{F6, F7}
-    xbacklight -{dec,inc} 10
+# # brightness controls
+# {F6, F7}
+#     xbacklight -{dec,inc} 10
 
-shift + {F6,F7}
-    xbacklight -set {50,100}
+# shift + {F6,F7}
+#     xbacklight -set {50,100}
 
-# multi-monitor
-super + {F10,shift + F10,ctrl + F10}
-    {monitorselect,monitorstartup,monitorsolo}
+# # multi-monitor
+# super + {F10,shift + F10,ctrl + F10}
+#     {monitorselect,monitorstartup,monitorsolo}
 
-# toggle touchpad
-F4
-      touchpad-toggle
+# # toggle touchpad
+# F4
+#       touchpad-toggle
 
 # mount-unmount
 super + grave
@@ -92,5 +97,5 @@ super + shift + {comma,period}
 super + Return
 			$TERMINAL
 
-F12
-			$TERMINAL -e nmtui
+# F12
+# 			$TERMINAL -e nmtui
