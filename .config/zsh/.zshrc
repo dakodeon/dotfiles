@@ -237,15 +237,16 @@ alias q='exit'
 # aliases for programs
 # note the use of chname for terminal apps. caveat: the name remains after
 # exiting (run chname again if desired)
-alias e='emacsclient -c '
+alias e='devour emacsclient -c '
 alias et='chname emacs; emacsclient -t '
 alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
 alias v='chname nvim; nvim '
 alias nb='chname newsboat; newsboat'
 alias ra='chname ranger; ranger '
 alias lf='chname lf; lf '
-alias z='zathura '
+alias z='devour zathura '
 alias vr='vimv '
+alias mp='devour mpv'
 
 # aliases for git
 
