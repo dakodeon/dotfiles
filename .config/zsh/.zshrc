@@ -42,7 +42,6 @@ bindkey -M vicmd ' ' edit-command-line
 # how to make this work
 # bindkey -M vicmd 'ZZ' exit
 
-# these don't work?
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
@@ -71,19 +70,19 @@ zle -N zle-line-init
 echo -ne '\e[5 q' # vi mode starts in insert, the cursor should reflect this
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
-# these were already here
-# bindkey -e
+# some other keybindings
 bindkey '^[[2~' overwrite-mode                                  # Insert key
 bindkey '^[[3~' delete-char                                     # Delete key
 bindkey '^[[5~' history-beginning-search-backward               # Page up key
 bindkey '^[[6~' history-beginning-search-forward                # Page down key
 
-## Plugins section: Enable fish style features
-# Use syntax highlighting
+# sourcing
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Use history substring search
 source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-# bind UP and DOWN arrow keys to history substring search
+
+source ~/.config/zsh/git_rprompt.zsh
+
+
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
@@ -96,72 +95,13 @@ compinit -d
 colors
 
 # Print a greeting message when shell is started
-# cat ~/Documents/ascii/$(ls ~/Documents/ascii | sort -R | head -1)
 echo -e "\n\033[32;1m➛ \033[34;3m"$USER@$HOST"\033[32m ➛ \033[34;3m"$(lsb_release -ds | tr -d '"')"\033[32;1m ➛ \033[34;3m"$(uname -r)" \033[32;1m➛\n"
 
 # enable substitution for prompt
 setopt prompt_subst
 
 # prompt message
-PROMPT="%{$fg[cyan]%}$USER%{$fg[white]%}@%{$fg[yellow]%}$HOST %B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%}) 〉%{$reset_color%}%b" # Print some system information when the shell is first started
-
-### Git prompt functions
-
-# Modify the colors and symbols in these variables as desired.
-GIT_PROMPT_SYMBOL="%{$fg[blue]%}±"                              # plus/minus     - clean repo
-GIT_PROMPT_PREFIX="%{$fg[green]%}[%{$reset_color%}"
-GIT_PROMPT_SUFFIX="%{$fg[green]%}]%{$reset_color%}"
-GIT_PROMPT_AHEAD="%{$fg[red]%}ANUM%{$reset_color%}"             # A"NUM"         - ahead by "NUM" commits
-GIT_PROMPT_BEHIND="%{$fg[cyan]%}BNUM%{$reset_color%}"           # B"NUM"         - behind by "NUM" commits
-GIT_PROMPT_MERGING="%{$fg_bold[magenta]%}⚡︎%{$reset_color%}"     # lightning bolt - merge conflict
-GIT_PROMPT_UNTRACKED="%{$fg_bold[red]%}●%{$reset_color%}"       # red circle     - untracked files
-GIT_PROMPT_MODIFIED="%{$fg_bold[yellow]%}●%{$reset_color%}"     # yellow circle  - tracked files modified
-GIT_PROMPT_STAGED="%{$fg_bold[green]%}●%{$reset_color%}"        # green circle   - staged changes present = ready for "git push"
-
-parse_git_branch() {
-  # Show Git branch/tag, or name-rev if on detached head
-  ( git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD ) 2> /dev/null
-}
-
-parse_git_state() {
-  # Show different symbols as appropriate for various Git repository states
-  # Compose this value via multiple conditional appends.
-  local GIT_STATE=""
-  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
-  if [ "$NUM_AHEAD" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
-  fi
-  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-  if [ "$NUM_BEHIND" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
-  fi
-  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
-    GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
-  fi
-  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
-    GIT_STATE=$GIT_STATE$GIT_PROMPT_UNTRACKED
-  fi
-  if ! git diff --quiet 2> /dev/null; then
-    GIT_STATE=$GIT_STATE$GIT_PROMPT_MODIFIED
-  fi
-  if ! git diff --cached --quiet 2> /dev/null; then
-    GIT_STATE=$GIT_STATE$GIT_PROMPT_STAGED
-  fi
-  if [[ -n $GIT_STATE ]]; then
-    echo "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
-  fi
-}
-
-git_prompt_string() {
-  local git_where="$(parse_git_branch)"
-  
-  # If inside a Git repository, print its branch and state
-  [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX"
-  
-  # If not inside the Git repo, print exit codes of last command (only if it failed)
-  [ ! -n "$git_where" ] && echo "%{$fg[red]%} %(?..[%?])"
-}
+PROMPT="%{$fg[cyan]%}$USER%{$fg[white]%}@%{$fg[yellow]%}$HOST %B%{$fg[green]%}%1~%(?.%{$fg[green]%}.%{$fg[red]%}) 〉%{$reset_color%}%b"
 
 ## Prompt on right side:
 #  - shows status of git when in git repository (code adapted from https://techanic.net/2012/12/30/my_git_prompt_for_zsh.html)
@@ -216,99 +156,8 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-## Alias section 
-
-# add sensible options
-alias cp="cp -iv"     # Confirm before overwriting something
-alias mv="mv -iv"
-alias rm="rm -vI"
-alias df='df -h'      # Human-readable sizes
-alias du='du -h'
-alias free='free -m'  # Show sizes in MB
-
-# aliases for ls 
-alias ll='ls -l'
-alias la='ls -al'
-alias l.='ls -d .*'
-
-# exit
-alias q='exit'
-
-# aliases for programs
-# note the use of chname for terminal apps. caveat: the name remains after
-# exiting (run chname again if desired)
-alias e='devour emacsclient -c '
-alias et='chname emacs; emacsclient -t '
-alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
-alias v='chname nvim; nvim '
-alias nb='chname newsboat; newsboat'
-alias ra='chname ranger; ranger '
-alias lf='chname lf; lf '
-alias z='devour zathura '
-alias vr='vimv '
-alias mp='devour mpv'
-
-# aliases for git
-
-alias g.='git status'
-alias gd='git diff '
-alias gC='git clone '
-alias ga='git add'
-alias gc='git commit -m '
-alias gA='git add . && git commit -m '
-alias gp='git push'
-alias gO='git remote set-url origin git@github.com:'
-alias gu='git restore '
-alias gU='git restore .'
-alias gr='git restore --staged '
-alias g\?='alias | grep git'
-
-# aliases for pacman
-
-alias pS='sudo pacman -S ' # install
-alias pU='sudo pacman -Syu ' # upgrade
-alias pf='pacman -Ss ' # find package
-alias pR='sudo pacman -Rns ' # remove
-alias pl='pacman -Qe' # list expl. installed packages
-alias plu='pacman -Qdt' # list unneeded packages installed as deps
-alias pi='pacman -Qi ' # info about installed package
-alias pis='pacman -Si ' # info about package
-alias pif='pacman -Ql ' # files of installed package
-alias pifs='pacman -Sl ' # files of package
-alias pC='sudo pacman -Sc' # clear database of uninstalled packages
-alias pCC='sudo pacman -Scc' # clear database of all packages
-alias p\?='alias | grep pacman'
-
-# aliases for directories
-alias h='cd; pwd'
-alias D='cd $HOME/Downloads; pwd'
-alias d='cd $HOME/Documents; pwd'
-alias M='cd $HOME/Music; pwd'
-alias P='cd $HOME/Pictures; pwd'
-alias R='cd /Music/Ρεμπέτικα; pwd'
-alias V='cd $HOME/Videos; pwd'
-alias m='cd /media; pwd'
-alias p='cd $HOME/.personal; pwd'
-alias R='cd $HOME/.source; pwd'
-alias Rd='cd $HOME/.source/dotfiles; pwd'
-alias E='cd $HOME/.emacs.d; pwd'
-alias C='cd $HOME/.config; pwd'
-alias S='cd $HOME/.local/bin; pwd'
-alias W='cd /var/www/lukesrv; pwd'
-
-# aliases for my scripts
-alias es='scriptsel -t'
-alias esn='newscript '
-alias ec='configsel -t'
-alias ecn='dotfiles-update '
-alias sx='sxivdir'
-
-# misc aliases
-# rsync my website!
-alias WS='rsync -rptzP --exclude "photoshow/photofull.html" --exclude "photoshow/diffs" /var/www/lukesrv/* root@lukebass.xyz:/var/www/lukesrv/'
-
-# copy file contents to clipboard
-alias yX='xclip -sel c < '
+# source aliases
+source ~/.config/shell_aliases.zsh 
 
 # for emacs-vterm -- not exactly sure what this does, though
 function vterm_printf(){
