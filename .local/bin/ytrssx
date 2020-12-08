@@ -1,7 +1,16 @@
 #!/bin/env sh
 
-# extract the RSS feed link from a Youtube account and put it on the clipboard
+# extract RSS feeds from various sites. For now, youtube account pages and github. If no url is given as argument, it reads from clipboard.
 
-feed="$(curl -s "$(xclip -selection clipboard -o)" | grep -o '"externalId":"[a-zA-Z0-9_\-]*"' | tr -d "\"" | awk -F':' '{print "https://www.youtube.com/feeds/videos.xml?channel_id="$2}')"
+url="${1:-$(xclip -selection clipboard -o)}"
+
+case "$url" in
+    *youtube*)
+	feed="$(curl -s "$url" | grep -o '"externalId":"[a-zA-Z0-9_\-]*"' | tr -d "\"" | awk -F':' '{print "https://www.youtube.com/feeds/videos.xml?channel_id="$2}')"
+	;;
+    *github*)
+	feed="$(curl -s "$url" | grep -o 'https://github.com/.*\.atom')"
+	;;
+esac
 
 [ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify "RSS feed in clipboard" "$(echo "$feed")"; } || dunstify "No RSS feed found!"
