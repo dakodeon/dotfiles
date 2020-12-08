@@ -32,11 +32,11 @@ separator_block_width=15
 align=center
 markup=none
 interval=1
-color=#AAAAAA
+color=#A8A8A8
 
 # audio player info
 [mpd_info]
-color=#336699
+color=#5588BB
 interval=once
 signal=7
 separator=false
@@ -55,7 +55,7 @@ interval=1800
 
 # email
 [mail-notifier]
-label= 
+label=  
 color=#5588BB
 interval=once
 instance=loukas.bass
@@ -65,7 +65,7 @@ separator=false
 separator_block_width=5
 
 [mail-notifier]
-color=#BB8899
+color=#CC88CC
 interval=once
 instance=dakodeon
 signal=2
@@ -83,7 +83,7 @@ separator=false
 separator_block_width=5
 
 [mail-notifier]
-color=#CCAA00
+color=#DDBB77
 interval=once
 instance=gmail_luc
 signal=2
@@ -93,13 +93,16 @@ markup=pango
 # The first parameter sets the step (and units to display)
 # The second parameter overrides the mixer selection
 # See the script for details.
-[volume]
-label= 
-instance=Master
-#instance=PCM
+# [volume]
+# label= 
+# instance=Master
+# #instance=PCM
+# interval=once
+# signal=10
+# command=~/.config/i3/i3blocks/volume 5 pulse
+[vol]
 interval=once
 signal=10
-command=~/.config/i3/i3blocks/volume 5 pulse
 
 # battery
 [battery]
@@ -113,13 +116,13 @@ markup=pango
 # The script may be called with a optional argument to set the alert
 # (defaults to 10 for 10%).
 [disk]
-label=
+label= 
 interval=30
 separator=false
 separator_block_width=10
 
 [disk]
-label=
+label= 
 instance=/
 interval=30
 separator=false
@@ -145,20 +148,20 @@ interval=3
 
 [wifi]
 label= 
-instance=wlp16s0
+# instance=wlp16s0
 interval=3
 min_width=35
 separator=false
 separator_block_width=10
 # wifi
 [iface]
-color=#00FF00
+color=#47C20A
 interval=3
 
 # Keyboard layout
 [keyb_layout]
-label=
-color=#BBBBBB
+label= 
+color=#A8A8A8
 interval=persist
 min_width=30
 

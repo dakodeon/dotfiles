@@ -16,7 +16,10 @@
 
 #------------------------------------------------------------------------
 
-INTERFACE="${BLOCK_INSTANCE:-wlan0}"
+# INTERFACE="${BLOCK_INSTANCE:-wlan0}"
+
+# choose the first wifi device if BLOCK_INSTANCE is not specified
+test -z $BLOCK_INSTANCE && INTERFACE="$(ls /sys/class/net/ | grep -E "wlp*|wlan*" | sed -n '1p')" || INTERFACE="$BLOCK_INSTANCE"
 
 #------------------------------------------------------------------------
 
