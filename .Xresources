@@ -6,7 +6,7 @@ st.font: mononoki Nerd Font Mono-10
 st.chscale: 1.3
 st.alpha: 0.9
 
-! dark+ theme
+! dark+ theme (sort of)
 ! black
 st.color0: #000000
 st.color8: #1C1C1C
@@ -15,7 +15,7 @@ st.color1: #DD6666
 st.color9: #DB8877
 ! green
 st.color2: #559944
-st.color10: #47C20A
+st.color10: #00AA66
 ! yellow
 st.color3: #DDBB77
 st.color11: #DDDDAA
