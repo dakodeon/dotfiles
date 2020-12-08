@@ -8,7 +8,7 @@ dotfiles_repo="$HOME/.source/dotfiles"
 
 # -t for terminal
 if [ "$1" = "-t" ]; then
-	alias edit_cmd='$EDITOR'
+	which devour >/dev/null && alias edit_cmd='devour emacsclient -c' || alias edit_cmd='$EDITOR'
 	alias select_cmd='fzf --height=50% --reverse --prompt "Select config: "'
 	alias notify_cmd='dunstify'
 else

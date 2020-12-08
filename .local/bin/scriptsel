@@ -10,7 +10,7 @@ scripts_dir="$HOME/.source/dotfiles/.local/bin"
 
 # -t for terminal
 [ "$1" = "-t" ] && {
-	alias edit_cmd='$EDITOR'
+	which devour >/dev/null && alias edit_cmd='devour emacsclient -c' || alias edit_cmd='$EDITOR'
 	alias select_cmd='fzf --height=50% --reverse --prompt "Select script: "'
 	alias notify_cmd='dunstify'
 } || {
