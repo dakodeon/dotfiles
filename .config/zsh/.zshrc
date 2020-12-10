@@ -80,9 +80,6 @@ bindkey '^[[6~' history-beginning-search-forward                # Page down key
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-source ~/.config/zsh/git_rprompt.zsh
-
-
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
@@ -112,6 +109,9 @@ PROMPT="%{$fg[cyan]%}$USER%{$fg[white]%}@%{$fg[yellow]%}$HOST %B%{$fg[green]%}%1
 #RPROMPT="%{$fg[red]%} %(?..[%?])" 
 # Right prompt with exit status of previous command marked with ✓ or ✗
 # RPROMPT="%(?.%{$fg[green]%}✓ %{$reset_color%}.%{$fg[red]%}✗ %{$reset_color%})"
+
+# source the file for git prompt
+source ~/.config/zsh/git_rprompt.zsh
 
 RPROMPT="%{$fg[red]%} %(?..[%?])"
 RPROMPT='$(git_prompt_string)'
