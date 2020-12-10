@@ -1,3 +1,6 @@
+# this should run on shell login
+exec sudo rfkill unblock all &
+
 # basic globals
 export TERMINAL="st"
 export EDITOR="nvim"
