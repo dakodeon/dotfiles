@@ -1,9 +1,96 @@
-#!/bin/sh
+#!/bin/env sh
+
+### --HELP START-- ###
 # Script to add wpa_supplicant networks through dmenu
+# I want options to a) connect, b) edit
+### --HELP END-- ###
 
-wpa_cli scan && networks="$(wpa_cli scan_results | awk 'NR > 2 {print $5}')" || exit 23
-sel="$(printf "$networks" | dmenu -c -l 12 -p "Select network: ")" || exit 3
+# init flags
+EDIT=false
+CONN=true # default behaviour
+TERM=false # this is used for some debugging if in a remote shell
 
-pass="$(dmenu -P -c -l 1 -p "Password for \"$sel\":")" || exit 3
+while getopts ":Eth" opt; do
+    case $opt in
+	E) EDIT=true && CONN=false ;;
+	t) TERM=true ;;
+	h) sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0" && exit ;;
+	\?) echo "Unknown option. Use -h for help." >&2 && exit 23 ;;
+    esac
+done
 
-printf "network={\n\tssid=\"%s\"\n\tpsk=\"%s\"\n}" "$sel" "$pass" >> /etc/wpa_supplicant/wpa_supplicant.conf && dunstify " New network" "\"$sel\" was added to your networks" || dunstify "  Error" "Could not add \"$sel\" to your networks"
+shift $((OPTIND-1))
+
+# functions
+
+# general prompt. Expects 3 args: 1. list of options, 2. prompt, 3. num of candidates
+prompt() { \
+	   if $TERM; then printf "$1" | fzf --height=$3 --prompt="$2"
+	   else printf "$1" | dmenu -c -l $3 -i -p "$2"; fi
+}
+
+# passwd prompt. Expects 2 args: 1. number of network, 2. prompt
+setpasswd() { \
+	      # assume that an empty password corresponds to an open network
+	      if $TERM; then
+		  echo "$2"
+		  stty -echo
+		  read pass || wpa_cli reconfigure && exit 3
+		  stty echo
+	      else
+		  pass="$(dmenu -P -c -l 1 -p "$2")" || wpa_cli reconfigure && exit 3
+		  ok=$?
+	      fi
+	      test $ok -ne 0 && wpa_cli reconfigure && exit 3
+	      test -n "$pass" && wpa_cli set_network $1 psk "\"$pass\"" \
+		      || wpa_cli set_network $1 key_mgmt NONE 
+}
+
+did=987654
+reconf=false
+
+if $CONN; then
+    wpa_cli scan && networks="$(wpa_cli scan_results | awk 'NR > 2 {print $5}')" || exit 23
+    sel="$(prompt "$networks" "Select network: " 12)" || exit 3
+    if wpa_cli list_networks | grep -q "$sel"; then
+	netnum="$(wpa_cli list_networks | grep "$sel" | awk '{print $1}')"
+    else
+	netnum="$(wpa_cli add_network | sed -n '2p')"
+	wpa_cli set_network $netnum ssid "\"$sel\""
+	setpasswd $netnum "Password for \"$sel\": " || wpa_cli remove_network $netnum
+    fi
+    
+    # if the selected network is the current network disconnect, else connect
+    test "$(wpa_cli list_networks | grep "$sel" | awk '{print $NF}')" = "[CURRENT]" && \
+	{ wpa_cli disconnect; dunstify -r $did " WiFi" "Disconnected from \"$sel\""; } || \
+	    { wpa_cli select_network $netnum; wpa_cli save_config; dunstify -r $did " WiFi" "Connected to \"$sel\""; }
+
+elif $EDIT; then
+    networks="$(wpa_cli list_networks | awk 'NR>2 && $2!="any" {print $2}')"
+    sel="$(prompt "$networks" "Configure network: " 12)" || exit 3
+    netnum="$(wpa_cli list_networks | grep "$sel" | awk '{print $1}')"
+    action="$(prompt "Change Password\nShow Password\nForget" "action on \"$sel\": " 5)" || exit 3
+
+    case "$action" in
+	"Change Password")
+	    setpasswd $netnum "New password for \"$sel\": "
+	    dunstify -r $did " WiFi" "\"$sel\" password updated"
+	    reconf=true
+	    ;;
+	"Show Password")
+	# h) sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0" && exit ;;
+	    pass="$(cat /etc/wpa_supplicant/wpa_supplicant.conf | sed -n "0,/$sel/d;/\}/,\$d;s/\s*psk=//p" | tr -d '"')"
+	    dunstify -r $did " Password for \"$sel\":" "$pass"
+	    echo -n "$pass" | xclip -selection clipboard
+	    ;;
+	"Forget")
+	    yorn="$(prompt "Yes\nNo" "Really forget \"$sel\"? ")" || exit 3
+	    test "$yorn" = "Yes" && wpa_cli remove_network $netnum || exit 3
+	    dunstify -r $did " WiFi" "\"$sel\" removed from known networks"
+	    reconf=true
+	    ;;
+    esac
+
+    wpa_cli save_config
+    $reconf && wpa_cli reconfigure
+fi
