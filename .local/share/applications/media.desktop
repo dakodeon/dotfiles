@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=Media
+Exec=/usr/bin/env st -e mpv %U

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=PDFReader
+Exec=/usr/bin/env zathura %u
