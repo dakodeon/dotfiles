@@ -39,16 +39,16 @@ while getopts ":aPhu:d:" opt; do
 	    media="audio"
 	    ;;
 	u)
-			# check if url contains 4anime and change url to point to video
-			url="$OPTARG"
-			echo "$url" | grep 4anime && url="$(curl "$url" | grep 'file:' | awk -F'"' '{print $2}')"
-			;;
+	    # check if url contains 4anime and change url to point to video
+	    url="$OPTARG"
+	    echo "$url" | grep 4anime && url="$(curl "$url" | grep 'file:' | awk -F'"' '{print $2}')"
+	    ;;
 	d)
-			dl_dir="$OPTARG"
-			;;
+	    dl_dir="$OPTARG"
+	    ;;
 	P)
-			play=true
-			;;
+	    play=true
+	    ;;
 	h) 
 	    sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0"
 	    exit
@@ -80,9 +80,9 @@ title="$(youtube-dl -e "$url")"
 dunstify -r $dunst_id " Downloading $media" "\"$title\""
 
 [ $play = true ] && \
-		{ dunstify -r $dunst_id " Playing" "\"$title\"" && st -e mpv "$url"; }
+    { dunstify -r $dunst_id " Playing" "\"$title\"" && st -e mpv "$url"; }
 
 [ $play = false ] && \
-			{ youtube-dl $audopt -q -i -c -o "$dl_dir/%(title)s.%(ext)s" "$url" && \
-					dunstify -r $dunst_id " Download complete" "\"$title\"" || \
-				dunstify -r $dunst_id " Download failed:" "\"$title\""; }
+    { youtube-dl $audopt -q -i -c -o "$dl_dir/%(title)s.%(ext)s" "$url" && \
+	  dunstify -r $dunst_id " Download complete" "\"$title\"" || \
+	      dunstify -r $dunst_id " Download failed:" "\"$title\""; }
