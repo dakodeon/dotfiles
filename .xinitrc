@@ -5,7 +5,7 @@
 
 exec unclutter --timeout 1 --ignore-scrolling &   # hide mouse pointer
 exec emacs --daemon &                             # everyone's favourite
-exec transmission-daemon &                        # torrenting
+# exec transmission-daemon &                        # torrenting
 exec dunst &                                      # notifications
 exec picom -b --experimental-backends &           # transparency
 exec monitorstartup &                             # autoconfig connected monitors

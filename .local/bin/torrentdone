@@ -2,4 +2,4 @@
 
 # Used by transmission daemon to notify when a torrent finished downloading
 
-notify-send "  Download complete:" "$TR_TORRENT_NAME"
+dunstify "  Download complete:" "$TR_TORRENT_NAME"
