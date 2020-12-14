@@ -25,6 +25,7 @@ done
 [ ! -p "$pipe" ] && mkfifo "$pipe"
 
 [ -p "$pipe" ] && \
-    sxhkd ${abort:+-a "$abort" } ${time:+-t "$time" } ${conf:+-c "$conf" } ${pipe:+-s "$pipe" } &
+    { pgrep -x sxhkd || sxhkd ${abort:+-a "$abort" } ${time:+-t "$time" } ${conf:+-c "$conf" } ${pipe:+-s "$pipe" } & }
 
-[ -p "$pipe" ] && sxhkd-statusd "$pipe" &
+[ -p "$pipe" ] && \
+    { pgrep -x sxhkd-statusd || sxhkd-statusd "$pipe" & }
