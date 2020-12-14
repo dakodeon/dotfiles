@@ -1,0 +1,30 @@
+#!/bin/env sh
+
+# script to start sxhkdrc along with the pipes and stuff
+# depends on sxhkd-statusd (https://github.com/piutranq/sxhkd-statusd)
+# you will probably also need socat to access the socket
+
+# the options given reflect the actual sxhkd options
+
+# the default pipe location
+pipe_addr="/run/user/$UID/sxhkd.fifo"
+
+while getopts ":a:t:c:s:" opt; do
+    case $opt in
+	a) abort="$OPTARG" ;;
+	t) time="$OPTARG" ;;
+	c) conf="$OPTARG" ;;
+	s) pipe="$OPTARG" ;;
+	\?) echo "-$OPTARG is an unknown option." >&2 ;;
+	:) echo "Missing argument for option -$OPTARG" >&2 ;;
+    esac
+done
+
+[ -z "$pipe" ] && pipe="$pipe_addr"
+
+[ ! -p "$pipe" ] && mkfifo "$pipe"
+
+[ -p "$pipe" ] && \
+    sxhkd ${abort:+-a "$abort" } ${time:+-t "$time" } ${conf:+-c "$conf" } ${pipe:+-s "$pipe" } &
+
+[ -p "$pipe" ] && sxhkd-statusd "$pipe" &
