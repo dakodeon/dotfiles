@@ -5,23 +5,33 @@
 # the -x option, opens $EDITOR in new $TERMINAL
 
 scripts_dir="$HOME/.source/dotfiles/.local/bin"
+def_loc="$scripts_dir"
 
 [ "$1" = "-x" ] && external=true && shift
 [ -z "$1" ] && echo "No script name given" && exit 1
 
 name="$1"
 
-cd "$scripts_dir" || { echo "$scripts_dir does not exist!"; exit 1; }
+[ ! -d "$scripts_dir" ] && echo "$scripts_dir does not exist!" && exit 1 
 
-[ -f "$name" ] && echo "File \"$name\" already exists!" && exit 23
-
-echo "#!/bin/env sh" > "$1" && chmod +x "$name"
+cd "$scripts_dir"
+dirs="$(find . -type d | sed 's/\/$//')"
 
 [ "$external" = "true" ] && \
-	$TERMINAL -e $EDITOR "$scripts_dir"/"$name" || $EDITOR "$name"
+    loc="$(printf %s "$dirs" | dmenu -l 5 -i -r -p "Where to? ")" || \
+	loc="$(printf %s "$dirs" | fzf --height=10 -e --prompt="Where to? ")" || exit 23
+
+fullname="$(echo "$loc/$name" | sed 's/^\.\///')"
+
+[ -f "$fullname" ] && echo "File \"$fullname\" already exists!" && exit 23
+
+echo "#!/bin/env sh" > "$fullname" && chmod +x "$fullname"
+
+[ "$external" = "true" ] && \
+	emacsclient -c "$scripts_dir"/"$fullname" || devour emacsclient -c "$fullname"
 
 # check for my restow script and run it if file is written
-[ "$(wc -l "$name" | cut -d' ' -f 1)" = "1" ] && \
-	rm "$name" || \
+[ "$(wc -l "$fullname" | cut -d' ' -f 1)" = "1" ] && \
+	rm "$fullname" || \
 	  { which dotfiles-update >/dev/null && dotfiles-update; }
 
