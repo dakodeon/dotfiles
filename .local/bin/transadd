@@ -2,6 +2,6 @@
 
 # from LukeSmith's voidrice
 
-pgrep -x transmission-daemon || (transmission-daemon && dunstify "Starting transmission daemon..." && sleep 3)
+pgrep -x transmission-da || (transmission-daemon && dunstify "Starting transmission daemon..." && sleep 3)
 
 transmission-remote -a "$@" && dunstify " Downloading torrent"
