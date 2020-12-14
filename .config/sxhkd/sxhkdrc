@@ -5,13 +5,16 @@ super + {q,shift + q}
 super + Pause
     i3lock
 
+super + Escape; {shift + s, r, s, e}
+      {sudo shutdown -h now, sudo reboot, sudo zzz -z, i3-msg exit}
+
 # there's a bug in dunstctl so "dunstctl is-paused" is needed to show previous
 # notifications after un-pausing.
 super + shift + Pause
     dunstctl set-paused toggle && dunstctl is-paused && pkill -RTMIN+13 i3blocks
 
 super + ctrl + r
-    pkill -SIGUSR1 sxhkd && notify-send " sxhkd" "Config reloaded"
+    pkill -SIGUSR1 sxhkd && sxhkd_run && notify-send " sxhkd" "Config reloaded"
       
 super + ctrl + shift + r
     dotfiles-update
@@ -21,16 +24,11 @@ XF86Audio{LowerVolume,RaiseVolume}
 
 XF86AudioMute
     pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks
+
+super + XF86AudioRaiseVolume
+    pactl set-sink-volume @DEFAULT_SINK@ 100% && pkill -RTMIN+10 i3blocks
+
 # audio controls (pulseaudio)
-# {F8,F9}
-#     pactl set-sink-volume 0 {-,+}5% && pkill -RTMIN+10 i3blocks
-    
-# shift + {F8,F9}
-#     pactl set-sink-volume 0 {50,100}% && pkill -RTMIN+10 i3blocks
-
-# F3
-#     pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
-
 # # audio controls (alsa)
 # ctrl + {F8,F9}
 #     amixer set 'Master' 5%{-,+}
@@ -68,7 +66,7 @@ super + d
 super + shift + d
     wm_menu
 
-super + {s,shift + s}
+super + {s, shift + s}
     {scriptsel, configsel}
 
 # download stuff -- ytrssx extracts rss feed from youtube
@@ -84,18 +82,22 @@ super + n
     emacsclient -c --eval '(org-capture)' --frame-parameters='(quote (name . "capture"))'
 
 # MPC controls
-super + {slash,shift + slash}
-    mpc {toggle,stop} && pkill -RTMIN+7 i3blocks
+super + {slash, shift + slash}
+    mpc {toggle, stop} && pkill -RTMIN+7 i3blocks
 
-super + {comma,period}
-    mpc {prev,next} && pkill -RTMIN+7 i3blocks
+super + {comma, period}
+    mpc {prev, next} && pkill -RTMIN+7 i3blocks
 
-super + shift + {comma,period}
-    mpc seek {-,+}5 && pkill -RTMIN+7 i3blocks
+super + shift + {comma, period}
+    mpc seek {-, +}5 && pkill -RTMIN+7 i3blocks
 
 # Programs
 super + Return
     $TERMINAL
 
-super + {F12,shift + F12,control + F12}
-    {wpa_menu,wpa_menu -E,sudo rfkil unblock all}
+# launchermode
+super + x; {Return, d, e, m, b, t, w, shift + d, q}
+      {$TERMINAL,$FILEMAN,$VISUAL,$MAILCLIENT,$BROWSER,$TERMINAL -e tremc,libreoffice --writer,darktable,$TERMINAL -e calc}
+
+super + {F12, shift + F12, control + F12}
+    {wpa_menu, wpa_menu -E, sudo rfkil unblock all}
