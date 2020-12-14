@@ -43,7 +43,7 @@ fi
 if [[ $QUALITY == 'down' ]]; then
     echo "#AAAAAA"
 elif [[ $QUALITY -ge 80 ]]; then
-    echo "#00FF00"
+    echo "#47C20A"
 elif [[ $QUALITY -lt 80 ]]; then
     echo "#FFF600"
 elif [[ $QUALITY -lt 60 ]]; then
@@ -53,6 +53,8 @@ elif [[ $QUALITY -lt 40 ]]; then
 fi
 
 case $BLOCK_BUTTON in
+    # 1) wpa_menu ;;
+    # 3) wpa_menu -E ;;
     1) $TERMINAL -e nmtui-connect ;;
     3) $TERMINAL -e nmtui-edit ;;
 esac
