@@ -1,8 +1,27 @@
 #!/bin/env sh
 
 ### --HELP START-- ###
-# Script to add wpa_supplicant networks through dmenu
-# I want options to a) connect, b) edit
+
+# Frontend to wpa_supplicant/wpa_cli using dmenu or fzf.
+
+# Basic usage: When called without an argument, it prompts for a network
+#   selection. If we are connected to the selected network it disconnects,
+#   else it connects. If the selected network is new it asks for the
+#   password and then adds it to wpa_supplicant.conf
+
+# Options:
+#   -E: Edit connection. Prompts for a network selection and then for an
+#       action upon the selected network.
+#       Actions:
+#         + Change Password: Change the password
+#         + View Password: Shows a notification with the current password
+#           and adds the password to the clipboard
+#         + Forget: Remove the network from wpa_supplicant.conf
+#   -t: Call from terminal. Replaces all menus with fzf
+#   -h: Display this help message.
+
+# dakodeon, 2020
+
 ### --HELP END-- ###
 
 # init flags
@@ -29,25 +48,25 @@ prompt() { \
 	   else printf "$1" | dmenu -c -l $3 -i -p "$2"; fi
 }
 
-# passwd prompt. Expects 2 args: 1. number of network, 2. prompt
+# passwd prompt. Expects 3 args: 1. prompt, 2. network name, 3. optional new network indicator
 setpasswd() { \
 	      # assume that an empty password corresponds to an open network
 	      if $TERM; then
-		  echo "$2"
+		  echo "$1"
 		  stty -echo
-		  read pass || wpa_cli reconfigure && exit 3
+		  read pass
 		  stty echo
 	      else
-		  pass="$(dmenu -P -c -l 1 -p "$2")" || wpa_cli reconfigure && exit 3
-		  ok=$?
+		  pass="$(dmenu -P -c -l 1 -p "$1")" || exit 3
 	      fi
-	      test $ok -ne 0 && wpa_cli reconfigure && exit 3
-	      test -n "$pass" && wpa_cli set_network $1 psk "\"$pass\"" \
-		      || wpa_cli set_network $1 key_mgmt NONE 
+	      netnum="$(test -n "$3" && wpa_cli add_network | sed -n '2p' || \
+			      wpa_cli list_networks | grep "$2" | awk '{print $1}')"
+	      test -n "$3" && wpa_cli set_network $netnum ssid "\"$2\""
+	      test -n "$pass" && wpa_cli set_network $netnum psk "\"$pass\"" \
+		      || wpa_cli set_network $netnum key_mgmt NONE 
 }
 
 did=987654
-reconf=false
 
 if $CONN; then
     wpa_cli scan && networks="$(wpa_cli scan_results | awk 'NR > 2 {print $5}')" || exit 23
@@ -55,15 +74,15 @@ if $CONN; then
     if wpa_cli list_networks | grep -q "$sel"; then
 	netnum="$(wpa_cli list_networks | grep "$sel" | awk '{print $1}')"
     else
-	netnum="$(wpa_cli add_network | sed -n '2p')"
-	wpa_cli set_network $netnum ssid "\"$sel\""
-	setpasswd $netnum "Password for \"$sel\": " || wpa_cli remove_network $netnum
+	setpasswd "Password for \"$sel\": " "$sel" 1
     fi
     
     # if the selected network is the current network disconnect, else connect
     test "$(wpa_cli list_networks | grep "$sel" | awk '{print $NF}')" = "[CURRENT]" && \
-	{ wpa_cli disconnect; dunstify -r $did " WiFi" "Disconnected from \"$sel\""; } || \
-	    { wpa_cli select_network $netnum; wpa_cli save_config; dunstify -r $did " WiFi" "Connected to \"$sel\""; }
+	{ wpa_cli disconnect;
+	  dunstify -r $did " WiFi" "Disconnected from \"$sel\""; } || \
+	    { wpa_cli select_network $netnum; wpa_cli save_config;
+	      dunstify -r $did " WiFi" "Connected to \"$sel\""; }
 
 elif $EDIT; then
     networks="$(wpa_cli list_networks | awk 'NR>2 && $2!="any" {print $2}')"
@@ -73,9 +92,8 @@ elif $EDIT; then
 
     case "$action" in
 	"Change Password")
-	    setpasswd $netnum "New password for \"$sel\": "
+	    setpasswd "New password for \"$sel\": " "$sel"
 	    dunstify -r $did " WiFi" "\"$sel\" password updated"
-	    reconf=true
 	    ;;
 	"Show Password")
 	# h) sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0" && exit ;;
@@ -87,10 +105,8 @@ elif $EDIT; then
 	    yorn="$(prompt "Yes\nNo" "Really forget \"$sel\"? ")" || exit 3
 	    test "$yorn" = "Yes" && wpa_cli remove_network $netnum || exit 3
 	    dunstify -r $did " WiFi" "\"$sel\" removed from known networks"
-	    reconf=true
 	    ;;
     esac
 
     wpa_cli save_config
-    $reconf && wpa_cli reconfigure
 fi
