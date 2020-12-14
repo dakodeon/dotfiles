@@ -34,6 +34,13 @@ markup=none
 interval=1
 color=#A8A8A8
 
+# sxhkd key chords
+[sxhkdwatch]
+background=#D43A3A
+color=#000000
+interval=persist
+separator=false
+
 # audio player info
 [mpd_info]
 color=#5588BB

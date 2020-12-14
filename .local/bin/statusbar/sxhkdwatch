@@ -1,0 +1,42 @@
+#!/bin/env sh
+
+# echo keychords on statusbar
+# uses sxhkd-statusd and socat
+
+# original script (for polybar): https://github.com/piutranq/polybar-sxhkd
+
+addr="/run/user/$UID/sxhkd.fifo.sxhkd-statusd"
+
+printout() { \
+	     key="$1"
+	     case "$key" in
+		 "super + v")
+		     echo " download: (a)udio, (v)ideo, (V)ideo on mpv, (r)ss "
+		     ;;
+		 "super + Escape")
+		     echo " (S)hutdown, (r)eboot, (s)uspend, (e)xit "
+		     ;;
+		 "super + x")
+		     echo " launcher " ;; 
+		 *) echo " $key " ;;
+	     esac
+}
+
+handle_event() { \
+		 event="$1"
+		 echo "$event" | grep -q "^H" && \
+		     key="$(echo "$event" | sed 's/.//')"
+		 echo "$event" | grep -q "^BBegin" && \
+		     printout "$key"
+		 echo "$event" | grep -q "^EEnd" && \
+		     echo ""
+}
+
+loop() { \
+	 socat unix-connect:"$addr" - | \
+	     while read l; do
+		 handle_event "$l"
+	     done
+}
+
+loop
