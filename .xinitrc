@@ -9,6 +9,7 @@ exec transmission-daemon &                        # torrenting
 exec dunst &                                      # notifications
 exec picom -b --experimental-backends &           # transparency
 exec monitorstartup &                             # autoconfig connected monitors
+exec sxhkd_run -t 10 -a "Escape" &		  # custom script to start sxhkd-statusd alongside sxhkd
 
 exec wallset &
 
@@ -18,7 +19,6 @@ i3conf=$HOME/.config/i3/i3.conf
 
 if [[ "$(tty)" = "/dev/tty1" ]]; then
     if [ -f $i3conf ] ; then
-	exec sxhkd -c $HOME/.config/sxhkdrc & # this is specific to i3
 	exec i3 -c $i3conf
     else
 	echo i3 config file does not exist in $i3conf
