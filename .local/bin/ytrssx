@@ -4,6 +4,8 @@
 
 url="${1:-$(xclip -selection clipboard -o)}"
 
+urlfile="$HOME/.config/newsboat/urls"
+
 case "$url" in
     *youtube*)
 	feed="$(curl -s "$url" | grep -o '"externalId":"[a-zA-Z0-9_\-]*"' | tr -d "\"" | awk -F':' '{print "https://www.youtube.com/feeds/videos.xml?channel_id="$2}')"
@@ -13,4 +15,23 @@ case "$url" in
 	;;
 esac
 
-[ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify "RSS feed in clipboard" "$(echo "$feed")"; } || dunstify "No RSS feed found!"
+# [ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify " RSS feed in clipboard" "$(echo "$feed")"; }
+[ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
+
+topics="$(sed -n 's/^"\s\+--\s\([A-Z ]\+\)\s--\s\+"$/\1/p' "$urlfile")"
+
+topicsel="$(printf %s "$topics" | dmenu -i -l 5 -p "Feed \"$feed\" topic: ")" || exit 23
+
+echo "$topics" | grep -q "$topicsel" && topicexists=true || topicexists=false
+
+taglist="$(echo "" | dmenu -p "Add some tags: ")"
+
+entry="$feed${taglist:+ $taglist}"
+
+if $topicexists; then
+    sed -i "/\"    -- $topicsel --    \"/a $entry" "$urlfile"
+else
+    printf "\"    -- %s --    \"\n%s" "$topicsel" "$entry" >> "$urlfile"
+fi
+
+dunstify " RSS feed added" "to $urlfile"
