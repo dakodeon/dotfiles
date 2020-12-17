@@ -13,10 +13,16 @@ case "$url" in
     *github*)
 	feed="$(curl -s "$url" | grep -o 'https://github.com/.*\.atom')"
 	;;
+    http*)
+	feed="$url"
+	;;
+    *)
+	dunstify "No RSS feed found!" && exit 23
+	;;
 esac
 
 # [ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify " RSS feed in clipboard" "$(echo "$feed")"; }
-[ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
+# [ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
 
 topics="$(sed -n 's/^"\s\+--\s\([A-Z ]\+\)\s--\s\+"$/\1/p' "$urlfile")"
 
