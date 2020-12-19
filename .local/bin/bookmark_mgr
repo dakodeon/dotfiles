@@ -1,0 +1,65 @@
+#!/bin/env sh
+
+### --HELP START-- ###
+
+# A browser-agnostic, portable bookmarking solution.
+
+# Saves and retrieves URLs to/from a bookmark file.
+
+# The bookmark file is located in $XDG_DATA_HOME/bookmarks.
+
+# Options:
+#    -s: Save a bookmark. If a URL is not passed as an argument, the script
+#        reads from the clipboard. Then, the user is prompted to insert
+#        tags (space separated).
+#    -l: Load a bookmark. The user is prompted for a keyword to search for.
+#        Then the relevant URLs are listed. Multi-selection is also
+#        available. The links are opened with $BROWSER.
+#    -h: This help message.
+
+# dakodeon, 2020
+
+### --HELP END-- ###
+
+SAVE=false
+
+while getopts ":slh" opt; do
+    case $opt in
+	s)
+	    SAVE=true
+	    ;;
+	l)
+	    SAVE=false
+	    ;;
+	h)
+	    sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0" && exit
+	    ;;
+	\?)
+	    echo Unknown option. -h for help. && exit 23
+	    ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+bookfile="${XDG_DATA_HOME:-$HOME/.local/share}/bookmarks"
+    
+if $SAVE; then
+    url="${1:-$(xclip -selection clipboard -o)}"
+
+    [ -f "$bookfile" ] && grep -q "$url" "$bookfile" && dunstify "Bookmark already saved!" && exit 23
+
+    tags="$(printf "" | dmenu -i -p "Add tags to \"$url\": ")"
+
+    echo "$url | $tags" >> "$bookfile" && dunstify " Bookmark saved" "$url" || dunstify " Bookmark failed!" "$url"
+else
+    filter="$(echo "" | dmenu -p "Filter bookmarks: ")" || exit 23
+    result="$(grep "$filter" "$bookfile" | sed 's/ | .*$//')"
+    if [ -n "$result" ] ; then
+	sel="$(printf %s "$result" | dmenu -i -l 10 -p "Select bookmark: ")" || exit 23
+
+	echo "$sel" | while IFS= read -r bookmark; do
+	    $BROWSER "$bookmark"
+	done
+    fi
+fi
