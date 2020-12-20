@@ -1,6 +1,39 @@
 #!/bin/env sh
 
-# extract RSS feeds from various sites. For now, youtube account pages and github. If no url is given as argument, it reads from clipboard.
+### --HELP START-- ###
+
+# YouTube RSS eXtractor
+
+# Actually supports more than YouTube, I intend to include every site I
+# come across that has a strange way of getting an RSS feed. For now, three
+# cases are handled: YouTube account, Github project and general URL.
+
+# Usage: ytrssx [URL]
+
+# URL: the URL from which we intend to extract the RSS feed. If it is not
+# present, the script will assume a valid URL is in the clipboard.
+
+# The script will store the exracted RSS feed's URL onto a file. For my
+# setup, this file is the one newsboat uses (~/.config/newsboat/urls).
+# -- TODO: add argument for custom file.
+
+# I have my feeds file split onto categories. So, the script prompts for an
+# existing category, but a new one can also be defined. The categories are
+# defined by lines in the file of the form " -- CATEGORY -- ". This is not
+# a functionality of newsboat, but it handles it pretty well, just as an
+# empty feed. In some other feed reader this could throw an error.
+
+# Another functionality of newsboat incorporated here, is the ability to
+# define tags. So you get a prompt to add those.
+# -- TODO: include existing tags in the prompt.
+
+# The script depends on dmenu and xclip.
+
+# dakodeon, 2020
+
+### --HELP END-- ###
+
+[ "$1" = "-h" ] && sed '0,/HELP START/d;/HELP END/,$d;s/^# //' "$0" && exit
 
 url="${1:-$(xclip -selection clipboard -o)}"
 
