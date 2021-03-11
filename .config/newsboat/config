@@ -3,8 +3,9 @@ podcast-auto-enqueue yes
 text-width 78
 download-path "~/Downloads/newsboat"
 player "mpv"
-notify-program "newsboat-notify"
+# notify-program "newsboat-notify"
 show-keymap-hint no
+show-read-articles no
 
 prepopulate-query-feeds yes
 
@@ -62,9 +63,13 @@ bind-key < prev-dialog
 bind-key ^E pagedown
 bind-key ^Y pageup
 
-macro o set browser "mpv %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
+macro o set browser "mpv %u >/dev/null 2>&1 &"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
 macro v set browser "download_stuff -u %u -d ~/Downloads"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
 macro a set browser "download_stuff -a -u %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
-macro y set browser "straw-viewer %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
-macro c set browser "straw-viewer --comments %u"; open-in-browser ; set browser "`echo $BROWSER`"
+macro y set browser "pipe-viewer %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
+macro c set browser "pipe-viewer --comments %u"; open-in-browser ; set browser "`echo $BROWSER`"
 macro t set browser "transadd %u"; open-in-browser-and-mark-read ; set browser "`echo $BROWSER`"
+
+define-filter "Video feeds" "tags # \"video\""
+define-filter "Blogs/news feeds" "tags # \"webpage\""
+define-filter "Anime torrent feeds" "tags # \"anime\""
