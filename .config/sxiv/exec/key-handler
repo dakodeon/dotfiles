@@ -22,13 +22,21 @@ rotate() {
     done
 }
 
+rename() {
+    curr_name="$(basename "$1")"
+    dir="$(dirname "$1")"
+    new_name="$(echo "" | dmenu -c -it "$curr_name" -p "Rename file:")"
+    mv "$1" "$dir/$new_name"
+}
+
 case "$1" in
     "C-x") xclip -in -filter | tr '\n' ' ' | xclip -in -selection clipboard ;;
     "C-c") while read file; do xclip -selection clipboard -target image/png "$file"; done ;;
     "C-e") while read file; do urxvt -bg "#444" -fg "#eee" -sl 0 -title "$file" -e sh -c "exiv2 pr -q -pa '$file' | less" & done ;;
     "C-g") tr '\n' '\0' | xargs -0 gimp & ;;
-    "C-r") while read file; do rawtherapee "$file" & done ;;
+    # "C-r") while read file; do rawtherapee "$file" & done ;;
     "C-d") while read file; do rm "$file"; done ;;
+    "C-r") while read file; do rename "$file"; done ;;
     "C-comma")  rotate 270 ;;
     "C-period") rotate  90 ;;
     "C-slash")  rotate 180 ;;
