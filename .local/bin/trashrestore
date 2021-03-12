@@ -1,0 +1,18 @@
+#!/bin/env sh
+
+# restore trashed files using fzf and trashman
+
+trashdir="$XDG_DATA_HOME/Trash/files"
+
+restored="$(ls -A "$trashdir" | fzf -e -m --reverse --prompt="Restore file(s):")" || exit 23
+
+
+OIFS=$IFS
+IFS='
+'
+numfiles=0
+
+for file in $restored; do
+    trash -r "$file" && ((numfiles=numfiles+1))
+done && dunstify " Trash restore" "$numfiles file(s) restored from Trash"
+IFS=$OIFS
