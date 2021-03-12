@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+
+preview() {
+	cat <<-EOF | paste -sd '' >"$LF_UEBERZUG_FIFO"
+	{
+	"action": "add", "identifier": "lf-preview",
+	"path": "$1", "x": $4, "y": $5, "width": $2, "height": $3,
+	"scaler": "contain"
+	}
+	EOF
+}
+
+lf-ueberzug-cleaner # clean active preview
+
+file="$1"; shift
+case "$(file --mime-type "$file" | awk -F': ' '{print $2}')" in
+	video/*)
+		thumbnail="$LF_UEBERZUG_TEMPDIR/thumbnail.png"
+		ffmpegthumbnailer -i "$file" -o "$thumbnail" -s 0
+		preview "$thumbnail" "$@"
+		;;
+*/pdf)
+	thumbnail="$LF_UEBERZUG_TEMPDIR/thumbnail.png"
+	gs -o "$thumbnail" -sDEVICE=pngalpha -dLastPage=1 "$file" >/dev/null
+	preview "$thumbnail" "$@"
+	;;
+image/*)
+	preview "$file" "$@"
+	;;
+audio/mpeg)
+	ffprobe -loglevel error -show_entries format_tags=artist,composer,title,album,track,date,rhythm,dromos,tone "$file" | sed -n '/TAG/p'
+	;;
+*tar|*zip|*rar)
+	als "$file"
+	;;
+*)
+	case "$(basename "$file")" in
+		*.odt)
+			odt2txt "$file"
+			;;
+		*.doc|*.docx)
+			pandoc -t asciidoc "$file"
+			;;
+		*)
+			highlight -J 120 -V -O ansi "$file"
+			;;
+	esac
+esac
+return 127 # nonzero retcode required for lf previews to reload
