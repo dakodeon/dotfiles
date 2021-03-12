@@ -1,0 +1,56 @@
+set ifs "\n"
+
+set icons true
+set hiddenfiles ".*:*.xmp"
+set ratios 1:2:3
+set scrolloff 10
+
+cmd trash %{{
+    cnt=0
+    for file in $fx; do
+    	trash "$file" && ((cnt=cnt+1))
+	done && dunstify " Trash" "$cnt file(s) trashed"
+}}
+
+cmd trash-empty %{{
+    trashdir="$(trash -W)"
+    numfiles="$(ls $trashdir | wc -l)"
+    echo "Really delete $numfiles file(s)? [y/N] "
+    read ans
+    [ "$ans" == "y" ] && trash -e && dunstify " Trash empty" "$numfiles file(s) deleted"
+}}
+
+# clear some default bindings
+map y
+map d
+
+map W2 set ratios 1:1
+map W3 set ratios 1:2:3
+
+map yy copy
+map yd cut
+map dd trash
+map Tr $trashrestore
+map TD trash-empty
+map DD delete
+
+map bg %wallset $f
+
+# locations
+
+map gh cd ~
+map gD cd ~/Downloads
+map gd cd ~/Documents
+map gM cd ~/Music
+map gR cd ~/Music/Ρεμπέτικα
+map gP cd ~/Pictures
+map gW cd ~/Pictures/wallpapers
+map gV cd ~/Videos
+map gm cd /media
+map gp cd ~/.personal
+map gr cd ~/.source
+map gf cd ~/.source/dotfiles
+map gE cd ~/.emacs.d
+map gC cd ~/.config
+map gS cd ~/.local/bin
+map gw cd /var/www/lukesrv
