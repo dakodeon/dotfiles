@@ -5,7 +5,7 @@
 
 exec unclutter --timeout 1 --ignore-scrolling &   # hide mouse pointer
 exec emacs --daemon &                             # everyone's favourite
-# exec transmission-daemon &                        # torrenting
+pgrep transmission-daemon && transmission-daemon  # torrenting
 exec dunst &                                      # notifications
 exec picom -b --experimental-backends &           # transparency
 exec monitorstartup &                             # autoconfig connected monitors
@@ -24,5 +24,5 @@ if [[ "$(tty)" = "/dev/tty1" ]]; then
 	echo i3 config file does not exist in $i3conf
     fi
 elif [[ "$(tty)" = "/dev/tty2" ]]; then
-    exec dwm
+    exec awesome
 fi
