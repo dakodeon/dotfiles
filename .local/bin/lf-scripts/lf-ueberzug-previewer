@@ -13,7 +13,7 @@ preview() {
 lf-ueberzug-cleaner # clean active preview
 
 file="$1"; shift
-case "$(file --mime-type "$file" | awk -F': ' '{print $2}')" in
+case "$(file --mime-type "$file" -bL)" in
 	video/*)
 		thumbnail="$LF_UEBERZUG_TEMPDIR/thumbnail.png"
 		ffmpegthumbnailer -i "$file" -o "$thumbnail" -s 0
@@ -45,5 +45,6 @@ audio/mpeg)
 			highlight -J 120 -V -O ansi "$file"
 			;;
 	esac
+	;;
 esac
 return 127 # nonzero retcode required for lf previews to reload
