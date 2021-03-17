@@ -16,12 +16,12 @@ done
 
 shift $((OPTIND-1))
 
-[ $# -eq 0 ] && exit
+[ $# -eq 0 ] && dirs="." || dirs="$@"
 
 # well...
 # to have each entry in a new line, I printf a \n with a following 'x', which I
 # then remove with '%x'...
-for i in "$@"; do
+for i in $dirs; do
 	[ -f "$i" ] &&
 		filelist="${filelist:+"$filelist"}$(readlink -f "$i")$(printf '\nx')" && filelist=${filelist%x}
 	[ -d "$i" ] &&
