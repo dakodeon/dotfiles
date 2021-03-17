@@ -1,0 +1,20 @@
+#!/bin/env sh
+
+# ps interface with fzf to kill proccesses. Supports multiple choice
+cnt_ok=0
+cnt_fail=0
+
+pids=$(ps -ef | fzf -e -m --reverse --prompt="kill processes: " | awk '{print $2}')
+
+[ -z "$pids" ] && exit 23
+
+for i in $pids; do
+    kill $i && cnt_ok=$((cnt_ok+1)) || cnt_fail=$((cnt_fail+1))
+done
+
+[ $cnt_ok -gt 0 ] && ok_txt="$cnt_ok processes killed successfuly\n"
+[ $cnt_fail -gt 0 ] && fail_txt="$cnt_fail processes still on the loose!"
+
+txt=${ok_txt:+"$ok_txt"}${fail_txt:+"$fail_txt"}
+
+dunstify " Kill processes" "$txt"

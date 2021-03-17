@@ -1,0 +1,30 @@
+#!/bin/env sh
+
+# script to replace xdg_open. Reads mime type and chooses the application
+# accordingly
+
+[ ! -f "$1" ] && exit 23
+
+case "$(file --mime-type "$1" -bL)" in
+    video/*)
+	mpv "$1" >/dev/null 2>&1 ;;
+    audio/*)
+	$TERMINAL -e mpv "$1" ;;
+    image/*)
+	sxiv "$1" ;;
+    application/pdf)
+	zathura "$1" ;;
+    text/html)
+	$BROWSER "$1" ;;
+    *)
+	case "$1" in
+	    *odt|*doc|*docx)
+		libreoffice --writer "$1" ;;
+	    *xcf)
+		gimp "$1" ;;
+	    *)
+		$TERMINAL -e $EDITOR "$1" ;;
+	esac ;;
+esac
+
+    

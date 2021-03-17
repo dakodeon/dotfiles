@@ -1,0 +1,17 @@
+#!/bin/env sh
+
+# global file marker. Mostly for use inside lf, but can also be used from
+# the terminal. Takes 2 args, the mark and the file
+
+# default markfile file
+markfile="$XDG_DATA_HOME/filemarks"
+
+[ -z "$1" -o -z "$2" ] && exit 23
+
+mark="$1"
+file="$(realpath -e "$2")" || exit 23
+
+# if mark already exists, remove it
+sed -i "/^$mark:/d" "$markfile"
+
+echo "$mark:$file" >> "$markfile" && dunstify " File marked" "File \"$file\" was marked" || exit 23

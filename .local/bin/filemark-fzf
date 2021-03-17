@@ -1,0 +1,28 @@
+#!/bin/env sh
+
+# fzf interface to my filemarks
+
+markfile="$XDG_DATA_HOME/filemarks"
+
+pipeout=false
+goto=false
+del=false
+
+if [ -z $1 ]; then
+    pipeout=true && fprompt="Find filemark: "
+else
+    case $1 in
+	-F) goto=true && fprompt="Find filemark: " ;;
+	-D) del=true && fprompt="Remove filemark: " ;;
+	*) echo invalid arg && exit 23 ;;
+    esac
+fi
+
+entry="$(fzf -e --reverse --prompt="$fprompt" < "$markfile")" || exit 23
+
+file="$(echo "$entry" | awk -F':' '{print $2}')"
+
+
+$pipeout && echo "$file" && exit 0
+$goto && cd "$(dirname "$file")" && pwd && exit 0
+$del && sed -i "\?$file?d" "$markfile" && dunstify " Filemark" "Removed mark from \"$file\"" && exit 0
