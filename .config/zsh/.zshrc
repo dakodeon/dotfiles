@@ -176,3 +176,5 @@ function vterm_printf(){
 if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
 fi
+
+source $XDG_CONFIG_HOME/broot/launcher/bash/br
