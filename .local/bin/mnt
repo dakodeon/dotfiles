@@ -150,8 +150,9 @@ fi
 fstype="$(lsblk -nlo "fstype" "$DEVICE")"
 case "$fstype" in
     "vfat")
-	sudo -A mount -t vfat "$DEVICE" "$MOUNTPOINT" -o rw,umask=0000
-	;;
+	sudo -A mount -t vfat "$DEVICE" "$MOUNTPOINT" -o rw,uid=$(id -u),gid=$(id -g) ;;
+    "exfat")
+	sudo -A mount -t exfat "$DEVICE" "$MOUNTPOINT" -o rw,uid=$(id -u),gid=$(id -g) ;;
     *)
 	us="$(whoami)"
 	ug="$(groups | awk '{print $1}')"
