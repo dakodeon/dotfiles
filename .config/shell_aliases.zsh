@@ -30,6 +30,7 @@ alias z='devour zathura '
 alias vr='vimv '
 alias mp='devour mpv'
 
+alias c='highlight -J 120 -V -O ansi'
 # aliases for git
 
 alias g.='git status'
@@ -76,7 +77,7 @@ alias rd='cd $HOME/.source/dotfiles; pwd'
 alias E='cd $HOME/.emacs.d; pwd'
 alias C='cd $HOME/.config; pwd'
 alias S='cd $HOME/.local/bin; pwd'
-alias W='cd /var/www/lukesrv; pwd'
+alias w='cd /var/www/lukesrv; pwd'
 alias d\?='alias | grep cd'
 
 # aliases for my scripts
