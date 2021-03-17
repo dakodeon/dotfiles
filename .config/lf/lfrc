@@ -5,6 +5,51 @@ set hiddenfiles ".*:*.xmp"
 set ratios 1:2:3
 set scrolloff 10
 
+## ui commands
+cmd open $opener $f &
+
+# open file replacing lf window
+cmd open-inplace ${{
+    [ -f $f ] && devour opener $f || exit 0
+}}
+
+cmd filemark %{{
+    echo Mark file as:
+    read ans
+    filemark $ans $f
+}}
+
+cmd filemark-find ${{
+    choice="$(filemark-fzf)" || exit 23
+    lf -remote "send $id cd \"$(dirname $choice)\""
+    lf -remote "send $id select \"$(basename $choice)\""
+}}
+
+cmd filemark-remove $filemark-fzf -D
+
+cmd 1pane ${{
+    lf -remote "send $id set nopreview"
+    lf-ueberzug-cleaner
+    lf -remote "send $id set ratios 1"
+}}
+
+cmd 2pane ${{
+    lf -remote "send $id set ratios 1:1"
+    lf -remote "send $id set preview"
+}}
+
+cmd 3pane ${{
+    lf -remote "send $id set ratios 1:2:3"
+    lf -remote "send $id set preview"
+}}
+
+cmd reload-conf ${{
+    lf -remote "send $id source ~/.config/lf/lfrc"
+    lf -remote "send $id echo Config reloaded"
+}}
+
+# files commands
+
 cmd trash %{{
     cnt=0
     for file in $fx; do
@@ -15,17 +60,75 @@ cmd trash %{{
 cmd trash-empty %{{
     trashdir="$(trash -W)"
     numfiles="$(ls $trashdir | wc -l)"
-    echo "Really delete $numfiles file(s)? [y/N] "
+    echo "Really delete $numfiles file(s)? [y/N]"
     read ans
-    [ "$ans" == "y" ] && trash -e && dunstify " Trash empty" "$numfiles file(s) deleted"
+    [ "$ans" == "y" ] && trash -e && echo Files deleted && dunstify " Trash empty" "$numfiles file(s) deleted"
+}}
+
+cmd pack %{{
+    echo "Archive name (w/extension):"
+    read ans
+    for file in $fx; do
+    	atool "$ans" -a "$(basename $file)"
+	done
+    lf -remote "send $id unselect"
+}}
+
+cmd unpack %{{
+    echo "Unpack archive to (default: current dir):"
+    read ans
+    [ -z $ans ] && ans="."
+    [ ! -d $ans ] && mkdir -p "$ans"
+    [ -d $ans ] && atool -X "$ans" $fx
+    lf -remote "send $id unselect"
+}}
+
+cmd mkdir %{{
+    echo "New dir:"
+    read name
+    mkdir "$name"
+}}
+
+cmd mkfile %{{
+    echo "File name:"
+    read name
+    $EDITOR "$name"
+}}
+
+cmd chmod %{{
+    echo "Mode bits:"
+    read ans
+    for file in $fx; do
+    	chmod $ans $file
+    done
+    lf -remote 'send reload'
 }}
 
 # clear some default bindings
 map y
 map d
+cmap <tab>
 
-map W2 set ratios 1:1
-map W3 set ratios 1:2:3
+cmap <tab> cmd-menu-complete
+
+map <a-R> reload-conf
+
+map <enter> open
+
+map O open-inplace
+
+map W1 1pane
+map W2 2pane
+map W3 3pane
+
+map + mkdir
+map M chmod
+map xx unpack
+map xz pack
+
+map m filemark
+map ` filemark-find
+map ~ filemark-remove
 
 map yy copy
 map yd cut
@@ -33,6 +136,11 @@ map dd trash
 map Tr $trashrestore
 map TD trash-empty
 map DD delete
+
+map PP &sxivdir -1 $fx; lf -remote "send $id unselect"
+map PR &sxivdir $fx; lf -remote "send $id unselect"
+map Pp &sxivdir -1
+map Pr &sxivdir
 
 map bg %wallset $f
 
