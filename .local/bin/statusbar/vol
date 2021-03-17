@@ -5,9 +5,9 @@ level="$(pactl list sinks | grep '^[[:space:]]Volume:' | awk -F' / ' '{print int
 muted="$(pactl list sinks | grep '^[[:space:]]Mute:' | awk -F': ' '{print $2}')"
 
 if [ "$muted" = "yes" ]; then
-    echo " MUTE"
+    echo " MUTE"
 else
-    echo " $level%"
+    echo " $level%"
 fi
 
 # BLOCK_BUTTON ACTIONS GO HERE
