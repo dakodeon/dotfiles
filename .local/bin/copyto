@@ -1,0 +1,14 @@
+#!/bin/env sh
+
+# copy to locations
+# uses broot, but could also use fzf
+
+[ -z "$1" ] && exit
+
+dest="$(broot -f --conf ~/.config/broot/conf_sel.toml)"
+
+[ -z "$dest" ] && exit
+
+dunstify -r 1 " Copy files" "Copying $# files to $dest"
+
+cp -r -t "$dest" "$@" && dunstify -r 1 " Copy files" "$# files copied successfully" || dunstify -r 1 " Copy files" "Copying failed!"

@@ -1,0 +1,14 @@
+#!/bin/env sh
+
+# move to locations
+# uses broot, but could also use fzf
+
+[ -z "$1" ] && exit
+
+dest="$(broot -f --conf ~/.config/broot/conf_sel.toml)"
+
+[ -z "$dest" ] && exit
+
+dunstify -r 1 " Move files" "Moving $# files to $dest"
+
+mv -t "$dest" "$@" && dunstify -r 1 " Move files" "$# files moved successfully" || dunstify -r 1 " Move files" "Moving failed!"
