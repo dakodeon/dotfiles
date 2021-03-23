@@ -28,31 +28,9 @@ XF86AudioMute
 super + XF86AudioRaiseVolume
     pactl set-sink-volume @DEFAULT_SINK@ 100% && pkill -RTMIN+10 i3blocks
 
-# audio controls (pulseaudio)
-# # audio controls (alsa)
-# ctrl + {F8,F9}
-#     amixer set 'Master' 5%{-,+}
-
-# shift + ctrl + {F8,F9}
-#     amixer set 'Master' {50,100}%
-    
-# ctrl + F3
-#     amixer set 'Speaker' toggle
-
-# # brightness controls
-# {F6, F7}
-#     xbacklight -{dec,inc} 10
-
-# shift + {F6,F7}
-#     xbacklight -set {50,100}
-
 # multi-monitor
 super + {F10,shift + F10,ctrl + F10}
     {monitorselect,monitorstartup,monitorsolo}
-
-# # toggle touchpad
-# F4
-#       touchpad-toggle
 
 # mount-unmount
 super + grave
@@ -66,8 +44,13 @@ super + d
 super + shift + d
     wm_menu
 
+# visit scripts/configs
 super + {s, shift + s}
     {scriptsel, configsel}
+
+# visit dirs/filemarks
+super + {g, shift + g}
+    {loc-selectah, mark-selectah}
 
 # download stuff -- ytrssx extracts rss feed from youtube
 super + v; {a, v, shift + v, r}
