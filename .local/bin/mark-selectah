@@ -1,0 +1,18 @@
+#!/bin/env sh
+
+# jump to filemarks
+
+fileman='lf-ueberzug'
+locations="$XDG_DATA_HOME/filemarks"
+
+[ "$1" = "-t" ] && {
+    alias select_cmd='fzf -e --height=50% --reverse --prompt="Go to: "'
+    alias open_cmd="$fileman"
+} || {
+    alias select_cmd='dmenu -l 10 -i -p "Go to: "'
+    alias open_cmd="$TERMINAL -e $fileman"
+}
+
+loc="$(sed "s?$HOME?~?" < "$locations" | select_cmd | sed "s?~?$HOME?" | awk -F':' '{print $2}')" || exit 23
+
+open_cmd -command select "$loc"
