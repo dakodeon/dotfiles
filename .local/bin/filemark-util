@@ -1,0 +1,36 @@
+#!/bin/env sh
+
+# filemark utility. Add, visit or remove filemarks
+
+markfile="$XDG_DATA_HOME/filemarks"
+
+while getopts ":A:FPD" opt; do
+    case $opt in
+	A) action=add; mark="$OPTARG" ;;
+	F) action=goto; fprompt="Visit filemark: " ;;
+	P) action=pipeout; fprompt="Visit filemark: " ;;
+	D) action=del; fprompt="Remove filemark: " ;;
+	:) echo "Option -$OPTARG requires an argument" >&2 ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+if [ "$action" = "add" ] ; then
+    [ -z "$1" ] && exit
+    file="$(realpath -e "$1")" || exit 23
+    # remove mark if it exists
+    sed -i "/^$mark:/d" "$markfile"
+    line="$mark:$file"
+    echo "$line" >> "$markfile" && dunstify " Filemark added" "\"$line\"" || exit 23
+else
+    entry="$(fzf -e --reverse --prompt="$fprompt" < "$markfile")" || exit
+    file="$(echo "$entry" | awk -F':' '{print $2}')"
+    case "$action" in
+	pipeout) echo "$file" && exit ;;
+	goto) cd "$(dirname "$file")" && pwd && exit ;;
+	# use printf to handle special chars (eg []) for sed to function properly
+	del) file="$(printf "%q\n" "$file")" && sed -i "\?$file?d" "$markfile" && dunstify " Filemark removed" "\"$file\"" && exit ;;
+    esac
+fi
+	
