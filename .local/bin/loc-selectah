@@ -2,30 +2,19 @@
 
 # jump to locations
 
-term=false
+fileman='lf-ueberzug'
+locations="$XDG_CONFIG_HOME/locations"
 
-while getopts ":tl:" opt; do
-    case $opt in
-	t) term=true ;;
-	l) loclist="$OPTARG" ;;
-	\?) echo "Unknown option" >&2 ;;
-	:) echo "Option -$OPTARG requires an argument" >&2 ;;
-    esac
-done
-
-
-case "$loclist" in
-    "locations")
-	loclist="$XDG_CONFIG_HOME/locations"
-	;;
-    "filemarks")
-	loclist="$XDG_DATA_HOME/filemarks"
-	;;
-    *) echo Unknown set of locations >&2 && exit 23 ;;
-esac
-
-$term && {
-    alias select_cmd='fzf --height=50% --reverse --prompt="Go to: "'
+[ "$1" = "-t" ] && {
+    alias select_cmd='fzf -e --height=50% --reverse --prompt="Go to: "'
+    alias open_cmd="$fileman"
 } || {
     alias select_cmd='dmenu -l 10 -i -p "Go to: "'
+    alias open_cmd="$TERMINAL -e $fileman"
 }
+
+loc="$(awk '{print $2}' < "$locations" | select_cmd | sed "s?~?$HOME?")"
+
+[ -z "$loc" ] && exit
+
+open_cmd "$loc"
