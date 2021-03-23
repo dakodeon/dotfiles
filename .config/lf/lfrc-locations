@@ -1,0 +1,19 @@
+# locations
+
+map gh cd ~
+map gD cd ~/Downloads
+map gd cd ~/Documents
+map gM cd ~/Music
+map gR cd ~/Music/Ρεμπέτικα
+map gP cd ~/Pictures
+map gW cd ~/Pictures/wallpapers
+map gV cd ~/Videos
+map gm cd /media
+map gp cd ~/.personal
+map gr cd ~/.source
+map gf cd ~/.source/dotfiles
+map gE cd ~/.emacs.d
+map gC cd ~/.config
+map gS cd ~/.local/bin
+map gL cd ~/.local/share
+map gw cd /var/www/lukesrv

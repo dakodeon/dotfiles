@@ -1,7 +1,10 @@
 set ifs "\n"
 
+# set promptfmt "\033[32;1m%u@%h\033[0m:\033[34;1m%d"
+
+set preview
 set icons true
-set hiddenfiles ".*:*.xmp"
+set hiddenfiles ".*:*.xmp:#*#"
 set ratios 1:2:3
 set scrolloff 10
 
@@ -13,23 +16,33 @@ cmd open-inplace ${{
     [ -f $f ] && devour opener $f || exit 0
 }}
 
+cmd broot-jump ${{
+    res="$(broot --conf ~/.config/broot/conf_sel.toml)"
+    [ -z "$res" ] && exit
+    if [ -f "$res" ]; then
+        cmd="select"
+    elif [ -d "$res" ]; then
+        cmd="cd"
+    fi
+    lf -remote "send $id $cmd \"$res\""
+}}
+
 cmd filemark %{{
     echo Mark file as:
     read ans
-    filemark $ans $f
+    filemark-util -A $ans $f
 }}
 
 cmd filemark-find ${{
-    choice="$(filemark-fzf)" || exit 23
-    lf -remote "send $id cd \"$(dirname $choice)\""
-    lf -remote "send $id select \"$(basename $choice)\""
+    choice="$(filemark-util -P)" || exit 0
+    lf -remote "send $id select \"$choice\""
 }}
 
-cmd filemark-remove $filemark-fzf -D
+cmd filemark-remove $filemark-util -D
 
 cmd 1pane ${{
-    lf -remote "send $id set nopreview"
     lf-ueberzug-cleaner
+    lf -remote "send $id set nopreview"
     lf -remote "send $id set ratios 1"
 }}
 
@@ -104,22 +117,69 @@ cmd chmod %{{
     lf -remote 'send reload'
 }}
 
+cmd sort-ctime :{{
+    set sortby ctime
+    set reverse
+    set nodirfirst
+    set info ctime
+    top
+}}
+
+cmd sort-size :{{
+    set sortby size
+    set reverse
+    set nodirfirst
+    set info size
+    top
+}}
+
+cmd sort-ext :{{
+    set sortby ext
+    set noreverse
+    set dirfirst
+    set info
+}}
+
+cmd sort-natural :{{
+    set sortby natural
+    set noreverse
+    set dirfirst
+    set info 
+}}
+
 # clear some default bindings
 map y
 map d
+map w
+map se
+map st
+map sn
+map ss
+map sc
+map zr
+map zh
 cmap <tab>
+map <f-1>
+
 
 cmap <tab> cmd-menu-complete
-
 map <a-R> reload-conf
-
 map <enter> open
-
 map O open-inplace
+map W $$SHELL
 
-map W1 1pane
-map W2 2pane
-map W3 3pane
+map w1 1pane
+map w2 2pane
+map w3 3pane
+
+map sn sort-natural
+map se sort-ext
+map ss sort-size
+map st sort-ctime
+map sd set dirfirst!
+map sr set reverse!
+
+map zz set hidden!
 
 map + mkdir
 map M chmod
@@ -133,9 +193,15 @@ map ~ filemark-remove
 map yy copy
 map yd cut
 map dd trash
+map DD delete
+
+map YY $copyto $fx; lf -remote "send $id unselect"
+map YD $moveto $fx; lf -remote "send $id unselect"
+
+map J broot-jump
+
 map Tr $trashrestore
 map TD trash-empty
-map DD delete
 
 map PP &sxivdir -1 $fx; lf -remote "send $id unselect"
 map PR &sxivdir $fx; lf -remote "send $id unselect"
@@ -144,21 +210,4 @@ map Pr &sxivdir
 
 map bg %wallset $f
 
-# locations
-
-map gh cd ~
-map gD cd ~/Downloads
-map gd cd ~/Documents
-map gM cd ~/Music
-map gR cd ~/Music/Ρεμπέτικα
-map gP cd ~/Pictures
-map gW cd ~/Pictures/wallpapers
-map gV cd ~/Videos
-map gm cd /media
-map gp cd ~/.personal
-map gr cd ~/.source
-map gf cd ~/.source/dotfiles
-map gE cd ~/.emacs.d
-map gC cd ~/.config
-map gS cd ~/.local/bin
-map gw cd /var/www/lukesrv
+source "~/.config/lf/lfrc-locations"
