@@ -6,7 +6,7 @@
 
 # Actually supports more than YouTube, I intend to include every site I
 # come across that has a strange way of getting an RSS feed. For now, three
-# cases are handled: YouTube account, Github project and general URL.
+# cases are handled: YouTube account, Github project, odysee account and general URL.
 
 # Usage: ytrssx [URL]
 
@@ -46,6 +46,10 @@ case "$url" in
     *github*)
 	feed="$(curl -s "$url" | grep -o 'https://github.com/.*\.atom')"
 	;;
+    *odysee*)
+	channel="$(echo "$url" | sed -e 's/^.*@//' -e 's/:[0-9]*$//')"
+	feed="https://lbryfeed.melroy.org/channel/odysee/$channel"
+	;;
     http*)
 	feed="$url"
 	;;
@@ -57,13 +61,13 @@ esac
 # [ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify " RSS feed in clipboard" "$(echo "$feed")"; }
 # [ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
 
-topics="$(sed -n 's/^"\s\+--\s\([A-Z ]\+\)\s--\s\+"$/\1/p' "$urlfile")"
+topics="$(sed -n -e '/CATEGORIES/d' -e 's/^"\s\+--\s\([A-Z ]\+\)\s--\s\+"$/\1/p' "$urlfile")"
 
 topicsel="$(printf %s "$topics" | dmenu -i -l 5 -p "Feed \"$feed\" topic: ")" || exit 23
 
 echo "$topics" | grep -q "$topicsel" && topicexists=true || topicexists=false
 
-taglist="$(echo "" | dmenu -p "Add some tags: ")"
+taglist="$(echo "" | dmenu -p "Add some tags (prepend with \"~\" to name the feed): ")"
 
 entry="$feed${taglist:+ $taglist}"
 
@@ -73,4 +77,4 @@ else
     printf "\"    -- %s --    \"\n%s" "$topicsel" "$entry" >> "$urlfile"
 fi
 
-dunstify " RSS feed added" "to $urlfile"
+dunstify " RSS feed added" "to $urlfile"
