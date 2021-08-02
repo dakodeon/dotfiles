@@ -1,0 +1,101 @@
+#!/bin/env sh
+
+# a script using dmenu to interface with mpd and mpc to create and manage playlists
+
+# functionalities:
+# 1. add current song to some playlist(s)
+# 2. remove current song from the playlist
+# 3. load and play an existing playlist
+# 4. add some songs to the current playlist
+# 5. select and load songs from database as a playlist
+# 6. search current playlist for a song
+
+# check if mpd is running, exit if not
+pgrep mpd > /dev/null || exit 23
+
+# where are the playlists stored
+playlist_dir="$HOME/.local/share/mpd/playlists"
+
+# define some functions to search the database or the playlists
+
+# search playlists
+pl_search() { \
+	      mpc lsplaylists | dmenu -i -l 20 -p "$1"
+}
+
+# search the database
+db_search() { \
+	      mpc listall | dmenu -i -l 20 -p "$1"
+}
+
+# search current playlist
+curr_search() { \
+		mpc playlist | dmenu -i -l 20 -r -p "$1" | sed 's/.* - //' | xargs -I"{}" mpc search title "{}" 
+}
+
+add_to_playlist() { \
+		    set -f; IFS='
+'
+for file in $1; do
+    set +f; unset IFS
+    mpc add "$file"
+done
+set +f; unset IFS
+
+}
+
+# get info about current playing song
+get_now_playing() { \
+		    now_playing="$(mpc -f %file% current)"
+		    now_playing_fancy="$(mpc -f "[[%artist% - ]%title% [(album: %album%)]]|[%file%]" current)"
+}
+
+get_now_playing
+
+while getopts ":aDlANsh" opt; do
+    case $opt in
+	a) # add current song to playlist
+	    plist="$(pl_search "Add current playing to playlist:")" || exit 23
+	    plist_path="$playlist_dir/$plist.m3u"
+	    
+		    [ -f "$plist_path" ] && {
+			grep -q "$now_playing" "$plist_path" && dunstify " Track is already in playlist \"$plist\"" "$now_playing_fancy" && exit
+			echo "$now_playing" >> "$plist_path"
+		    } || echo "$now_playing" > "$plist_path"
+		    
+		    dunstify " Added track to playlist \"$plist\"" "$now_playing_fancy"
+	;;
+	D) # remove current from playlist
+	    yesno="$(printf "Yes\nNo" | dmenu -r -n -i "Really remove current song?")" || exit 23
+	    case "$yesno" in
+		"yes")
+		    mpc del 0
+		    dunstify " Removed track from playlist \"$plist\"" "$now_playing_fancy"
+		    ;;
+		*)
+		    exit 23
+		    ;;
+		esac
+	;;
+	l) # load a playlist
+	    plist="$(pl_search "Load playlist:")" || exit 23
+	    mpc clear && mpc load "$plist" && mpc play
+	    dunstify " Playlist loaded" "$plist"
+	;;
+	A) # add tracks from the database to the playlist
+	    newlist="$(db_search "Select songs to add to the playlist:")" || exit 23
+	    add_to_playlist "$newlist"
+	    dunstify "  Added some songs to current playlist"
+	;;
+	N) # replace playlist with songs
+	    newlist="$(db_search "Select songs to play:")" || exit 23
+	    mpc clear && add_to_playlist "$newlist" && mpc play && get_now_playing
+	    dunstify " Playlist changed. Now playing:" "$now_playing_fancy"
+	;;
+	s) # select and play a song from the current playlist
+	    curr_search "Select song:" | xargs -I"{}" mpc searchplay filename "{}" && get_now_playing
+	    dunstify " Now playing:" "$now_playing_fancy"
+	   ;;
+	h) echo "display a help message" ;;
+    esac
+done
