@@ -20,18 +20,14 @@ unmounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2=="" {print $0}' |
 mounted=$(lsblk -nlo type,mountpoint | awk '$1=="part" && $2!~/^$|SWAP|\/boot|\/home$|^\/$/ {print $0}' | wc -l)
 
 if test $unmounted -ne 0 && test $mounted -ne 0; then
-    action="$(printf "Mount\nUnmount\nAbort" | dmenu -i -p "Both mounted and unmounted devices found. What do you want to do?")"
-    test $? -ne 0 && echo Aborted by user. && exit 2
+    action="$(printf "Mount\nUnmount" | dmenu -i -p "Both mounted and unmounted devices found. What do you want to do?")"
+    test $? -ne 0 && exit 2
     case "$action" in
 	"Mount")
 	    mnt
 	    ;;
 	"Unmount")
 	    umnt
-	    ;;
-	"Abort")
-	    echo Aborted by user.
-	    exit 2
 	    ;;
 	*)
 	    exit 1
@@ -43,5 +39,3 @@ elif test $mounted -ne 0; then
 else
     dunstify -r $did " Mount/Unmount" "No device to mount/unmount!"
 fi
-
-    

@@ -80,7 +80,7 @@ done
 test -z "$mounted_devices" && scriptfail "No mounted devices found" 0
 
 if test -z "$DEVICE" && test -z "$LABEL" && test -z "$MOUNTPOINT"; then
-    MOUNTPOINT="$(echo "$mounted_devices" | dmenu -i -p "Choose device to unmount: " | awk '{print $NF}')" || scriptfail "Aborted by user." 2
+    MOUNTPOINT="$(echo "$mounted_devices" | dmenu -i -p "Choose device to unmount: " | awk '{print $NF}')"
     # test $? -ne 0 && echo Aborted by user. && exit 2
 elif test -n "$DEVICE" && test -z "$LABEL" && test -z "$MOUNTPOINT"; then
     MOUNTPOINT="$(echo "$mounted_devices" | grep -w "$DEVICE" | awk '{print $NF}')"
@@ -100,7 +100,7 @@ test -z "$DEVICE" && DEVICE="$(lsblk -no path,mountpoint | grep "$MOUNTPOINT" | 
 sudo umount "$MOUNTPOINT"
 
 if test $? -ne 0; then
-    yornforce="$(printf "Yes\nNo" | dmenu -i -p "Unmounting failed! Use force?")" || scriptfail "Aborted by user." 2
+    yornforce="$(printf "Yes\nNo" | dmenu -i -p "Unmounting failed! Use force?")"
     # test $? -ne 0 && echo Aborted by user. && exit 2
     case "$yornforce" in
 	"Yes")

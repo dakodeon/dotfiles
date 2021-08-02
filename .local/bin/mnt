@@ -114,7 +114,7 @@ elif test -n "$LABEL"; then
     DEVICE=$(echo "$valid_devices" | grep -w "$LABEL" | cut -d' ' -f1)
 else
     if test -z "$DEVICE"; then
-	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')" || scriptfail "Aborted by user." 2
+	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')"
     fi
     LABEL="$(lsblk -no path,label | grep -w "$DEVICE" | awk '{print $2}')"
 fi
@@ -123,11 +123,11 @@ fi
 # shellcheck disable=SC2086
 if test -z "$MOUNTPOINT"; then
     if $dirprompt; then
-	MOUNTPOINT="$(find /mnt /mount /media /home -maxdepth 5 -type d $exclude_mounted 2>/dev/null | dmenu -i -p "Where to mount? ")" || scriptfail "Aborted by user." 2
+	MOUNTPOINT="$(find /mnt /mount /media /home -maxdepth 5 -type d $exclude_mounted 2>/dev/null | dmenu -i -p "Where to mount? ")"
     elif test -n "$LABEL"; then
 	MOUNTPOINT="$default_mountdir/$LABEL"
     else
-	MOUNTPOINT="$(echo "" | dmenu -i -p "Type in name to mountpoint: ")" || scriptfail "Aborted by user." 2
+	MOUNTPOINT="$(echo "" | dmenu -i -p "Type in name to mountpoint: ")"
 	if test -n "$MOUNTPOINT"; then
 	    MOUNTPOINT="$default_mountdir/$MOUNTPOINT"
 	else
