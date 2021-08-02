@@ -27,8 +27,8 @@ case "$(file --mime-type "$file" -bL)" in
 image/*)
 	preview "$file" "$@"
 	;;
-audio/mpeg)
-	ffprobe -loglevel error -show_entries format_tags=artist,composer,title,album,track,date,rhythm,dromos,tone "$file" | sed -n '/TAG/p'
+audio/*)
+    ffprobe -loglevel error -show_entries format_tags=artist,composer,title,album,track,date,rhythm,dromos,tone "$file" | sed -n '/TAG:/p' | sed 's/TAG://'
 	;;
 *tar|*zip|*rar)
 	als "$file"
