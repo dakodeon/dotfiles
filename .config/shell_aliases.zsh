@@ -8,7 +8,7 @@ alias mv="mv -iv"
 alias rm="rm -vI"
 alias df='df -h'      # Human-readable sizes
 alias du='du -h'
-alias free='free -m'  # Show sizes in MB
+alias free='free -h'
 
 # aliases for ls 
 alias ll='ls -l'
@@ -29,6 +29,7 @@ alias lf="lf-ueberzug"
 alias z='devour zathura '
 alias vr='vimv '
 alias mp='devour mpv'
+alias yt='pipe-viewer'
 
 alias c='highlight -J 120 -V -O ansi'
 # aliases for git
