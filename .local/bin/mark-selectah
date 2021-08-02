@@ -15,4 +15,6 @@ locations="$XDG_DATA_HOME/filemarks"
 
 loc="$(sed "s?$HOME?~?" < "$locations" | select_cmd | sed "s?~?$HOME?" | awk -F':' '{print $2}')" || exit 23
 
+[ -z "$loc" ] && exit
+
 open_cmd -command select "$loc"
