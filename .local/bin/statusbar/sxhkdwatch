@@ -17,7 +17,14 @@ printout() { \
 		     echo " (S)hutdown, (r)eboot, (s)uspend, (e)xit "
 		     ;;
 		 "super + x")
-		     echo " launcher " ;; 
+		     echo " launcher "
+		     ;; 
+		 "super + r")
+		     echo " reload: (i)3, (s)xkhkd, (d)otfiles "
+		     ;; 
+		 "super + p")
+		     echo " play selectah "
+		     ;;
 		 *) echo " $key " ;;
 	     esac
 }
