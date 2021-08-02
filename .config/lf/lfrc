@@ -7,6 +7,7 @@ set icons true
 set hiddenfiles ".*:*.xmp:#*#"
 set ratios 1:2:3
 set scrolloff 10
+set mouse true
 
 ## ui commands
 cmd open $opener $f &
@@ -17,7 +18,7 @@ cmd open-inplace ${{
 }}
 
 cmd broot-jump ${{
-    res="$(broot --conf ~/.config/broot/conf_sel.toml)"
+    res="$(broot)"
     [ -z "$res" ] && exit
     if [ -f "$res" ]; then
         cmd="select"
