@@ -44,8 +44,8 @@ separator=false
 # audio player info
 [mpd_info]
 color=#5588BB
-interval=once
-signal=7
+interval=persist
+# signal=7
 separator=false
 separator_width=10
 
