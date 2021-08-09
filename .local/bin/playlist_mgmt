@@ -15,8 +15,9 @@ pgrep mpd > /dev/null || exit 23
 
 # where are the playlists stored
 playlist_dir="$HOME/.local/share/mpd/playlists"
+music_dir="$HOME/Music"
 
-# define some functions to search the database or the playlists
+# FUNCTIONS DEFINITIONS
 
 # search playlists
 pl_search() { \
@@ -24,6 +25,26 @@ pl_search() { \
 }
 
 # search the database
+db_search2() { \
+	      searchby="$(printf "artist\ncomposer\nalbum\ndirs\nall" | dmenu -i -l 5 -p "Search database by:")" || exit 23
+	      case "$searchby" in
+		  artist|composer|album)
+		      tag="$searchby"
+		      query="$(mpc list "$tag" | dmenu -i -l 20 -p "Search by $tag:")" || exit 23
+		      mpc search "$tag" "$query" | dmenu -i -l 20 -p "$1"
+		      ;;
+		  dirs)
+		      query="$(find "$music_dir" -type d | dmenu -i -l 20 -p "$1")" || exit 23
+		      query=${query#"$music_dir/"}
+		      mpc search filename "$query"
+		      ;;
+		  all)
+		      mpc listall | dmenu -i -l 20 -p "$1"
+		      ;;
+		  *) exit 23 ;;
+	      esac
+}
+
 db_search() { \
 	      mpc listall | dmenu -i -l 20 -p "$1"
 }
@@ -41,7 +62,6 @@ for file in $1; do
     mpc add "$file"
 done
 set +f; unset IFS
-
 }
 
 # get info about current playing song
@@ -83,12 +103,12 @@ while getopts ":aDlANsh" opt; do
 	    dunstify " Playlist loaded" "$plist"
 	;;
 	A) # add tracks from the database to the playlist
-	    newlist="$(db_search "Select songs to add to the playlist:")" || exit 23
+	    newlist="$(db_search2 "Select songs to add to the playlist:")" || exit 23
 	    add_to_playlist "$newlist"
 	    dunstify "  Added some songs to current playlist"
 	;;
 	N) # replace playlist with songs
-	    newlist="$(db_search "Select songs to play:")" || exit 23
+	    newlist="$(db_search2 "Select songs to play:")" || exit 23
 	    mpc clear && add_to_playlist "$newlist" && mpc play && get_now_playing
 	    dunstify " Playlist changed. Now playing:" "$now_playing_fancy"
 	;;
