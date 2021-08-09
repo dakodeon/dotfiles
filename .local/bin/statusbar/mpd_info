@@ -1,21 +1,18 @@
 #!/bin/env sh
 
-# display info about what mpd is playing
-
-mpc idle player > /dev/null && {
-    is_playing=false
-
-    state="$(mpc | awk '$1 ~ /\[[a-z]*\]/ {print $1}' | tr -d '[]')"
-
-    case $state in
-	"playing") state=""; is_playing=true ;;
-	"paused") state=""; is_playing=true;;
-	*) state="" ;;
-    esac
-
-    if test $is_playing; then
-	info="$(mpc current)"
-	echo "$state $info"
-    fi
-
-}
+while true; do
+    mpc idle >/dev/null && {
+	playinfo="$(mpc | awk '$1 ~ /\[[a-z]*\]/ {print $1}' | sed 's/\[playing\]//' | sed 's/\[paused\]//') $(mpc current)"
+	modeinfo=""
+	# shuffle value
+	[ "$(mpc | awk '/volume/ {print $5}')" = "on" ] && modeinfo="$modeinfo咽"
+	# repeat value
+	[ "$(mpc | awk '/volume/ {print $3}')" = "on" ] && modeinfo="$modeinfo 凌"
+	# single value
+	[ "$(mpc | awk '/volume/ {print $7}')" = "on" ] && modeinfo="$modeinfo ⓵"
+	# consume value
+	[ "$(mpc | awk '/volume/ {print $9}')" = "on" ] && modeinfo="$modeinfo "
+	
+	echo "$modeinfo $playinfo"
+    } || echo ""
+done
