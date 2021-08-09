@@ -3,7 +3,7 @@ podcast-auto-enqueue yes
 text-width 78
 download-path "~/Downloads/newsboat"
 player "mpv"
-# notify-program "newsboat-notify"
+notify-program "newsboat-notify"
 show-keymap-hint no
 show-read-articles no
 
