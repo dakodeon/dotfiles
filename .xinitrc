@@ -10,9 +10,9 @@ exec dunst &                                      # notifications
 exec picom -b --experimental-backends &           # transparency
 exec monitorstartup &                             # autoconfig connected monitors
 exec sxhkd_run -t 10 -a "Escape" &		  # custom script to start sxhkd-statusd alongside sxhkd
-exec mpd-monitor &				  # custom script, starts mpd and monitors it
+exec mpd &				  	  # music player daemon
 
-exec wallset &
+exec wallset &					  # muh wallpaper
 
 # load i3
 
