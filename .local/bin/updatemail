@@ -1,3 +1,3 @@
 #!/bin/env sh
 
-/usr/local/bin/mbsync -c /home/louk/.config/mbsyncrc -a && /usr/local/bin/mu index --maildir="/home/louk/.personal/Mail" && pkill -RTMIN+2 i3blocks
+/usr/local/bin/mbsync -c /home/louk/.config/mbsyncrc -a && /usr/local/bin/mu index --maildir="/home/louk/.local/share/mail" && pkill -RTMIN+2 i3blocks
