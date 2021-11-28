@@ -1,0 +1,22 @@
+#!/bin/env sh
+
+# script to handle the information displayed by mpd eg on the statusbar
+
+truncate_string() {
+    STRLENGTH="$(echo "$1" | wc -m)"
+    [ $STRLENGTH -gt 20 ] && \
+	echo -n "$1" | sed 's/\(^....................\).*/\1…/' || \
+	    echo "$1"
+}
+
+composer="$(mpc -f %composer% current)"
+artist="$(mpc -f %artist% current)"
+title="$(mpc -f %title% current)"
+
+artist_trunc="$(truncate_string "$artist")"
+title_trunc="$(echo "$title" | sed 's/ (.*)$//')"
+title_trunc="$(truncate_string "$title_trunc")"
+
+[ "$composer" = "$artist" -o -z "$composer" ] && \
+    echo "$artist_trunc - $title_trunc" || \
+	echo "$composer ($artist_trunc) - $title_trunc"
