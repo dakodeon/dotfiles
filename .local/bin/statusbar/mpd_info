@@ -2,7 +2,7 @@
 
 while true; do
     mpc idle >/dev/null && {
-	playinfo="$(mpc | awk '$1 ~ /\[[a-z]*\]/ {print $1}' | sed 's/\[playing\]//' | sed 's/\[paused\]//') $(mpc current)"
+	playinfo="$(mpc | awk '$1 ~ /\[[a-z]*\]/ {print $1}' | sed 's/\[playing\]//' | sed 's/\[paused\]//') $(mpc_display)"
 	modeinfo=""
 	# shuffle value
 	[ "$(mpc | awk '/volume/ {print $5}')" = "on" ] && modeinfo="$modeinfo咽"
