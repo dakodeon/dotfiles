@@ -74,12 +74,13 @@ super + shift + {comma, period}
 
 super + control + {comma, period, slash, backslash}
       mpc {random,repeat,single,consume}
+
 # playlist controls (using mpc)
-super + p; {a, D, l, A, N, s}
-      playlist_mgmt -{a,D,l,A,N,s}
+super + p; {a, D, l, A, N, s, F}
+      playlist_mgmt -{a,D,l,A,N,s,F}
 
 super + p; p
-      dunstify "Now playing" "$(mpc -f "%artist% - %title% (%album%)")"
+      dunstify "Now playing" "$(mpc -f "%artist% - %title% [(%album%)]")"
 
 # Programs
 super + Return
