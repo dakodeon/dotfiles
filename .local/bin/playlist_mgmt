@@ -9,6 +9,7 @@
 # 4. add some songs to the current playlist
 # 5. select and load songs from database as a playlist
 # 6. search current playlist for a song
+# 7. show current playing file in file manager (lf)
 
 # check if mpd is running, exit if not
 pgrep mpd > /dev/null || exit 23
@@ -16,6 +17,9 @@ pgrep mpd > /dev/null || exit 23
 # where are the playlists stored
 playlist_dir="$HOME/.local/share/mpd/playlists"
 music_dir="$HOME/Music"
+
+# file manager
+fileman='lf-ueberzug'
 
 # FUNCTIONS DEFINITIONS
 
@@ -58,21 +62,17 @@ add_to_playlist() { \
 		    set -f; IFS='
 '
 for file in $1; do
-    set +f; unset IFS
+    # set +f; unset IFS
     mpc add "$file"
 done
 set +f; unset IFS
 }
 
 # get info about current playing song
-get_now_playing() { \
-		    now_playing="$(mpc -f %file% current)"
-		    now_playing_fancy="$(mpc -f "[[%artist% - ]%title% [(album: %album%)]]|[%file%]" current)"
-}
+now_playing="$(mpc -f %file% current)"
+now_playing_fancy="$(mpc_display)"
 
-get_now_playing
-
-while getopts ":aDlANsh" opt; do
+while getopts ":aDlANsFh" opt; do
     case $opt in
 	a) # add current song to playlist
 	    plist="$(pl_search "Add current playing to playlist:")" || exit 23
@@ -96,26 +96,29 @@ while getopts ":aDlANsh" opt; do
 		    exit 23
 		    ;;
 		esac
-	;;
+	    ;;
 	l) # load a playlist
 	    plist="$(pl_search "Load playlist:")" || exit 23
 	    mpc clear && mpc load "$plist" && mpc play
 	    dunstify " Playlist loaded" "$plist"
-	;;
+	    ;;
 	A) # add tracks from the database to the playlist
 	    newlist="$(db_search2 "Select songs to add to the playlist:")" || exit 23
 	    add_to_playlist "$newlist"
 	    dunstify "  Added some songs to current playlist"
-	;;
+	    ;;
 	N) # replace playlist with songs
 	    newlist="$(db_search2 "Select songs to play:")" || exit 23
 	    mpc clear && add_to_playlist "$newlist" && mpc play && get_now_playing
 	    dunstify " Playlist changed. Now playing:" "$now_playing_fancy"
-	;;
+	    ;;
 	s) # select and play a song from the current playlist
 	    curr_search "Select song:" | xargs -I"{}" mpc searchplay filename "{}" && get_now_playing
 	    dunstify " Now playing:" "$now_playing_fancy"
-	   ;;
+	    ;;
+	F) # show current track in file manager
+	    $TERMINAL -e $fileman "$music_dir/$now_playing"
+	    ;;
 	h) echo "display a help message" ;;
     esac
 done
