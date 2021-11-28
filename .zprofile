@@ -28,8 +28,9 @@ export WINEPREFIX="$XDG_DATA_HOME/wine"
 # the path
 export PATH=$PATH$( find $HOME/.local/bin/ -type d -printf ":%p" )
 
-# misc options
+# globals for programs
 export FZF_DEFAULT_COMMAND="find . -path \"*/.git\" -prune -o -printf \"%P\\n\""
+export MPC_FORMAT="[[%composer% (&%artist%)]|%artist%] - %title%"
 
 export LF_ICONS="\
 tw=:\
