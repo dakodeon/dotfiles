@@ -8,6 +8,7 @@ set hiddenfiles ".*:*.xmp:#*#"
 set ratios 1:2:3
 set scrolloff 10
 set mouse true
+set incsearch true
 
 ## ui commands
 cmd open $opener $f &
@@ -161,7 +162,6 @@ map zr
 map zh
 cmap <tab>
 map <f-1>
-
 
 cmap <tab> cmd-menu-complete
 map <a-R> reload-conf
