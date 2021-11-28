@@ -23,7 +23,7 @@ printout() { \
 		     echo " reload: (i)3, (s)xkhkd, (d)otfiles "
 		     ;; 
 		 "super + p")
-		     echo " playlist mgmt: (a)dd, (D)elete, (l)oad, (A)dd, (N)ew, (s)elect  "
+			 echo " playlist mgmt: (a)dd, (D)elete, (l)oad, (A)dd, (N)ew, (s)elect, (F)ocus in lf "
 		     ;;
 		 *) echo " $key " ;;
 	     esac
