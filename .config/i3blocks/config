@@ -107,6 +107,12 @@ markup=pango
 # interval=once
 # signal=10
 # command=~/.config/i3/i3blocks/volume 5 pulse
+
+[pacupdateable]
+label=
+interval=once
+signal=8
+
 [vol]
 interval=once
 signal=10
