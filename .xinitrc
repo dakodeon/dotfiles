@@ -25,5 +25,5 @@ if [[ "$(tty)" = "/dev/tty1" ]]; then
 	echo i3 config file does not exist in $i3conf
     fi
 elif [[ "$(tty)" = "/dev/tty2" ]]; then
-    exec dwm
+    exec bspwm
 fi
