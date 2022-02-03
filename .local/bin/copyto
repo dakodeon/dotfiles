@@ -5,7 +5,7 @@
 
 [ -z "$1" ] && exit
 
-dest="$(broot -f ~)"
+dest="$(broot -f /)"
 
 [ -z "$dest" ] && exit
 
