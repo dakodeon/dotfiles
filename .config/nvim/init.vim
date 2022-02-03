@@ -83,3 +83,4 @@ noremap <leader>gv :edit $MYVIMRC<CR>
 autocmd BufWritePost $MYVIMRC :source $MYVIMRC
 autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
 autocmd BufWritePost *i3.conf,*i3blocks/config !i3-msg restart
+autocmd BufWritePost *.c !gcc %
