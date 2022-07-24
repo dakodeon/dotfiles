@@ -59,7 +59,7 @@ case "$url" in
 esac
 
 # [ -n "$feed" ] && { echo "$feed" | xclip -selection clipboard; dunstify " RSS feed in clipboard" "$(echo "$feed")"; }
-# [ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
+[ -z "$feed" ] && dunstify "No RSS feed found!" && exit 23
 
 topics="$(sed -n -e '/CATEGORIES/d' -e 's/^"\s\+--\s\([A-Z ]\+\)\s--\s\+"$/\1/p' "$urlfile")"
 
