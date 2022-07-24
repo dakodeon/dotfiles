@@ -1,0 +1,80 @@
+#!/bin/env sh
+
+# check battery status without "fancy" tools like acpi
+# for use with lemonbar/lemonaid
+
+# probes /sys/class/power_supply/ for battery related info
+
+# for dunst notifications
+dunst_id=1234
+warned=0
+warned_full=0
+
+# update interval in seconds
+interval=1
+
+# battery info
+instance="CMB1"
+bat_info="/sys/class/power_supply/$instance/uevent"
+fullchr="$(grep POWER_SUPPLY_CHARGE_FULL= $bat_info | awk -F '=' '{ print $2 }')"
+
+# at which percent to get a warning
+warn_at=10
+
+# while true; do
+    currchr="$(grep POWER_SUPPLY_CHARGE_NOW= $bat_info | awk -F '=' '{ print $2 }')"
+    percent=$((currchr*100/fullchr))
+
+    fullstat="$(grep POWER_SUPPLY_STATUS= $bat_info | awk -F '=' '{ print $2 }')"
+
+    case "$fullstat" in
+	"Charging"|"Unknown")
+	    [ "$fullstat" = "Charging" ] && stat="CHR" || stat=""
+
+	    if [ $warned -eq 1 ]; then
+		dunstify -C $dunst_id
+		warned=0
+	    fi
+
+	    [ $percent -eq 100 ] && color="00FF00" || color="#AAAAAA"
+	    ;;
+	"Discharging")
+	    stat="DIS"
+	    warned_full=0
+	    if [ $percent -le 5 ]; then
+		zzz -z
+	    elif [ $percent -le 20 ]; then
+		color="#FF0000"
+	    elif [ $percent -le 40 ]; then
+		color="#FFAE00"
+	    elif [ $percent -le 60 ]; then
+		color="#FFF600"
+	    elif [ $percent -lt 85 ]; then
+		color="#A8FF00"
+	    else
+		color="#00FF00"
+	    fi
+	    ;;
+	*)
+	    echo Unknown error
+	    exit 23
+	    ;;
+    esac
+    
+    if [ "$fullstat" = "Discharging" ] && [ $percent -le $warn_at ] && [ $warned -eq 0 ] ; then
+	dunstify -r $idlow -u critical '  Battery is running low.' 'System will soon hibernate'
+	warned=1
+    fi
+
+    if [ "$fullstat" = "Charging" ] && [ $percent -eq 100 ] && [ $warned_full -eq 0 ] ; then
+	dunstify 'Battery is full'
+	warned_full=1
+    fi
+
+    # add option to format for i3blocks
+    full_text="%{F$color}$percent% $stat%{F-}"
+
+    echo "$full_text"
+
+    # sleep $interval
+# done

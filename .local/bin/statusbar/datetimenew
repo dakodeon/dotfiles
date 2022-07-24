@@ -1,0 +1,12 @@
+#!/bin/env sh
+
+day=$(date '+%a'. | tr '[:lower:]' '[:upper:]')
+date=$(date '+%Y-%m-%d')
+time=$(date '+%H:%M:%S')
+
+# echo "<span foreground='#BBBBBB'>$(echo $day)  </span><span foreground='#5588BB'>$(echo $date)  </span><span foreground='#FFFFFF'>$(echo $time)</span>"
+echo "%{+u}%{U#5588BB}%{F#BBBBBB}%{T1}$day  %{F#5588BB}$date  %{F#FFFFFF}$time%{F-}%{U-}%{-u}"
+
+# case $BLOCK_BUTTON in
+#     1) urxvt -e calcurse ;;
+# esac

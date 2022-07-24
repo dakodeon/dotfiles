@@ -1,0 +1,7 @@
+#!/bin/env sh
+
+# watch for keyboard layout changes and signal lemonbar
+
+while true; do
+    xkb-switch -w && pkill -RTMIN+3 lemonaid
+done

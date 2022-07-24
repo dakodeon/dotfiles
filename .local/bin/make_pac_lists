@@ -1,0 +1,11 @@
+#!/bin/env sh
+
+# categorize pacman packages. Maybe keep also the desriptions?
+# use two files, one for normal packages, one for aur packages
+# use fzf to select packages. In the preview, show pacman -Qi
+
+fileloc="$XDG_DATA_HOME"
+
+pacman -Qqe | grep -vx "$(pacman -Qqem)" | grep -vx "$(pacman -Qqg base base-devel)" | fzf --layout=reverse --header-first --multi --marker="*" --bind 'ctrl-r:clear-selection' --preview='pacman -Qi {}' --header="---NORMAL PACKAGES---" > "$fileloc/packages_pacman"
+
+pacman -Qqem | fzf --layout=reverse --header-first --multi --marker="*" --bind 'ctrl-r:clear-selection' --preview='pacman -Qi {}' --header="---AUR PACKAGES---" > "$fileloc/packages_aur"
