@@ -10,6 +10,8 @@ alias df='df -h'      # Human-readable sizes
 alias du='du -h'
 alias free='free -h'
 
+alias duf='duf -hide special'
+
 # aliases for ls 
 alias ll='ls -l'
 alias la='ls -al'
@@ -19,14 +21,16 @@ alias l.='ls -d .*'
 # note the use of chname for terminal apps. caveat: the name remains after
 # exiting (run chname again if desired)
 alias e='devour emacsclient -c '
+alias ,e='emacsclient -c '
 alias et='chname emacsterm; emacsclient -t '
 alias er='pgrep emacs >/dev/null && pkill emacs; emacs --daemon'
 alias v='chname nvim; nvim '
 alias nb='chname newsboat; newsboat'
 alias ra='chname ranger; ranger '
 # alias lf='chname lf; lf '
-alias lf="lf-ueberzug"
+alias lf="chname lf; lf-ueberzug"
 alias z='devour zathura '
+alias ,z='zathura '
 alias vr='vimv '
 alias mp='devour mpv'
 alias yt='pipe-viewer'
@@ -91,7 +95,7 @@ alias ecn='dotfiles-update '
 alias sx='sxivdir'
 
 # misc aliases
-# rsync my website!
+# rsync my website
 alias WS='rsync -rptzP --exclude "photoshow/photofull.html" --exclude "photoshow/diffs" /var/www/lukesrv/* root@lukebass.xyz:/var/www/lukesrv/'
 
 # copy file contents to clipboard
