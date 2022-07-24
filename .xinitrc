@@ -19,11 +19,15 @@ exec wallset &					  # muh wallpaper
 i3conf=$HOME/.config/i3/i3.conf
 
 if [[ "$(tty)" = "/dev/tty1" ]]; then
+		export WMNAME="i3"
+		export STATUSBAR="i3blocks"
     if [ -f $i3conf ] ; then
 	exec i3 -c $i3conf
     else
 	echo i3 config file does not exist in $i3conf
     fi
 elif [[ "$(tty)" = "/dev/tty2" ]]; then
+		export WMNAME="bspwm"
+		export STATUSBAR="lemonaid"
     exec bspwm
 fi
