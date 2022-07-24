@@ -11,20 +11,20 @@ super + Escape; {shift + s, r, s, e}
 super + r; {i, s, d}
       {i3-msg restart, pkill -SIGUSR1 sxhkd && sxhkd_run && notify-send " sxhkd" "Config reloaded", dotfiles-update}
       
-# there's a bug in dunstctl so "dunstctl is-paused" is needed to show previous
-# notifications after un-pausing.
+# dunst controls
 super + shift + Pause
     dunstctl set-paused toggle && dunstctl is-paused && pkill -RTMIN+13 i3blocks
-
+ctrl + { space, shift + space, grave, shift + period }
+		dunstctl { close, close-all, history-pop, context }
 # volume controls
 XF86Audio{LowerVolume,RaiseVolume}
-    pactl set-sink-volume @DEFAULT_SINK@ {-,+}5% && pkill -RTMIN+10 i3blocks
+    pactl set-sink-volume @DEFAULT_SINK@ {-,+}5% && pkill -RTMIN+10 i3blocks && pkill -RTMIN+10 lemonaid
 
 XF86AudioMute
-    pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks
+    pactl set-sink-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks  && pkill -RTMIN+10 lemonaid
 
 super + XF86AudioRaiseVolume
-    pactl set-sink-volume @DEFAULT_SINK@ 100% && pkill -RTMIN+10 i3blocks
+    pactl set-sink-volume @DEFAULT_SINK@ 100% && pkill -RTMIN+10 i3blocks && pkill -RTMIN+10 lemonaid
 
 # multi-monitor
 super + {F10,shift + F10,ctrl + F10}
