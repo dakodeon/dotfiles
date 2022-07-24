@@ -45,6 +45,8 @@ alias gO='git remote set-url origin git@github.com:'
 alias gu='git restore '
 alias gU='git restore .'
 alias gr='git restore --staged '
+alias gl='git log'
+alias gL='git log --all --decorate --oneline --graph'
 alias g\?='alias | grep git'
 
 # aliases for pacman
