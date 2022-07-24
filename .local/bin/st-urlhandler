@@ -15,7 +15,7 @@ urls="$(sed 's/.*│//g' | tr -d '\n' |
 	cmd() { echo "$1" | xclip -selection clipboard; }
 } || {
 	action="Follow"
-	cmd() { setsid xdg-open "$1" >/dev/null 2>&1; }
+	cmd() { setsid $BROWSER "$1" >/dev/null 2>&1; }
 }
 
 chosen="$(echo "$urls" | dmenu -i -p "$action url:" -l 10)"
