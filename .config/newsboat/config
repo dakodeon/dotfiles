@@ -21,13 +21,16 @@ articlelist-format "%4i   %D   %?T?|%-17T|   ?%t"
 notify-format "%n new articles in %f feeds"
 
 # colors
-color info blue default underline
-color listfocus default blue
+color title color23 default underline
+color info color23 default underline
+color listnormal white default dim
+color listfocus_unread white color23 bold
+color listfocus black color23
 
 # highlighting
-highlight all "^ *[0-9]+ *" blue default
+highlight all "^ *[0-9]+ *" color23 default dim
 
-highlight feedlist "-- .* --" cyan default 
+highlight feedlist "-- .* --" color23 default dim
 highlight feedlist " *0/[0-9]+ *" default default
 highlight feedlist " *[1-9][0-9]*/[0-9]+ *" default default bold
 highlight feedlist " *0/0 *" default default invis
