@@ -8,8 +8,8 @@ super + Pause
 super + Escape; {shift + s, r, s, e}
       {sudo shutdown -h now, sudo reboot, sudo zzz -z, i3-msg exit}
 
-super + r; {i, s, d}
-      {i3-msg restart, pkill -SIGUSR1 sxhkd && sxhkd_run && notify-send " sxhkd" "Config reloaded", dotfiles-update}
+super + r; {i, s, d, p}
+      {i3-msg restart, pkill -SIGUSR1 sxhkd && sxhkd_run && notify-send " sxhkd" "Config reloaded", dotfiles-update, picom_toggle}
       
 # dunst controls
 super + shift + Pause
