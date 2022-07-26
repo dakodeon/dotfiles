@@ -34,6 +34,7 @@ export LESSHISTFILE="$XDG_STATE_HOME/less/history"
 export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/pass"
 export TEXMFVAR="$XDG_CACHE_HOME/texlive/texmf-var"
+export MEDNAFEN_HOME="$XDG_DATA_HOME/mednafen"
 
 # shell history
 export HISTFILE="$XDG_STATE_HOME/shell/history"
