@@ -49,3 +49,4 @@ Nsxiv.window.background: #1C1C1C
 Nsxiv.bar.background: #000000
 Nsxiv.bar.foreground: #333333
 Nsxiv.bar.font: mononoki Nerd Font Mono-9
+!Nsxiv.window.alpha: 0.5 ! alpha patch not applied --TODO
