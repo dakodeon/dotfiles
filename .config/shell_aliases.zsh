@@ -11,6 +11,7 @@ alias du='du -h'
 alias free='free -h'
 
 alias duf='duf -hide special'
+alias wget=wget --hsts-file="$XDG_DATA_HOME/wget-hsts"
 
 # aliases for ls 
 alias ll='ls -l'
