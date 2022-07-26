@@ -25,9 +25,9 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 zmodload zsh/complist
 
-HISTFILE=$XDG_CACHE_HOME/zsh/zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+# HISTFILE=$XDG_CACHE_HOME/zsh/zsh_history
+# HISTSIZE=10000
+# SAVEHIST=10000
 WORDCHARS=${WORDCHARS//\/[&.;]}                                 # Don't consider certain characters part of the word
 
 ## Keybindings section
