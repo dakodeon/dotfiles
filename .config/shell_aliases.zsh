@@ -91,6 +91,7 @@ alias d\?='alias | grep cd'
 # aliases for my scripts
 alias es='scriptsel -t'
 alias esn='newscript '
+alias esq='quickscript '
 alias ec='configsel -t'
 alias ecn='dotfiles-update '
 alias sx='sxivdir'
