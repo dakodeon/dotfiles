@@ -1,10 +1,16 @@
 #!/bin/env sh
 
-# makes a wallpaper selector out of sxiv.
-# uses two of my scripts, wallset and sxivdir
-# the arguments provided are used to control sxivdir
+# makes a wallpaper selector out of nsxiv. nsxiv is patched with the
+# dmenu-patch, which allows to press Shift+Enter on an image and exit while
+# piping out the name of said image. The image is then passed to my script
+# for setting the wallpaper.
 
-# with no args, runs on the default wallpaper dir
+# with the -1 argument, recursiveness is disabled, with the -s argument
+# shuffling the images is enabled. Then, there is one positional parameter
+# expected, which shoud be a directory. If no positional parameter is
+# provided, the default behaviour is to act on the wallpaper directory,
+# with the shuffle and recursiveness flags on.
+
 walldir="$HOME/Pictures/wallpapers"
 
 while getopts ":1s" opt; do
@@ -18,10 +24,21 @@ done
 
 shift $((OPTIND-1))
 
-[ -z "$1" ] && files="$walldir" && norecur= && shuf=true
+# default is to have recursion and to shuffle on the wallpapers dir
+if [ -z "$1" ]; then
+    entry="$walldir"
+    norecur=
+    shuf=true
+else
+    [ -d "$1" ] && entry="$1" || exit 23
+fi
 
-[ -n "$1" ] && files="$@"
+files="$(find "$entry" ${norecur:+-maxdepth 1} -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f)"
 
-# file="$(readlink -f "$(find "${dir:-"$walldir"}" ${dir:+-maxdepth 1} -iregex '.*.\(jpg\|jpeg\|png\|gif\|tif\|tiff\)' -type f | shuf | sxiv -t -i -o)")"
+set -f; IFS='
+'
 
-sxivdir ${norecur:+-1} ${shuf:+-s} -o "$(printf "%s\n" "$files")" | xargs wallset
+[ -n "$shuf" ] && files="$(printf "%s\n" "$files" | shuf)"
+
+nsxiv -O -t $files | xargs wallset
+set +f; unset IFS
