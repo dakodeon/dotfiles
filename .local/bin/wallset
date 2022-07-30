@@ -23,7 +23,7 @@
 # cases, the selected image is symlinked to the default location. One exception
 # to this is when a tif/tiff file is selected. xwallpaper doesn't accept those
 # (but I have a lot!) so, instead of a symlink, a jpeg version of the image is
-# used, made using convert (imagemagick).
+# used, which is created using convert (imagemagick).
 
 wall_loc=${XDG_DATA_HOME:-$HOME/.local/share}/wallpaper.jpg
 posarg=${XDG_DATA_HOME:-$HOME/.local/share}/.wallpos
