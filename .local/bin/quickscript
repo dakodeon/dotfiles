@@ -1,0 +1,9 @@
+#!/bin/env sh
+
+# create a quick script
+
+[ -z "$1" ] && echo "You have to specify a name" && exit 17
+
+[ -e "$1" ] && echo "File already exists" && exit 17
+
+touch "$1" && chmod +x "$1" && echo "#!/bin/env sh" > "$1" && nvim "$1"
