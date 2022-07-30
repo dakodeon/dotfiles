@@ -204,10 +204,10 @@ map J broot-jump
 map Tr $trashrestore
 map TD trash-empty
 
-map PP &sxivdir -1 $fx; lf -remote "send $id unselect"
-map PR &sxivdir $fx; lf -remote "send $id unselect"
-map Pp &sxivdir -1
-map Pr &sxivdir
+# map PP &sxivdir -1 $fx; lf -remote "send $id unselect"
+# map PR &sxivdir $fx; lf -remote "send $id unselect"
+# map Pp &sxivdir -1
+# map Pr &sxivdir
 
 map bg %wallset $f
 
