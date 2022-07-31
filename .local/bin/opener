@@ -9,7 +9,7 @@ case "$(file --mime-type "$1" -bL)" in
     video/*|audio/*)
 	mpv "$1" >/dev/null 2>&1 ;;
     image/*)
-	sxiv "$1" ;;
+	nsxiv "$1" ;;
     application/pdf)
 	zathura "$1" ;;
     text/html)
