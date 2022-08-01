@@ -3,6 +3,7 @@ follow_now_playing_lyrics = "yes"
 ignore_leading_the = "yes"
 ignore_diacritics = "yes"
 default_place_to_search_in = "database"
+ncmpcpp_directory="/home/louk/.config/ncmpcpp"
 
 ## Display Modes ##
 playlist_editor_display_mode = "columns"
