@@ -10,7 +10,7 @@ case "$(file --mime-type "$1" -bL)" in
 	mpv "$1" >/dev/null 2>&1 ;;
     image/*)
 	nsxiv "$1" ;;
-    application/pdf)
+    application/pdf|application/epub+zip)
 	zathura "$1" ;;
     text/html)
 	$BROWSER "$1" ;;
