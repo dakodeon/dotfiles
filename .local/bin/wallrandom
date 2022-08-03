@@ -1,0 +1,7 @@
+#!/bin/env sh
+
+# set a random wallpaper
+
+walldir="$HOME/Pictures/wallpapers"
+
+find "$walldir" -maxdepth 2 -type f | shuf | head -n1 | xargs wallset

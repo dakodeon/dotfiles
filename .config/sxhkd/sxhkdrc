@@ -84,11 +84,15 @@ super + p; p
 
 # Programs
 super + Return
-    $TERMINAL
+      $TERMINAL
+
+# random wallpaper
+super + shift + w
+      wallrandom
 
 # launchermode
 super + x; {Return, d, e, m, b, t, w, shift + d, q}
-      {$TERMINAL,$FILEMAN,emacsclient -c,$MAILCLIENT,$BROWSER,$TERMINAL -e tremc,libreoffice --writer,darktable,$TERMINAL -e calc}
+    {$TERMINAL,$FILEMAN,emacsclient -c,$MAILCLIENT,$BROWSER,$TERMINAL -e tremc,libreoffice --writer,darktable,$TERMINAL -e calc}
 
 super + {F12, shift + F12, control + F12}
     {wpa_menu, wpa_menu -E, sudo rfkill unblock all}
