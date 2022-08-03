@@ -30,7 +30,7 @@ did=999112
 
 # defaults
 # Because of the use of labels, the awk command becomes slightly more complicated as I need to use the '-P' flag for lsblk.
-valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$4~/part/ && $5~/""/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
+valid_devices="$(lsblk -nPo "path,label,size,type,mountpoint" | awk '$1~/*sda*/ && $4~/part/ && $5~/""/ {for (i=1;i<=3;i++) sub(/.*=/, "",$i);printf "%s %s (%s)\n",$1,$2,$3}' | tr -d '"' | sed 's/  / /')"
 
 # validity of MOUNTPOINT
 exclude_mounted=$(lsblk -nlo "path,type,mountpoint" | awk '$2 == "part" && $3 !~ /\/boot|\/home$|SWAP/ && length($3)>1 {printf "-not \\( -path *%s -prune \\) \\ \n",$3}')
@@ -114,7 +114,7 @@ elif test -n "$LABEL"; then
     DEVICE=$(echo "$valid_devices" | grep -w "$LABEL" | cut -d' ' -f1)
 else
     if test -z "$DEVICE"; then
-	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')"
+	DEVICE="$(echo "$valid_devices" | dmenu -i -p "Choose a device to mount: ")" && DEVICE="$(echo "$DEVICE" | awk '{print $1}')" || exit 23
     fi
     LABEL="$(lsblk -no path,label | grep -w "$DEVICE" | awk '{print $2}')"
 fi
