@@ -29,6 +29,6 @@ confs="$(find "$dotfiles_repo" -path "$dotfiles_repo"/.git -prune -o \
 	-name '.*ignore' -o -name 'README.*' -o \
 	${1:+-iregex ".*$1.*"} -type f -printf '%P\n')"
 
-file="$dotfiles_repo"/"$(echo "$confs" | select_cmd)" || exit 23
+file="$dotfiles_repo"/"$(echo "$confs" | sort | select_cmd)" || exit 23
 
 [ -f "$file" ] && edit_cmd "$file"

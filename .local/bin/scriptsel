@@ -6,6 +6,7 @@
 # if invoking from terminal, use -t. If a positional parameter is set, it is
 # used to filter the results.
 
+# the default path is a softlink, how to resolve?
 scripts_dir="$HOME/.source/dotfiles/.local/bin"
 
 # -t for terminal
@@ -22,15 +23,19 @@ scripts_dir="$HOME/.source/dotfiles/.local/bin"
 
 shift
 
+# check if the scripts directory exists
 [ ! -d "$scripts_dir" ] && {
 	notify_cmd " Script select" ">>\"$scripts_dir\" does not exist!"
 	exit 23
 }
 
+# if a positional argument is given, use it to filter the output (maybe use initial text?)
 scripts="$(find "$scripts_dir" ${1:+-iregex ".*$1.*"} -type f -printf '%P\n')"
 
-name="$(echo "$scripts" | select_cmd)" || exit 23
+# sort the output before presenting it
+name="$(echo "$scripts" | sort | select_cmd)" || exit 23
 
+# present the list, with no existing name run newscript
 [ -f "$scripts_dir"/"$name" ] && \
 	edit_cmd "$scripts_dir"/"$name" || \
 	{ which newscript >/dev/null && newscript -x "$name"; }
