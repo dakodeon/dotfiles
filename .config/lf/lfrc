@@ -4,7 +4,7 @@ set ifs "\n"
 
 set preview
 set icons true
-set hiddenfiles ".*:*.xmp:#*#"
+set hiddenfiles ".*:#*#:*.xmp:*.srt"
 set ratios 1:2:3
 set scrolloff 10
 set mouse true
@@ -209,6 +209,7 @@ map TD trash-empty
 # map Pp &sxivdir -1
 # map Pr &sxivdir
 
+map S %subliminal download -l en $fx
 map bg %wallset $f
 
 source "~/.config/lf/lfrc-locations"
