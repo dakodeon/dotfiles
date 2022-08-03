@@ -62,6 +62,6 @@ fi
 [ -n "$pos" ] && pos="--$pos" && echo "$pos" > "$posarg"
 [ -z "$pos" ] && [ -s "$posarg" ] && pos="$(cat "$posarg")"
 
-[ "$allset" = "true" ] && dunstify -i "$wall_loc" "setbg" "changing wallpaper"
+[ "$allset" = "true" ] && dunstify -r 1 -i "$wall_loc" "wallset" "changing wallpaper"
 
 [ -f "$wall_loc" ] && xwallpaper "${pos:-"--maximize"}" "$wall_loc"
