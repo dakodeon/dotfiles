@@ -35,7 +35,7 @@ play=false
 while getopts ":aPhu:d:" opt; do
     case $opt in
 	a)
-	    audopt="-x --audio-format mp3"
+	    audopt="-x --audio-format mp3 --audio-quality 0"
 	    media="audio"
 	    ;;
 	u)
