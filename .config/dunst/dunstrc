@@ -2,8 +2,6 @@
     # Functionality
     title = Dunst
     class = Dunst
-    startup_notification = false
-    verbosity = mesg
     dmenu = /usr/bin/dmenu -p dunst:
     browser = /usr/bin/firefox -new-tab
     always_run_script = true
@@ -14,6 +12,7 @@
     monitor = 0
     follow = mouse
     sort = yes
+    notification_limit = 5
     indicate_hidden = yes
     stack_duplicates = true
     hide_duplicate_count = true
@@ -22,21 +21,31 @@
     show_indicators = no
     idle_threshold = 120
     show_age_threshold = 60
+    timeout = 10
     # Formatting
     ## Shape
-    geometry = "300x5-30+20"
-    shrink = no
-    notification_height = 0
-    separator_height = 1
-    padding = 8
-    horizontal_padding = 8
+    origin = top-right
+    width = (250, 400)
+    height = 500
+    offset = 20x20
+    progress_bar = true
+    progress_bar_height = 12
+    # separator_height = 1
+    gap_size = 3
+    padding = 10
+    horizontal_padding = 10
     corner_radius = 3
-    transparency = 50
+    transparency = 0
     frame_width = 1
-    frame_color = "#DDBB77CC"
     separator_color = frame
+    ## Colors
+    frame_color = "#DDBB77"
+    background = "#0000004C"
+    foreground = "#FFFFFF"
+    highlight = "#4CAF6D75"
     ## Text
-    font = mononoki Nerd Font 8
+    icon_theme = "Papirus"
+    font = mononoki Nerd Font 9
     line_height = 0
     markup = full
     format = "<b>%s</b>\n%b"
@@ -47,22 +56,14 @@
     icon_position = left
     max_icon_size = 64
     icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+# Rules for urgency
 [urgency_low]
-    background = "#22222250"
+    background = "#2222224C"
     foreground = "#888888"
-    timeout = 10
-[urgency_normal]
-    background = "#1C1C1C50"
-    foreground = "#ffffff"
-    timeout = 10
+    highlight = "#CCCCCC75"
+    frame_color = "#AAAAAA"
 [urgency_critical]
-    background = "#90000050"
-    foreground = "#ffffff"
-    frame_color = "#ff0000CC"
+    background = "#9000004C"
+    frame_color = "#CC0000"
+    highlight = "#FF000075"
     timeout = 0
-# this should be moved to sxhkd
-[shortcuts]
-    close = ctrl+space
-    close_all = ctrl+shift+space
-    history = ctrl+grave
-    context = ctrl+shift+period
